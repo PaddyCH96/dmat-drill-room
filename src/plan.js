@@ -66,6 +66,8 @@ function viewSetup(){
     </form>
   </div>
   ${first?'':`<div class="panel stack"><h3>Your data</h3><p class="muted">${Sync.ref?'Progress syncs to your Claude account.':'Progress is stored in this browser only. Copy the backup code to move it to another browser or device.'}</p>
+  ${storeWarning?`<p class="tag bad" style="white-space:normal">${storeWarning}</p>`:''}
+  <p class="muted" style="font-size:14.5px">The backup code carries everything: scores, mistake bank, levels, trick cards, plan ticks and your exam setup. Importing merges it with what's already here; if this browser already has an exam set up, that setup is kept.</p>
   <div class="row"><button class="btn" data-act="export">Copy backup code</button><button class="btn ghost" data-act="import">Import code</button><button class="btn ghost" data-act="reset" style="color:var(--bad)">Reset all progress</button></div>
   <label for="codebox" class="muted" hidden>Backup code</label><textarea id="codebox" hidden rows="3" style="width:100%;font-family:var(--mono);font-size:12px;background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px"></textarea><p id="codemsg" class="muted"></p></div>`}
   <p class="muted" style="font-size:13.5px">dMAT Drill Room is an unofficial, open-source practice tool and is not affiliated with g.a.s.t. or the TestDaF-Institut. Always check the official rules at <a href="https://www.d-mat.de/en/" target="_blank" rel="noopener">d-mat.de</a>.</p>

@@ -950,6 +950,8 @@ function viewSetup(){
     </form>
   </div>
   ${first?'':`<div class="panel stack"><h3>Your data</h3><p class="muted">${Sync.ref?'Progress syncs to your Claude account.':'Progress is stored in this browser only. Copy the backup code to move it to another browser or device.'}</p>
+  ${storeWarning?`<p class="tag bad" style="white-space:normal">${storeWarning}</p>`:''}
+  <p class="muted" style="font-size:14.5px">The backup code carries everything: scores, mistake bank, levels, trick cards, plan ticks and your exam setup. Importing merges it with what's already here; if this browser already has an exam set up, that setup is kept.</p>
   <div class="row"><button class="btn" data-act="export">Copy backup code</button><button class="btn ghost" data-act="import">Import code</button><button class="btn ghost" data-act="reset" style="color:var(--bad)">Reset all progress</button></div>
   <label for="codebox" class="muted" hidden>Backup code</label><textarea id="codebox" hidden rows="3" style="width:100%;font-family:var(--mono);font-size:12px;background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px"></textarea><p id="codemsg" class="muted"></p></div>`}
   <p class="muted" style="font-size:13.5px">dMAT Drill Room is an unofficial, open-source practice tool and is not affiliated with g.a.s.t. or the TestDaF-Institut. Always check the official rules at <a href="https://www.d-mat.de/en/" target="_blank" rel="noopener">d-mat.de</a>.</p>
@@ -978,10 +980,19 @@ const $=(s,r=document)=>r.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const DAY=86400000;
 const SYNC_KEYS=['log','qlog','cards','plandone','seenP','mistakes','level','todaydone','skin','setup'];
+const BACKUP_KEYS=[...SYNC_KEYS,'examday'];
 const MEM={};
+const CAPS={qlog:1000,log:500};
+let storeWarning='';
 const store={
   get(k,d){ if(k in MEM)return MEM[k]; try{const v=localStorage.getItem('dmat_'+k);if(v){MEM[k]=JSON.parse(v);return MEM[k];}}catch(e){} return d; },
-  set(k,v,quiet){ MEM[k]=v; try{localStorage.setItem('dmat_'+k,JSON.stringify(v))}catch(e){} if(!quiet&&SYNC_KEYS.includes(k))Sync.queue(); }
+  set(k,v,quiet){
+    if(CAPS[k]&&Array.isArray(v)&&v.length>CAPS[k])v=v.slice(-CAPS[k]);
+    MEM[k]=v;
+    try{ localStorage.setItem('dmat_'+k,JSON.stringify(v)); storeWarning=''; }
+    catch(e){ storeWarning='This browser refused to save your progress (its storage is full or blocked). Copy your backup code from Settings, and free up space or allow site data.'; }
+    if(!quiet&&SYNC_KEYS.includes(k))Sync.queue();
+  }
 };
 /* ---- account sync (db + user capabilities); falls back to this browser ---- */
 function mergeVal(k,l,r){
@@ -1109,7 +1120,7 @@ countdown();setInterval(countdown,60000);
 
 function render(){ window.__aiItems=[]; const v=$('#view'); if(session) return renderSession();
   if(!getSetup()&&tab!=='setup')tab='setup'; document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab)); document.getElementById('tabs').hidden=!getSetup();
-  v.innerHTML=({setup:viewSetup,today:viewToday,plan:viewPlan,practice:viewPractice,mock:viewMock,progress:viewProgress,guide:viewGuide,tricks:viewTricks})[tab]();
+  v.innerHTML=resumeBanner()+({setup:viewSetup,today:viewToday,plan:viewPlan,practice:viewPractice,mock:viewMock,progress:viewProgress,guide:viewGuide,tricks:viewTricks})[tab]();
   bindView(); }
 
 /* ---------- PLAN ---------- */
@@ -1192,9 +1203,38 @@ function startMock(k,task){
 }
 
 /* ---------- SESSION ---------- */
-function newSession(s){ session={...s,pi:0,finished:false,results:[]}; if((examDay()&&s.kind!=='bank')||s.kind==='mock'){session.exam=true;session.drill=false;} startPart(); }
+/* ---- resume an interrupted session ---- */
+const LIVE_MAX=6*3600*1000;
+function packPart(p){return {sec:p.sec,items:p.items,limit:p.limit,target:p.target,pids:p.pids,idx:p.idx,ans:p.ans,flags:[...(p.flags||[])],checked:[...(p.checked||[])],itemT:p.itemT,elapsed:elapsed(p)};}
+function unpackPart(o){const p={...o,flags:new Set(o.flags||[]),checked:new Set(o.checked||[])};p.t0=Date.now()-(o.elapsed||0)*1000;p.lastSwitch=Date.now();return p;}
+function saveLive(){
+  if(!session||session.finished)return;
+  try{ const p=session.parts[session.pi]; if(p&&p.sec!=='break')p.itemT[p.idx]+=(Date.now()-p.lastSwitch)/1000, p.lastSwitch=Date.now();
+    store.set('live',{ts:Date.now(),kind:session.kind,drill:session.drill,diff:session.diff,exam:session.exam,mock:session.mock,task:session.task,pi:session.pi,
+      parts:session.parts.map(packPart),results:session.results.map(r=>({...r,part:packPart(r.part)}))},true);
+  }catch(e){}
+}
+function clearLive(){store.set('live',null,true);}
+function liveSession(){const L=store.get('live',null);return L&&L.parts&&Date.now()-L.ts<LIVE_MAX?L:null;}
+function resumeLive(){
+  const L=liveSession(); if(!L)return; clearLive();
+  session={kind:L.kind,drill:L.drill,diff:L.diff,exam:L.exam,mock:L.mock,task:L.task,pi:L.pi,finished:false,
+    parts:L.parts.map(unpackPart),results:(L.results||[]).map(r=>({...r,part:unpackPart(r.part)}))};
+  stopTimer(); timerId=setInterval(tick,500); renderSession(); window.scrollTo({top:0});
+}
+function resumeBanner(){
+  const L=liveSession(); if(!L||session)return '';
+  const p=L.parts[L.pi]||{}; const name=(SECTIONS[p.sec]||{}).name||'session';
+  const left=p.limit?` · ${fmt(Math.max(0,p.limit-(p.elapsed||0)))} left`:'';
+  const done=(p.ans||[]).filter(a=>a!=null).length;
+  return `<div class="panel stack" style="border-color:var(--accent);gap:10px;margin-bottom:18px"><div><p class="eyebrow">Unfinished session</p><h3>${name} · ${done}/${(p.items||[]).length} answered${left}</h3></div>
+  <p class="muted" style="font-size:15px">You left this session open. Pick it up where you stopped, with the time you had left.</p>
+  <div class="row"><button class="btn primary" data-act="resume">Resume</button><button class="btn ghost" data-act="dropresume">Discard it</button></div></div>`;
+}
+
+function newSession(s){ clearLive(); session={...s,pi:0,finished:false,results:[]}; if((examDay()&&s.kind!=='bank')||s.kind==='mock'){session.exam=true;session.drill=false;} startPart(); }
 function startPart(){ const p=session.parts[session.pi]; p.idx=0; p.ans=p.items.map(()=>null); p.flags=new Set(); p.checked=new Set(); p.t0=Date.now(); p.itemT=p.items.map(()=>0); p.lastSwitch=Date.now();
-  stopTimer(); timerId=setInterval(tick,500); render(); window.scrollTo({top:0}); }
+  stopTimer(); timerId=setInterval(tick,500); saveLive(); render(); window.scrollTo({top:0}); }
 function stopTimer(){ if(timerId)clearInterval(timerId); timerId=null; }
 function elapsed(p){return Math.floor((Date.now()-p.t0)/1000);}
 const fmt=s=>`${Math.floor(s/60)}:${String(Math.max(0,s)%60).padStart(2,'0')}`;
@@ -1204,7 +1244,7 @@ function tick(){ const p=session.parts[session.pi]; const el=$('#timer'); if(!el
 function paceHint(p,e){const el=$('#pace');if(!el)return;if(session.exam||!p.items.length){el.textContent='';return;}
   const per=p.limit/p.items.length; const expected=Math.min(p.items.length,Math.floor(e/per)); const done=p.items.filter((x,i)=>isAnswered(x,p.ans[i])).length; const d=expected-done;
   el.textContent=d>=2?`${d} behind pace`:d<=-2?`${-d} ahead of pace`:'On pace'; el.className='pace '+(d>=3?'bad':d>=2?'warn':'good');}
-function switchItem(i){ const p=session.parts[session.pi]; p.itemT[p.idx]+=(Date.now()-p.lastSwitch)/1000; p.lastSwitch=Date.now(); p.idx=Math.max(0,Math.min(p.items.length-1,i)); renderSession(); }
+function switchItem(i){ const p=session.parts[session.pi]; p.itemT[p.idx]+=(Date.now()-p.lastSwitch)/1000; p.lastSwitch=Date.now(); p.idx=Math.max(0,Math.min(p.items.length-1,i)); saveLive(); renderSession(); }
 function renderSession(){
   window.__aiItems=[]; const v=$('#view'); const p=session.parts[session.pi];
   if(session.finished) { v.innerHTML=renderResults(); bindView(); return; }
@@ -1279,7 +1319,7 @@ function finishPart(auto){
     if(p.sec==='subj'&&p.pids){const seen=store.get('seenP',{});p.pids.forEach(id=>{const its=p.items.map((x,i)=>[x,i]).filter(([x])=>x.pid===id);seen[id]={c:its.filter(([x,i])=>isCorrect(x,p.ans[i])).length,t:its.length};});store.set('seenP',seen);}
   }
   if(session.pi<session.parts.length-1){ session.pi++; startPart(); }
-  else { stopTimer(); session.finished=true; if(session.task)taskDone(session.task); render(); window.scrollTo({top:0}); }
+  else { stopTimer(); clearLive(); session.finished=true; if(session.task)taskDone(session.task); render(); window.scrollTo({top:0}); }
 }
 function renderResults(){
   const R=session.results; if(!R.length)return `<div class="panel stack"><h2>Session ended</h2><div class="row"><button class="btn primary" data-act="again">Back</button></div></div>`; const C=R.reduce((s,r)=>s+r.correct,0), T=R.reduce((s,r)=>s+r.total,0);
@@ -1317,6 +1357,7 @@ function viewProgress(){
   <div class="scroll-x"><table class="data"><tr><th>Section</th><th>Sessions</th><th>Accuracy</th><th>Avg time / item</th><th>Last 5</th></tr>${rows}</table></div></div>
   ${subjBreakdown()}
   <div class="panel stack"><h3>History</h3><div class="scroll-x"><table class="data"><tr><th>When</th><th>Section</th><th>Mode</th><th>Level</th><th>Score</th><th>Time</th></tr>${hist}</table></div>
+  ${storeWarning?`<p class="tag bad" style="align-self:flex-start;white-space:normal">${storeWarning}</p>`:''}
   <p class="muted">${Sync.ref?'Your progress syncs to your Claude account automatically, so it follows you to other devices. The code below is a manual backup.':'Progress is saved in this browser. To move it to another browser or device, copy the backup code below and import it there.'}</p>
   <div class="row"><button class="btn" data-act="export">Copy progress code</button><button class="btn ghost" data-act="import">Import code</button></div>
   <label for="codebox" class="muted" hidden>Progress code</label><textarea id="codebox" hidden rows="3" style="width:100%;font-family:var(--mono);font-size:12px;background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px"></textarea><p id="codemsg" class="muted"></p></div></div>`;
@@ -1405,6 +1446,8 @@ function bindView(){
   v.onclick=e=>{
     const b=e.target.closest('button,[data-plan],a[data-task]'); if(!b)return;
     const d=b.dataset;
+    if(d.act==='resume')return resumeLive();
+    if(d.act==='dropresume'){clearLive();return render();}
     if(d.go)return setTab(d.go);
     if(d.sec){pr.sec=d.sec;return render();}
     if(d.diff){pr.diff=d.diff;return render();}
@@ -1428,14 +1471,14 @@ function bindView(){
     if(!session)return actGlobal(d.act);
     const p=session.parts[session.pi];
     if(d.jump)return switchItem(+d.jump);
-    if(d.latin){p.ans[p.idx]=d.latin;return renderSession();}
-    if(d.mcq){p.ans[p.idx]=+d.mcq;return renderSession();}
-    if(d.fig){const [k,j]=d.fig.split(':').map(Number);const a=p.ans[p.idx]||[null,null];a[k]=j;p.ans[p.idx]=a;return renderSession();}
+    if(d.latin){p.ans[p.idx]=d.latin;saveLive();return renderSession();}
+    if(d.mcq){p.ans[p.idx]=+d.mcq;saveLive();return renderSession();}
+    if(d.fig){const [k,j]=d.fig.split(':').map(Number);const a=p.ans[p.idx]||[null,null];a[k]=j;p.ans[p.idx]=a;saveLive();return renderSession();}
     switch(d.act){
       case 'prev':return switchItem(p.idx-1);
       case 'next':return switchItem(p.idx+1);
-      case 'check':p.checked.add(p.idx);return renderSession();
-      case 'flag':p.flags.has(p.idx)?p.flags.delete(p.idx):p.flags.add(p.idx);return renderSession();
+      case 'check':p.checked.add(p.idx);saveLive();return renderSession();
+      case 'flag':p.flags.has(p.idx)?p.flags.delete(p.idx):p.flags.add(p.idx);saveLive();return renderSession();
       case 'finish':{const un=p.items.filter((x,i)=>!isAnswered(x,p.ans[i])).length;if(un&&!p.armed){p.armed=true;b.textContent=`${un} unanswered — tap again to submit`;setTimeout(()=>{p.armed=false;},4000);return;}return finishPart(false);}
       case 'endbreak':return finishPart(false);
       case 'again':session=null;return render();
@@ -1444,7 +1487,8 @@ function bindView(){
   };
   v.oninput=e=>{const i=e.target.dataset.eq;if(i==null||!session)return;const p=session.parts[session.pi];const a=p.ans[p.idx]||p.items[p.idx].names.map(()=>'');a[+i]=e.target.value.replace(/\D/g,'');p.ans[p.idx]=a;
     const strip=$('.navstrip button.cur');if(strip)strip.classList.toggle('done',isAnswered(p.items[p.idx],a));
-    const cb=$('[data-act="check"]');if(cb)cb.disabled=!isAnswered(p.items[p.idx],a);};
+    const cb=$('[data-act="check"]');if(cb)cb.disabled=!isAnswered(p.items[p.idx],a);
+    clearTimeout(window.__eqSave);window.__eqSave=setTimeout(saveLive,600);};
   const sf=document.getElementById('setupform'); if(sf){sf.onsubmit=saveSetup; sf.oninput=setupPreview; setupPreview();}
   v.onchange=e=>{const k=e.target.dataset.plan;if(!k)return;const done=store.get('plandone',{});done[k]=e.target.checked;store.set('plandone',done);render();};
   v.onkeydown=e=>{if(e.key==='Enter'&&e.target.dataset.eq!=null){const n=$(`#eq-${+e.target.dataset.eq+1}`);if(n)n.focus();else{const nb=$('[data-act="check"]')||$('[data-act="next"]');if(nb&&!nb.disabled)nb.click();}}};
@@ -1452,11 +1496,17 @@ function bindView(){
 function actGlobal(a){
   const box=$('#codebox'), msg=$('#codemsg');
   if(a==='reset'){const btn=document.querySelector('[data-act="reset"]');if(btn&&btn.dataset.armed!=='1'){btn.dataset.armed='1';btn.textContent='Tap again to erase everything';setTimeout(()=>{if(btn){btn.dataset.armed='';btn.textContent='Reset all progress';}},4000);return;}
-    ['log','qlog','cards','plandone','seenP','mistakes','level','todaydone','prsel','examday'].forEach(k=>store.set(k,k==='log'||k==='qlog'?[]:{}));Sync.queue();render();return;}
-  if(a==='export'){const code=btoa(unescape(encodeURIComponent(JSON.stringify({log:store.get('log',[]),plandone:store.get('plandone',{}),seenP:store.get('seenP',{}),qlog:store.get('qlog',[]),cards:store.get('cards',{})}))));box.hidden=false;box.value=code;box.select();
+    ['log','qlog','cards','plandone','seenP','mistakes','level','todaydone','prsel'].forEach(k=>store.set(k,k==='log'||k==='qlog'?[]:{}));
+    store.set('examday',false); clearLive(); Sync.queue(); render(); return;}
+  if(a==='export'){const data={};BACKUP_KEYS.forEach(k=>{const v=store.get(k,null);if(v!=null)data[k]=v;});
+    const code=btoa(unescape(encodeURIComponent(JSON.stringify({v:1,data}))));box.hidden=false;box.value=code;box.select();
     try{navigator.clipboard.writeText(code).then(()=>msg.textContent='Copied. On the other device, paste it here and choose Import code.',()=>msg.textContent='Select the code above and copy it.');}catch(e){msg.textContent='Select the code above and copy it.';}}
   if(a==='import'){ if(box.hidden||!box.value.trim()){box.hidden=false;box.value='';box.focus();msg.textContent='Paste your code in the box, then choose Import code again.';return;}
-    try{const o=JSON.parse(decodeURIComponent(escape(atob(box.value.trim()))));['log','plandone','seenP','qlog','cards'].forEach(k=>o[k]&&store.set(k,o[k]));render();}catch(e){msg.textContent='That code could not be read. Copy the whole code again and paste it.';}}
+    try{const raw=JSON.parse(decodeURIComponent(escape(atob(box.value.trim()))));
+      const o=raw&&raw.v?raw.data:raw; let n=0;
+      BACKUP_KEYS.forEach(k=>{if(o&&o[k]!=null){store.set(k,mergeVal(k,store.get(k,null),o[k]));n++;}});
+      if(!n){msg.textContent='That code contained no progress.';return;}
+      buildPlan(); countdown(); render(); const m2=$('#codemsg'); if(m2)m2.textContent=`Imported and merged ${n} kind(s) of progress.`;}catch(e){msg.textContent='That code could not be read. Copy the whole code again and paste it.';}}
 }
 
 /* ===== features: mistake bank, today, pacing, keys, AI ===== */
