@@ -163,6 +163,8 @@ dmat-drill-room/
 └── docs/screenshots/
 ```
 
+[ARCHITECTURE.md](ARCHITECTURE.md) explains how the pieces fit together: state, the session engine, the plan builder and where to add things. Each file in `src/` starts with a short header saying what it holds.
+
 To make changes, you need [Node.js](https://nodejs.org) 18 or newer. There are no packages to install.
 
 ```bash
@@ -174,7 +176,7 @@ The checks cover the question bank's shape, that every generated Latin square ha
 
 ## Contributing
 
-New subject texts, trick cards and bug fixes are very welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the question format and workflow. Please only submit **original** material: don't copy official dMAT or TestAS items.
+New subject texts, trick cards and bug fixes are very welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the question format and workflow, and [ARCHITECTURE.md](ARCHITECTURE.md) for how the code is organised. Please only submit **original** material: don't copy official dMAT or TestAS items.
 
 If this helped you prepare, a ⭐ helps other candidates find it.
 

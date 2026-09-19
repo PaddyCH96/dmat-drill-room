@@ -1,3 +1,7 @@
+/* Subject Module texts and questions — the second batch, added with the per-subject tests.
+   Each entry: { id, area, title, domain, text (HTML), qs: [{ t, q, o[4], a, e, tip }] }.
+   `a` is the index of the correct option; options are shuffled at runtime.
+   See CONTRIBUTING.md for how to add one. */
 const MORE=[
 {id:'series',area:'math',title:'Arithmetic and Geometric Sequences',domain:'Mathematics',text:`<p>In an <b>arithmetic sequence</b>, each term is obtained by adding a constant difference d: a<sub>n</sub> = a<sub>1</sub> + (n − 1)·d. The sum of the first n terms is S<sub>n</sub> = n·(a<sub>1</sub> + a<sub>n</sub>) ÷ 2.</p><p>In a <b>geometric sequence</b>, each term is obtained by multiplying by a constant ratio q: a<sub>n</sub> = a<sub>1</sub>·q<sup>n−1</sup>. The sum of the first n terms is S<sub>n</sub> = a<sub>1</sub>·(q<sup>n</sup> − 1) ÷ (q − 1) for q ≠ 1.</p><p>If |q| &lt; 1, the terms shrink toward zero and the sum of <i>all</i> infinitely many terms approaches a finite value: S = a<sub>1</sub> ÷ (1 − q).</p>`,
 qs:[

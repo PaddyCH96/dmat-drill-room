@@ -1,3 +1,22 @@
+/* ---------------------------------------------------------------------------
+ * app.js — the core of the application.
+ *
+ * Contains, in order:
+ *   - storage: a small localStorage wrapper with size caps (store), optional
+ *     account sync when running as a Claude artifact (Sync), and the lists
+ *     that decide what syncs and what stays in this browser;
+ *   - the session engine: building a session from generated or stored items,
+ *     the timer, navigation, answering, saving an unfinished session (saveLive)
+ *     and scoring it (finishPart);
+ *   - the renderers for each item type (Latin squares, equations, figures,
+ *     subject questions) and the results screen;
+ *   - the Practice, Mock exam, Progress, Trick cards and Tactics views;
+ *   - event binding (bindView) shared by every view.
+ *
+ * Views are plain template strings re-rendered wholesale by render(); there is
+ * no framework and no build step beyond concatenation. State lives in `store`
+ * (persistent) and the `session` object (the run in progress).
+ * ------------------------------------------------------------------------- */
 /* ===== app ===== */
 const $=(s,r=document)=>r.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));

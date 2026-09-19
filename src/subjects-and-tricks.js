@@ -1,3 +1,15 @@
+/* ---------------------------------------------------------------------------
+ * subjects-and-tricks.js — subject areas, question types and the trick cards.
+ *
+ *   AREAS     the eight Subject Module areas shown in Practice;
+ *   QTYPES    the six question types (calculation, table/chart reading,
+ *             concept check, I/II/III statements, EXCEPT, transfer);
+ *   TYPE_TIP  the fallback tip used when a question has none of its own;
+ *   TRICKS    the recall cards, grouped by section and subject.
+ *
+ * It also back-fills `area` and `t` (question type) on the older passages, so
+ * every question in the bank has both regardless of which file it came from.
+ * ------------------------------------------------------------------------- */
 /* ===== subject extensions ===== */
 const OLD_AREA={stats:'stats',bayes:'stats',regression:'stats',growth:'math',elasticity:'econ',game:'econ',market:'econ',npv:'biz',breakeven:'biz',ohm:'phys',kinematics:'phys',gas:'phys',heat:'phys',ph:'chembio',enzyme:'chembio',bigo:'cs',binary:'cs',survey:'soc'};
 PASSAGES.forEach(p=>{p.area=OLD_AREA[p.id];p.qs.forEach(q=>{if(!q.t){const txt=q.q+' '+q.o.join(' ');q.t=/which statement|what does|why|interpret|best explanation|correct\?|requirement|what is true|how is .* interpreted|what happens/i.test(q.q)&&!/\d{2,}/.test(q.o.join(''))?'concept':'calc';}})});

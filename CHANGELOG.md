@@ -10,6 +10,7 @@ All notable changes to the dMAT Drill Room. Dates are in ISO format.
 
 ### Changed
 - The explanation code moved into its own file, `src/ai.js`, with three modes: Claude artifact, your own key, or off.
+- Every file in `src/` now opens with a header explaining what it holds, and ARCHITECTURE.md documents state, the session engine, the plan builder and how to extend each part.
 
 ## [1.1.0] — 2026-09-19
 

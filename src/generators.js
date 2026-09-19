@@ -1,3 +1,22 @@
+/* ---------------------------------------------------------------------------
+ * generators.js — the three Core Module puzzle generators.
+ *
+ * Every item is produced fresh, so practice never runs out:
+ *   genLatin(difficulty)     5x5 grid, letters A–E once per row and column.
+ *                            Cells are removed only while the marked cell can
+ *                            still be deduced, and the deduction path is kept
+ *                            so the app can explain the answer step by step.
+ *   genEquations(difficulty) A system of 2–4 equations over the integers 1–20,
+ *                            brute-force checked to have exactly one solution.
+ *   genFigures(difficulty)   A 4x4 matrix sequence following the official rules
+ *                            (straight and diagonal movement with bounces,
+ *                            border walks, x + 1 steps, rotation, colour), plus
+ *                            three distinct options for each of images 5 and 6.
+ *
+ * Difficulty is 'low' | 'medium' | 'high'. Each generator retries until it has
+ * a valid item, so callers never see a malformed one. tests/check.mjs verifies
+ * uniqueness and the no-overlap rule on hundreds of generated items.
+ * ------------------------------------------------------------------------- */
 /* ===== dMAT practice engine: generators ===== */
 const RNG = {
   int:(a,b)=>a+Math.floor(Math.random()*(b-a+1)),

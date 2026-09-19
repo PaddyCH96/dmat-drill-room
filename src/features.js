@@ -1,3 +1,17 @@
+/* ---------------------------------------------------------------------------
+ * features.js — everything layered on top of the session engine.
+ *
+ *   - the mistake bank: recordOutcome / startBank, with the "right twice to
+ *     clear" rule and a cap on stored core items;
+ *   - keyboard shortcuts for answering and navigating;
+ *   - the "Explain it differently" button and the prompt it sends (aiPrompt);
+ *   - pacing feedback after a session (pacePanel);
+ *   - the Today screen: turning the study plan into one-tap actions (runTask),
+ *     ticking steps off, and the mistake / cards / levels summary;
+ *   - installability and offline support (service worker registration).
+ *
+ * This file runs last, so it may use anything defined in the files before it.
+ * ------------------------------------------------------------------------- */
 /* ===== features: mistake bank, today, pacing, keys, AI ===== */
 MORE2.forEach(p=>{PASSAGES.push(p);PBY[p.id]=p;});
 function mkey(it){return it.type==='subj'?`s:${it.pid}:${it.qi}`:`${it.type}:${it.uid||Math.random().toString(36).slice(2,10)}`;}

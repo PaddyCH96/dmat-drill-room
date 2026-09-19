@@ -1,3 +1,20 @@
+/* ---------------------------------------------------------------------------
+ * plan.js — the exam setup and the study plan built from it.
+ *
+ * The setup (exam date and time, plan start, hours per day, daily start time)
+ * lives in store under 'setup'. buildPlan() turns it into two structures used
+ * by the Plan and Today views:
+ *   PLAN   [{ d: 'YYYY-MM-DD', t: title, type, items: ['09:00 do this', …] }]
+ *   TASKS  { 'YYYY-MM-DD': [[action, …], …] }   one action list per plan item
+ *
+ * DAY_TYPES holds the day templates; each item carries an offset in minutes
+ * from the start of the study block, which is scaled to the person's hours.
+ * daySequence(n) picks and orders the day types for a plan of n days: short
+ * plans keep the most valuable days, long plans repeat the middle of the cycle.
+ *
+ * Also here: the Settings view, including the optional API key panel (the key
+ * itself is handled in ai.js and never leaves this browser).
+ * ------------------------------------------------------------------------- */
 /* ===== configurable exam setup + generated study plan ===== */
 const pad2=n=>String(n).padStart(2,'0');
 const ymd=d=>`${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;

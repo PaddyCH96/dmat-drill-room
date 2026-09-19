@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping other dMAT candidates. There's no framework and no dependencies — just plain JavaScript.
+Thanks for helping other dMAT candidates. There's no framework and no dependencies — just plain JavaScript. [ARCHITECTURE.md](ARCHITECTURE.md) is a short tour of the code if you want the bigger picture.
 
 ## Workflow
 

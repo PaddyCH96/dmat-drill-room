@@ -1,3 +1,7 @@
+/* Subject Module texts and questions — the third batch: economics, business, humanities and biology.
+   Each entry: { id, area, title, domain, text (HTML), qs: [{ t, q, o[4], a, e, tip }] }.
+   `a` is the index of the correct option; options are shuffled at runtime.
+   See CONTRIBUTING.md for how to add one. */
 const MORE2=[
 {id:'monetary',area:'econ',title:'Central Banks and Interest Rates',domain:'Economics',text:`<p>A central bank steers the economy mainly through its <b>policy interest rate</b>. When it <b>raises</b> the rate, borrowing becomes more expensive for banks, firms and households; credit, investment and consumption tend to fall, which dampens demand and, with a delay of often one to two years, inflation. Higher rates also make a currency more attractive to foreign investors, so it tends to <b>appreciate</b>. <b>Lowering</b> the rate has the opposite effects and is used to support a weak economy.</p><p>Bond prices move <b>inversely</b> to interest rates: an existing bond with a fixed coupon becomes less attractive when new bonds pay more, so its price falls. A bond paying €50 per year forever (a perpetuity) is worth approximately coupon ÷ market interest rate.</p><p>The <b>quantity equation</b> links money and prices: M · V = P · Y (money supply × velocity of money = price level × real output). If V and Y are constant, prices rise in proportion to the money supply.</p>`,
 qs:[

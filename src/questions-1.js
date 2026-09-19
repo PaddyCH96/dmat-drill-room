@@ -1,3 +1,7 @@
+/* Subject Module texts and questions — the first batch: statistics, physics, economics, computing and more.
+   Each entry: { id, area, title, domain, text (HTML), qs: [{ t, q, o[4], a, e, tip }] }.
+   `a` is the index of the correct option; options are shuffled at runtime.
+   See CONTRIBUTING.md for how to add one. */
 const PASSAGES=[
 {id:'stats',title:'Describing Data: Centre and Spread',domain:'Statistics',text:`<p>Descriptive statistics summarise a data set with a few numbers. The <b>arithmetic mean</b> is the sum of all values divided by their number. The <b>median</b> is the middle value once the data are sorted (for an even number of values, the mean of the two middle values). The <b>mode</b> is the most frequent value. The <b>range</b> is the difference between the largest and smallest value.</p><p>The <b>standard deviation</b> (SD) measures how far values typically lie from the mean; the <b>variance</b> is the square of the SD. The mean and the SD react strongly to extreme values (outliers), whereas the median is considered <i>robust</i>.</p><p>A researcher recorded the commuting times (in minutes) of seven employees:</p><table><tr><th>Employee</th><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr><tr><th>Minutes</th><td>12</td><td>15</td><td>15</td><td>18</td><td>20</td><td>22</td><td>45</td></tr></table>`,
 qs:[
