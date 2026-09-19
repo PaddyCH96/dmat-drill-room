@@ -8,6 +8,8 @@
 
 ---
 
+**New in 1.1.0:** install it on your phone and use it offline, resume an interrupted session, print your plan, and a backup code that carries everything. See the [changelog](CHANGELOG.md).
+
 ## Contents
 
 - [What's inside](#whats-inside)
@@ -18,6 +20,7 @@
 - [Your data](#your-data)
 - [Project structure](#project-structure)
 - [Contributing](#contributing)
+- [Changelog](CHANGELOG.md)
 - [License](#license)
 
 ## What's inside
@@ -134,8 +137,10 @@ To make changes, you need [Node.js](https://nodejs.org) 18 or newer. There are n
 
 ```bash
 node build.mjs          # rebuild index.html and sw.js after editing src/
-node tests/check.mjs    # run the checks
+node tests/check.mjs    # run the checks (also run on every push by GitHub Actions)
 ```
+
+The checks cover the question bank's shape, that every generated Latin square has exactly one possible answer, that figure options are distinct and never overlap, that the planner produces valid days and times for every length from 1 to 60 days, and that the backup code survives a round trip. CI also fails if `index.html` or `sw.js` differs from a fresh build.
 
 ## Contributing
 

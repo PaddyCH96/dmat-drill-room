@@ -1,0 +1,29 @@
+name: Checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Question bank, generators and planner
+        run: node tests/check.mjs
+
+      - name: index.html and sw.js match a fresh build
+        run: |
+          node build.mjs
+          if ! git diff --quiet -- index.html sw.js; then
+            echo "::error::index.html or sw.js is out of date. Run 'node build.mjs' and commit the result."
+            git diff --stat -- index.html sw.js
+            exit 1
+          fi

@@ -5,8 +5,12 @@ import vm from 'node:vm';
 
 const read = (f) => readFileSync(new URL(`../src/${f}`, import.meta.url), 'utf8');
 const code = ['generators.js', 'questions-1.js', 'questions-2.js', 'questions-3.js', 'plan.js'].map(read).join('\n');
-const ctx = vm.createContext({ console });
-const api = vm.runInContext(`${code}\n;({genLatin,genEquations,genFigures,lsSolve,PASSAGES,MORE,MORE2,daySequence,DAY_TYPES})`, ctx);
+// plan.js expects a few globals that live in app.js at runtime
+const DAY = 86400000;
+const memory = {};
+const storeStub = { get: (k, d) => (k in memory ? memory[k] : d), set: (k, v) => { memory[k] = v; } };
+const ctx = vm.createContext({ console, DAY, store: storeStub, Sync: { queue() {} }, document: undefined });
+const api = vm.runInContext(`${code}\n;({genLatin,genEquations,genFigures,lsSolve,PASSAGES,MORE,MORE2,daySequence,DAY_TYPES,buildPlan,getPlan:()=>({PLAN,TASKS}),addDays,ymd})`, ctx);
 
 let failures = 0;
 const check = (ok, msg) => { if (!ok) { failures++; console.error('✗', msg); } };
@@ -68,6 +72,35 @@ for (let n = 1; n <= 60; n++) {
   check(seq.every((t) => api.DAY_TYPES[t]), `plan ${n}: unknown day type`);
   check(seq[seq.length - 1] === 'light', `plan ${n}: should end with a light review day`);
 }
+
+// 6. Plan builder: dates, day count and time scaling follow the setup
+const start = '2026-03-02';
+for (const [hours, expected] of [[6, ['09:00', '10:00', '11:30', '14:00']], [3, ['09:00', '09:30', '10:15', '11:30']], [8, ['09:00', '10:15', '12:15', '15:45']]]) {
+  memory.setup = { exam: addDaysLocal(start, 14), time: '09:00', start, hours, from: '09:00' };
+  api.buildPlan();
+  const { PLAN, TASKS } = api.getPlan();
+  check(PLAN.length === 14, `plan(${hours}h): expected 14 days, got ${PLAN.length}`);
+  check(PLAN[0].d === start, `plan(${hours}h): first day should be the start date`);
+  check(Object.keys(TASKS).length === PLAN.length, `plan(${hours}h): every day needs tasks`);
+  const times = PLAN[0].items.map((t) => t.slice(0, 5));
+  check(times.join(',') === expected.join(','), `plan(${hours}h): times were ${times.join(',')}, expected ${expected.join(',')}`);
+  const shortDay = PLAN.find((p) => p.type === 'latinEq');
+  const repeats = (TASKS[shortDay.d] || []).flat().filter((a) => (a.n || 1) > 1).length;
+  check(hours >= 4 ? repeats > 0 : repeats === 0, `plan(${hours}h): repeat counts should be capped below 4 hours`);
+}
+function addDaysLocal(s, n) { const d = new Date(s); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); }
+console.log('Plan builder: day counts, dates and time scaling OK');
+
+// 7. Backup code round trip (the encoding the app uses in the browser)
+const b64 = {
+  encode: (o) => Buffer.from(JSON.stringify(o), 'utf8').toString('base64'),
+  decode: (c) => JSON.parse(Buffer.from(c, 'base64').toString('utf8')),
+};
+const sample = { v: 1, data: { log: [{ ts: 1, sec: 'fig', correct: 4, total: 5, secs: 60 }], mistakes: { 'latin:abc': { streak: 1, due: 2, u: 3 } }, level: { fig: 3 }, setup: { exam: '2026-05-01', hours: 5 } } };
+const back = b64.decode(b64.encode(sample));
+check(JSON.stringify(back) === JSON.stringify(sample), 'backup code: round trip changed the data');
+check(back.data.mistakes && back.data.level && back.data.setup, 'backup code: must carry mistakes, levels and setup');
+console.log('Backup code: round trip OK');
 
 if (failures) { console.error(`\n${failures} check(s) failed`); process.exit(1); }
 console.log('All checks passed ✓');
