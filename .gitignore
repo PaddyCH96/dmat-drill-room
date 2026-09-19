@@ -3,3 +3,6 @@ node_modules/
 *.log
 .vscode/
 .idea/
+
+# personal assistant rules, not part of the project
+CLAUDE.md
