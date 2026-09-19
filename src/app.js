@@ -82,7 +82,8 @@ function viewPlan(){
   const done=store.get('plandone',{}); const today=ymd(new Date()); const S=getSetup();
   const log=store.get('log',[]);
   return `<div class="stack"><div class="panel"><div class="row" style="justify-content:space-between"><div><p class="eyebrow">${planSpan()} · ${S.hours} h per day from ${S.from}</p><h2>Your ${PLAN.length}-day plan</h2></div><span class="tag">${Object.values(done).filter(Boolean).length} / ${PLAN.length} days done</span></div>
-  <p class="muted" style="margin-top:6px;max-width:64ch">Tick a day off when it's done. Take a 10-minute break every hour. Change dates or hours in <button class="linkbtn" data-go="setup">Settings</button>.</p>
+  <div class="row noprint" style="margin-top:8px"><button class="btn" data-act="print">Print this plan</button></div>
+  <p class="muted" style="margin-top:6px;max-width:64ch">Tick a day off when it's done. Take a 10-minute break every hour.<span class="noprint"> Change dates or hours in <button class="linkbtn" data-go="setup">Settings</button>.</span></p>
   <div style="margin-top:12px">${PLAN.map((p,i)=>{const dt=parseYmd(p.d);const isT=p.d===today;return `<div class="day ${isT?'today':''} ${done[p.d]?'done':''}"><div class="date">${dt.toLocaleDateString(undefined,{weekday:'short'})}<b>${fmtDate(p.d)}</b>Day ${i+1}</div><div><h3>${p.t}${isT?' <span class="tag good">today</span>':''}</h3><ul>${p.items.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div><label class="check"><input type="checkbox" id="pd-${p.d}" data-plan="${p.d}" ${done[p.d]?'checked':''}> Done</label></div>`}).join('')}
   <div class="day"><div class="date">${parseYmd(S.exam).toLocaleDateString(undefined,{weekday:'short'})}<b>${fmtDate(S.exam)}</b>Exam</div><div><h3>dMAT exam (from ${S.time})</h3><ul><li>Light breakfast, one 10-minute warm-up set in the morning, then stop</li><li>Core Module 90 min → 30 min break → Subject Module 90 min</li></ul></div><span></span></div></div></div>
   <div class="panel"><div class="row" style="justify-content:space-between"><h3>Ready to start?</h3><span class="muted">${log.length} sessions logged</span></div>
@@ -181,7 +182,7 @@ function resumeBanner(){
   const p=L.parts[L.pi]||{}; const name=(SECTIONS[p.sec]||{}).name||'session';
   const left=p.limit?` · ${fmt(Math.max(0,p.limit-(p.elapsed||0)))} left`:'';
   const done=(p.ans||[]).filter(a=>a!=null).length;
-  return `<div class="panel stack" style="border-color:var(--accent);gap:10px;margin-bottom:18px"><div><p class="eyebrow">Unfinished session</p><h3>${name} · ${done}/${(p.items||[]).length} answered${left}</h3></div>
+  return `<div class="panel stack noprint" style="border-color:var(--accent);gap:10px;margin-bottom:18px"><div><p class="eyebrow">Unfinished session</p><h3>${name} · ${done}/${(p.items||[]).length} answered${left}</h3></div>
   <p class="muted" style="font-size:15px">You left this session open. Pick it up where you stopped, with the time you had left.</p>
   <div class="row"><button class="btn primary" data-act="resume">Resume</button><button class="btn ghost" data-act="dropresume">Discard it</button></div></div>`;
 }
@@ -192,13 +193,16 @@ function startPart(){ const p=session.parts[session.pi]; p.idx=0; p.ans=p.items.
 function stopTimer(){ if(timerId)clearInterval(timerId); timerId=null; }
 function elapsed(p){return Math.floor((Date.now()-p.t0)/1000);}
 const fmt=s=>`${Math.floor(s/60)}:${String(Math.max(0,s)%60).padStart(2,'0')}`;
+function announce(msg){const el=document.getElementById('announce');if(el)el.textContent=msg;}
 function tick(){ const p=session.parts[session.pi]; const el=$('#timer'); if(!el)return; const e=elapsed(p);
-  if(p.limit){const left=p.limit-e; el.textContent=fmt(Math.max(0,left)); el.className='timer'+(left<=60?' crit':left<=300?' warn':''); paceHint(p,e); if(left<=0){ finishPart(true);} }
+  if(p.limit){const left=p.limit-e; el.textContent=fmt(Math.max(0,left)); el.className='timer'+(left<=60?' crit':left<=300?' warn':''); paceHint(p,e);
+    p.said=p.said||{}; [[300,'Five minutes left'],[60,'One minute left. Put an answer on every question.']].forEach(([t,m])=>{if(left<=t&&left>t-3&&!p.said[t]){p.said[t]=1;announce(m);}}); if(left<=0){ finishPart(true);} }
   else { el.textContent=fmt(e); if(p.target&&e>p.target)el.className='timer warn'; } }
 function paceHint(p,e){const el=$('#pace');if(!el)return;if(session.exam||!p.items.length){el.textContent='';return;}
   const per=p.limit/p.items.length; const expected=Math.min(p.items.length,Math.floor(e/per)); const done=p.items.filter((x,i)=>isAnswered(x,p.ans[i])).length; const d=expected-done;
   el.textContent=d>=2?`${d} behind pace`:d<=-2?`${-d} ahead of pace`:'On pace'; el.className='pace '+(d>=3?'bad':d>=2?'warn':'good');}
-function switchItem(i){ const p=session.parts[session.pi]; p.itemT[p.idx]+=(Date.now()-p.lastSwitch)/1000; p.lastSwitch=Date.now(); p.idx=Math.max(0,Math.min(p.items.length-1,i)); saveLive(); renderSession(); }
+function focusItem(){const el=document.getElementById('itemlabel');if(el&&document.activeElement&&document.activeElement.tagName!=='INPUT')el.focus({preventScroll:true});}
+function switchItem(i){ const p=session.parts[session.pi]; p.itemT[p.idx]+=(Date.now()-p.lastSwitch)/1000; p.lastSwitch=Date.now(); p.idx=Math.max(0,Math.min(p.items.length-1,i)); saveLive(); renderSession(); focusItem(); }
 function renderSession(){
   window.__aiItems=[]; const v=$('#view'); const p=session.parts[session.pi];
   if(session.finished) { v.innerHTML=renderResults(); bindView(); return; }
@@ -221,9 +225,9 @@ function renderSession(){
     <button class="btn ghost" data-act="flag">${p.flags.has(p.idx)?'Unflag':'Flag for review'}</button>
     <span style="flex:1"></span>
     <button class="btn ${last?'primary':''}" data-act="finish">${session.pi<session.parts.length-1?'Submit section':'Finish &amp; see results'}</button></div>`;
-  v.innerHTML=`<div class="panel"><div class="sessbar"><div><p class="eyebrow">${stepInfo}${session.kind==='mock'?'Mock exam':session.kind==='bank'?'Redo mistakes':drill?'Drill':'Timed practice'}${EX&&session.kind!=='mock'?' · exam-day mode':''}</p><h3 style="font-size:20px">${secName}</h3></div><div class="row"><span id="pace" class="pace"></span><span class="muted" style="font-size:14.5px">${Object.keys(p.ans).filter(i=>answered(+i)).length}/${p.items.length} answered</span><div class="timer" id="timer">--:--</div></div></div>
+  v.innerHTML=`<div class="panel"><div class="sessbar"><div><p class="eyebrow">${stepInfo}${session.kind==='mock'?'Mock exam':session.kind==='bank'?'Redo mistakes':drill?'Drill':'Timed practice'}${EX&&session.kind!=='mock'?' · exam-day mode':''}</p><h3 style="font-size:20px">${secName}</h3></div><div class="row"><span id="pace" class="pace"></span><span class="muted" style="font-size:14.5px">${Object.keys(p.ans).filter(i=>answered(+i)).length}/${p.items.length} answered</span><div class="timer" id="timer" aria-label="Time remaining">--:--</div></div></div>
   <div class="navstrip">${strip}</div>
-  <div class="row" style="justify-content:space-between;margin-bottom:12px"><span class="eyebrow">Item ${p.idx+1}${it.diff&&!EX?` · ${it.diff}`:''}${session.kind==='bank'?` · ${bankLabel(it)}`:''}</span><span class="noteban">${EX?'No notes — work it in your head':keyHint(it,drill&&!checked)}</span></div>
+  <div class="row" style="justify-content:space-between;margin-bottom:12px"><span class="eyebrow" id="itemlabel" tabindex="-1">Item ${p.idx+1}${it.diff&&!EX?` · ${it.diff}`:''}${session.kind==='bank'?` · ${bankLabel(it)}`:''}</span><span class="noteban">${EX?'No notes — work it in your head':keyHint(it,drill&&!checked)}</span></div>
   ${body}${nav}</div>`;
   bindView(); tick();
 }
@@ -237,7 +241,7 @@ const COLS=['α','β','γ','δ','ε'];
 function latinTable(it,fillSteps){ const g=it.grid.map(r=>r.slice()); const filled=new Set(); if(fillSteps){it.steps.forEach(s=>{g[s.r][s.c]=s.v;filled.add(s.r*5+s.c)});}
   return `<div class="scroll-x"><table class="ls"><tr><th></th>${COLS.map(c=>`<th>${c}</th>`).join('')}</tr>${g.map((r,ri)=>`<tr><th>${ri+1}</th>${r.map((x,ci)=>{const q=ri===it.tr&&ci===it.tc;return `<td class="${q?'q':''} ${filled.has(ri*5+ci)&&!q?'fill':''}">${q&&!fillSteps?'?':(x||'')}</td>`}).join('')}</tr>`).join('')}</table></div>`; }
 function renderLatin(it,a,checked){
-  return `<div class="stack">${latinTable(it,false)}<div class="opts">${LETTERS.map(L=>{let c='';if(checked){if(L===it.answer)c='right';else if(L===a)c='wrong';}return `<button class="opt ${c}" data-latin="${L}" aria-pressed="${a===L}" ${checked?'disabled':''}>${L}</button>`}).join('')}</div>${checked?explainLatin(it):''}</div>`; }
+  return `<div class="stack">${latinTable(it,false)}<div class="opts" role="radiogroup" aria-label="Letter for the marked cell">${LETTERS.map(L=>{let c='';if(checked){if(L===it.answer)c='right';else if(L===a)c='wrong';}return `<button class="opt ${c}" data-latin="${L}" role="radio" aria-checked="${a===L}" ${checked?'disabled':''}>${L}${checked&&L===it.answer?'<span class="sr"> — correct</span>':''}</button>`}).join('')}</div>${checked?explainLatin(it):''}</div>`; }
 function explainLatin(it){ return `<div class="explain"><b>Answer: ${it.answer}.</b> Solution path:<ol>${it.steps.map(s=>`<li>${esc(s.why)}</li>`).join('')}</ol>${latinTable(it,true)}${aiBtn(it)}</div>`; }
 function renderEq(it,a,checked){ a=a||it.names.map(()=>'');
   return `<div class="stack"><div class="eqs">${it.eqs.map(e=>`<div>${esc(e)}</div>`).join('')}</div><p class="muted">Each letter is a whole number from 1 to 20.</p>
@@ -251,13 +255,13 @@ function frameSVG(fr){ const s=28; let g=''; for(let i=0;i<=4;i++){g+=`<line x1=
   const shapes=fr.map(o=>`<g transform="translate(${2+o.c*s+s/2},${2+o.r*s+s/2}) rotate(${o.rot})" fill="${COLORS[o.color]}" stroke="#1d1d1f" stroke-width="1.2" stroke-linejoin="round">${SHAPE_SVG[o.shape]}</g>`).join('');
   return `<svg viewBox="0 0 116 116" role="img" aria-label="matrix"><rect x="2" y="2" width="112" height="112" fill="var(--cell)"/><g stroke="#8A94A3" stroke-width="1">${g}</g>${shapes}</svg>`; }
 function renderFig(it,a,checked){ a=a||[null,null];
-  const cols=it.answers.map((ans,k)=>`<div class="figcol"><div class="qslot">?</div><span class="eyebrow">Image ${k+1}</span>${ans.options.map((o,j)=>{let c='';if(checked){if(j===ans.correct)c='right';else if(j===a[k])c='wrong';}return `<button class="figopt ${c}" data-fig="${k}:${j}" aria-pressed="${a[k]===j}" aria-label="Image ${k+1}, option ${j+1}" ${checked?'disabled':''}>${frameSVG(o)}</button>`}).join('')}</div>`).join('');
+  const cols=it.answers.map((ans,k)=>`<div class="figcol" role="radiogroup" aria-label="Choice for image ${k+1}"><div class="qslot">?</div><span class="eyebrow">Image ${k+1}</span>${ans.options.map((o,j)=>{let c='';if(checked){if(j===ans.correct)c='right';else if(j===a[k])c='wrong';}return `<button class="figopt ${c}" data-fig="${k}:${j}" role="radio" aria-checked="${a[k]===j}" aria-label="Image ${k+1}, option ${j+1}${checked&&j===ans.correct?', correct':''}" ${checked?'disabled':''}><span class="figmark" aria-hidden="true">${a[k]===j?'✓':checked&&j===ans.correct?'✓':''}</span>${frameSVG(o)}</button>`}).join('')}</div>`).join('');
   return `<div class="stack"><div class="scroll-x"><div class="figrow">${it.frames.map((f,i)=>`<div class="frame">${frameSVG(f)}<span class="eyebrow">${i+1}</span></div>`).join('')}</div></div>
   <p class="muted">Choose the matrix that comes next (image 1) and the one after it (image 2).</p><div class="figcols">${cols}</div>${checked?explainFig(it):''}</div>`; }
 function explainFig(it){ return `<div class="explain"><b>Rules in this sequence:</b><ul>${it.explain.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><div class="figrow" style="margin-top:8px">${it.answers.map((a,k)=>`<div class="frame">${frameSVG(a.options[a.correct])}<span class="eyebrow">correct ${k+1}</span></div>`).join('')}</div>${aiBtn(it)}</div>`; }
 function renderSubj(it,a,checked,p){ const P=PBY[it.pid]; const pos=p.items.filter(x=>x.pid===it.pid); const k=pos.indexOf(it)+1;
   return `<div class="subj"><div class="passage"><p class="eyebrow">${esc(P.domain)}</p><h3>${esc(P.title)}</h3>${P.text}</div>
-  <div class="stack"><p class="eyebrow">Question ${k} of ${pos.length} on this text${session&&session.exam?'':' · '+(QTYPES[it.t]||'')}</p><p class="qtext">${it.q}</p><div class="mcq">${it.o.map((o,j)=>{let c='';if(checked){if(j===it.a)c='right';else if(j===a)c='wrong';}return `<button class="${c}" data-mcq="${j}" aria-pressed="${a===j}" ${checked?'disabled':''}><span class="l">${'abcd'[j]})</span><span>${o}</span></button>`}).join('')}</div>${checked?subjExplain(it):''}</div></div>`; }
+  <div class="stack"><p class="eyebrow">Question ${k} of ${pos.length} on this text${session&&session.exam?'':' · '+(QTYPES[it.t]||'')}</p><p class="qtext">${it.q}</p><div class="mcq" role="radiogroup" aria-label="Answer options">${it.o.map((o,j)=>{let c='';if(checked){if(j===it.a)c='right';else if(j===a)c='wrong';}return `<button class="${c}" data-mcq="${j}" role="radio" aria-checked="${a===j}" ${checked?'disabled':''}><span class="l">${'abcd'[j]})</span><span>${o}</span>${checked?`<span class="sr">${j===it.a?' — correct answer':j===a?' — your answer, wrong':''}</span>`:''}</button>`}).join('')}</div>${checked?subjExplain(it):''}</div></div>`; }
 function subjExplain(it){return `<div class="explain">${it.e}${tipOf(it)?`<p class="trick"><b>Trick:</b> ${tipOf(it)}</p>`:''}${aiBtn(it)}</div>`;}
 
 function finishPart(auto){
@@ -449,6 +453,7 @@ function bindView(){
 }
 function actGlobal(a){
   const box=$('#codebox'), msg=$('#codemsg');
+  if(a==='print'){window.print();return;}
   if(a==='reset'){const btn=document.querySelector('[data-act="reset"]');if(btn&&btn.dataset.armed!=='1'){btn.dataset.armed='1';btn.textContent='Tap again to erase everything';setTimeout(()=>{if(btn){btn.dataset.armed='';btn.textContent='Reset all progress';}},4000);return;}
     ['log','qlog','cards','plandone','seenP','mistakes','level','todaydone','prsel'].forEach(k=>store.set(k,k==='log'||k==='qlog'?[]:{}));
     store.set('examday',false); clearLive(); Sync.queue(); render(); return;}

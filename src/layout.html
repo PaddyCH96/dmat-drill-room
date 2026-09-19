@@ -1,8 +1,9 @@
+<a class="skip" href="#view">Skip to content</a>
 <div class="wrap">
 <header class="top">
   <div class="toprow">
     <div class="brand"><h1>dMAT Drill Room</h1><span class="muted">Core + General Academic Module</span></div>
-    <div class="row" style="gap:14px">
+    <div class="row noprint" style="gap:14px">
       <div class="skins" role="group" aria-label="Theme"><span>Theme</span>
         <button class="skin" data-skin="auto" title="Clean (follows your system light/dark setting)"><i style="background:linear-gradient(135deg,#FFFFFF 50%,#2F5BD3 50%)"></i><b>Clean</b></button>
         <button class="skin" data-skin="warm" title="Warm"><i style="background:linear-gradient(135deg,#FAF6EF 50%,#B4531F 50%)"></i><b>Warm</b></button>
@@ -11,8 +12,8 @@
       </div>
     </div>
   </div>
-  <div class="row" style="gap:6px 14px;margin-top:6px"><div class="count" id="countdown"></div><span id="syncstate" class="count" style="color:var(--faint)">Progress saved in this browser</span></div>
-  <nav class="tabs" role="tablist" id="tabs">
+  <div class="row" style="gap:6px 14px;margin-top:6px"><div class="count" id="countdown"></div><span id="syncstate" class="count noprint" style="color:var(--faint)">Progress saved in this browser</span></div>
+  <nav class="tabs noprint" role="tablist" id="tabs" aria-label="Sections">
     <button role="tab" data-tab="today" aria-selected="true">Today</button>
     <button role="tab" data-tab="plan" aria-selected="false">Study plan</button>
     <button role="tab" data-tab="practice" aria-selected="false">Practice</button>
@@ -23,7 +24,8 @@
     <button role="tab" data-tab="setup" aria-selected="false">⚙ Settings</button>
   </nav>
 </header>
-<main id="view"></main>
+<div id="announce" class="sr" role="status" aria-live="polite"></div>
+<main id="view" tabindex="-1"></main>
 <div id="appbar"></div>
-<footer class="foot">dMAT Drill Room · open source (MIT) · <a href="https://github.com/PaddyCH96/dmat-drill-room" target="_blank" rel="noopener">GitHub</a> · Unofficial practice tool, not affiliated with g.a.s.t.</footer>
+<footer class="foot noprint">dMAT Drill Room · open source (MIT) · <a href="https://github.com/PaddyCH96/dmat-drill-room" target="_blank" rel="noopener">GitHub</a> · Unofficial practice tool, not affiliated with g.a.s.t.</footer>
 </div>
