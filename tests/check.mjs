@@ -102,5 +102,16 @@ check(JSON.stringify(back) === JSON.stringify(sample), 'backup code: round trip 
 check(back.data.mistakes && back.data.level && back.data.setup, 'backup code: must carry mistakes, levels and setup');
 console.log('Backup code: round trip OK');
 
+// 8. The API key must never ride along with sync or the backup code
+const appSrc = read('app.js');
+const keyLists = appSrc.match(/const (SYNC_KEYS|BACKUP_KEYS)\s*=\s*\[[^\]]*\]/g) || [];
+check(keyLists.length === 2, 'app.js: expected SYNC_KEYS and BACKUP_KEYS declarations');
+for (const list of keyLists) {
+  check(!/['"]ai['"]/.test(list), `${list.slice(0, 20)}…: must not contain 'ai' (that is the API key)`);
+  check(!/['"]live['"]/.test(list), `${list.slice(0, 20)}…: must not contain 'live' (an unfinished session is local)`);
+}
+check(/store\.set\('ai',[^)]*,\s*true\)/.test(read('plan.js')), 'plan.js: the API key must be saved with the no-sync flag');
+console.log('API key stays local: OK');
+
 if (failures) { console.error(`\n${failures} check(s) failed`); process.exit(1); }
 console.log('All checks passed ✓');

@@ -16,6 +16,7 @@
 - [Quick start](#quick-start)
 - [Setting your exam date](#setting-your-exam-date)
 - [How to use it well](#how-to-use-it-well)
+- ["Explain it differently" with your own API key](#explain-it-differently-with-your-own-api-key)
 - [Screenshots](#screenshots)
 - [Your data](#your-data)
 - [Project structure](#project-structure)
@@ -41,6 +42,7 @@ The dMAT has a **Core Module** (Figure Sequences, Mathematical Equations and Lat
 | **Trick cards** | 59 recall cards with spaced repetition (1 → 3 → 7 → 14 days). |
 | **Exam-day mode** | Hides hints, labels and feedback until the end, just like the real test. |
 | **Keyboard shortcuts** | `A–E` Latin squares · `1–4`/`A–D` subject · `1–6` figures · `←/→` move · `F` flag · `Enter` check / next. |
+| **"Explain it differently"** | Optional. Add your own API key (Anthropic or any OpenAI-compatible endpoint, including a local model) and every explanation gets a button that asks for a second explanation in different words. |
 | **Four themes** | Clean (follows system light/dark), Warm, Forest and Night. |
 | **Works on phones** | Responsive layout and large tap targets. Install it from the browser menu ("Add to Home Screen") to get an app icon and full offline use. |
 
@@ -104,9 +106,36 @@ You can change any of these later in **⚙ Settings**. Your scores, mistake bank
 |---|---|
 | ![Night theme](docs/screenshots/today-night.png) | ![Mobile](docs/screenshots/mobile.png) |
 
+## "Explain it differently" with your own API key
+
+Every explanation in the app can carry a button that asks a language model for a different explanation: another mental method, a memory hook and a common trap. It is entirely optional — the app is complete without it.
+
+![Settings: explanation provider](docs/screenshots/settings-ai.png)
+
+**Set it up:** ⚙ Settings → *"Explain it differently"* → pick a provider, paste your key, Save, then **Test it**.
+
+| Provider | Key | Model | Base URL |
+|---|---|---|---|
+| Anthropic (Claude) | `sk-ant-…` from [console.anthropic.com](https://console.anthropic.com) | e.g. `claude-sonnet-4-5` | default `https://api.anthropic.com` |
+| OpenAI-compatible | your provider's key | e.g. `gpt-4o-mini` | `https://api.openai.com/v1`, or your own, e.g. `http://localhost:11434/v1` for [Ollama](https://ollama.com) |
+
+Any endpoint that speaks the `/chat/completions` API works, so you can point it at Groq, Together, LM Studio, Ollama or your own gateway. For a local model the key can be any non-empty string.
+
+**Where the key lives.** In your browser's local storage, on your machine, and nowhere else:
+
+- it is **excluded from the backup code** and from account sync, so it cannot travel to another device by accident;
+- it is sent **only to the provider you chose**, directly from your browser;
+- there is no server in this project and no telemetry — check `src/ai.js`, it is about 90 lines;
+- anyone who can use your browser profile can read it, so use a key with a spending limit and press **Remove key** when you are done;
+- each explanation is one short request (500 tokens max), so costs are small, but they are yours.
+
+Cloning the repo does **not** commit any key: there is no `.env` and nothing to fill in before building. If you fork this and add a hosted backend, do not put a key in the client.
+
+A note on browsers: Anthropic's API needs the `anthropic-dangerous-direct-browser-access` header for browser calls, which the app sends. Some OpenAI-compatible providers block browser origins with CORS; if **Test it** reports that the provider could not be reached, that is usually why, and a local endpoint or a provider that allows browser calls will work.
+
 ## Your data
 
-- Progress is saved in your browser's `localStorage`. Nothing is sent anywhere.
+- Progress is saved in your browser's `localStorage`. Nothing is sent anywhere, except the explanation requests you trigger yourself (see above).
 - To move to another browser or device, use **⚙ Settings → Copy backup code**, then **Import code** on the other device.
 - **Reset all progress** in Settings clears scores, mistakes and cards. It keeps your exam setup.
 - *Optional:* if you publish `index.html` as a [Claude](https://claude.ai) artifact with the `db`, `user` and `sample` capabilities, progress syncs to your Claude account and every explanation gets an **"Explain it differently"** button. Outside Claude, these features simply stay hidden.
@@ -129,6 +158,7 @@ dmat-drill-room/
 │   ├── subjects-and-tricks.js  ← subject areas, question types, trick cards
 │   ├── plan.js                 ← setup screen and study-plan builder
 │   ├── app.js                  ← sessions, practice, mocks, progress, sync
+│   ├── ai.js                   ← optional "Explain it differently" providers
 │   └── features.js             ← Today screen, mistake bank, pacing, shortcuts
 └── docs/screenshots/
 ```

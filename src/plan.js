@@ -65,6 +65,7 @@ function viewSetup(){
       <div class="row" style="grid-column:1/-1"><button class="btn primary big" type="submit">${first?'Build my plan':'Save changes'}</button>${first?'':'<span class="muted" style="font-size:14.5px">Your scores, mistakes and cards are kept.</span>'}</div>
     </form>
   </div>
+  ${first?'':aiPanel()}
   ${first?'':`<div class="panel stack"><h3>Your data</h3><p class="muted">${Sync.ref?'Progress syncs to your Claude account.':'Progress is stored in this browser only. Copy the backup code to move it to another browser or device.'}</p>
   ${storeWarning?`<p class="tag bad" style="white-space:normal">${storeWarning}</p>`:''}
   <p class="muted" style="font-size:14.5px">The backup code carries everything: scores, mistake bank, levels, trick cards, plan ticks and your exam setup. Importing merges it with what's already here; if this browser already has an exam set up, that setup is kept.</p>
@@ -72,6 +73,46 @@ function viewSetup(){
   <label for="codebox" class="muted" hidden>Backup code</label><textarea id="codebox" hidden rows="3" style="width:100%;font-family:var(--mono);font-size:12px;background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px"></textarea><p id="codemsg" class="muted"></p></div>`}
   <p class="muted" style="font-size:13.5px">dMAT Drill Room is an unofficial, open-source practice tool and is not affiliated with g.a.s.t. or the TestDaF-Institut. Always check the official rules at <a href="https://www.d-mat.de/en/" target="_blank" rel="noopener">d-mat.de</a>.</p>
   </div>`;
+}
+function aiPanel(){
+  const c=store.get('ai',{})||{}; const p=AI_PROVIDERS[c.provider];
+  const status=AI.mode==='claude'?`<span class="tag good">On — ${esc(AI.how())}</span>`
+    :AI.mode==='key'?`<span class="tag good">On — ${esc(AI.how())}</span>`
+    :`<span class="tag">Off — no explanation button is shown</span>`;
+  return `<div class="panel stack"><div class="row" style="justify-content:space-between"><h3>"Explain it differently"</h3>${status}</div>
+  <p class="muted" style="max-width:64ch">Every explanation can carry a button that asks a language model for a second explanation: another mental method, a memory hook and a common trap. It is optional — everything else works without it.</p>
+  ${AI.mode==='claude'?'<p class="muted">This copy runs inside Claude, so explanations are already available and your own key is not needed.</p>':`
+  <form id="aiform" class="setup">
+    <label>Provider<select id="ai-provider">
+      <option value="" ${!c.provider?'selected':''}>Off</option>
+      ${Object.entries(AI_PROVIDERS).map(([k,v])=>`<option value="${k}" ${c.provider===k?'selected':''}>${esc(v.label)}</option>`).join('')}
+    </select></label>
+    <label>API key<input type="password" id="ai-key" value="${esc(c.key||'')}" autocomplete="off" spellcheck="false" placeholder="paste your key"></label>
+    <label>Model<input type="text" id="ai-model" value="${esc(c.model||'')}" spellcheck="false" placeholder="${p?esc(p.defaultModel):'model id'}"></label>
+    <label>Base URL <span class="muted" style="font-weight:400">(optional)</span><input type="text" id="ai-base" value="${esc(c.base||'')}" spellcheck="false" placeholder="${p?esc(p.defaultBase):'provider default'}"></label>
+    <p class="muted" style="grid-column:1/-1;font-size:14.5px">${p?esc(p.keyHint):'Pick a provider to see what kind of key it needs.'}</p>
+    <div class="row" style="grid-column:1/-1"><button class="btn primary" type="submit">Save</button><button class="btn" type="button" id="ai-test">Test it</button><button class="btn ghost" type="button" id="ai-clear">Remove key</button></div>
+    <p id="ai-msg" class="muted" style="grid-column:1/-1"></p>
+  </form>
+  <p class="muted" style="font-size:14px">Your key is stored in this browser only. It is left out of the backup code and of any account sync, and it is sent only to the provider you chose, straight from your browser. Anyone with access to this browser profile can read it, so use a key with a spending limit, and remove it here when you are done.</p>`}
+  </div>`;
+}
+function saveAi(e){
+  e&&e.preventDefault(); const g=id=>document.getElementById(id); const msg=g('ai-msg');
+  const provider=g('ai-provider').value;
+  if(!provider){store.set('ai',{},true);AI.refresh();render();return;}
+  const p=AI_PROVIDERS[provider];
+  const cfg={provider,key:g('ai-key').value.trim(),model:g('ai-model').value.trim()||p.defaultModel,base:g('ai-base').value.trim()||p.defaultBase};
+  if(!cfg.key){msg.textContent='Paste an API key first.';return;}
+  store.set('ai',cfg,true); AI.refresh(); render();
+  const m2=document.getElementById('ai-msg'); if(m2)m2.textContent='Saved. The button now appears under every explanation.';
+}
+async function testAi(){
+  const msg=document.getElementById('ai-msg'); saveAi(); const m=document.getElementById('ai-msg')||msg; if(!m)return;
+  if(!AI.available()){m.textContent='Nothing to test yet.';return;}
+  m.textContent='Testing…';
+  try{ const t=await AI.ask('Reply with exactly: ready'); m.textContent=t&&/ready/i.test(t)?'Working — the provider answered.':`Answered: ${String(t).slice(0,80)}`; }
+  catch(e){ m.textContent=(e&&e.message)||'The test failed.'; }
 }
 function setupPreview(){
   const f=id=>document.getElementById(id); if(!f('su-exam'))return;

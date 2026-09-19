@@ -4,6 +4,8 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 const DAY=86400000;
 const SYNC_KEYS=['log','qlog','cards','plandone','seenP','mistakes','level','todaydone','skin','setup'];
 const BACKUP_KEYS=[...SYNC_KEYS,'examday'];
+/* 'ai' (provider settings and API key) and 'live' (an unfinished session) are
+   deliberately absent from both lists: the key stays in this browser. */
 const MEM={};
 const CAPS={qlog:1000,log:500};
 let storeWarning='';
@@ -55,8 +57,6 @@ const Sync={ref:null,status:'local',timer:null,busy:false,again:false,
   }
 };
 function syncBadge(){const el=document.getElementById('syncstate');if(!el)return;el.textContent={synced:'✓ Progress synced to your account',saving:'Saving…',retry:'Sync paused — retrying',local:'Progress saved in this browser'}[Sync.status]||'';}
-/* ---- Claude explanations (sample capability) ---- */
-const AI={fn:null,async init(){try{if(window.claude&&window.claude.use){this.fn=await window.claude.use('sample');if(this.fn&&!session)render();}}catch(e){this.fn=null;}}};
 const SECTIONS={fig:{name:'Figure Sequences',n:20,min:25,gen:genFigures,target:75},eq:{name:'Mathematical Equations',n:20,min:25,gen:genEquations,target:75},latin:{name:'Latin Squares',n:20,min:25,gen:genLatin,target:75},subj:{name:'Subject Module',min:90,target:120},mix:{name:'Mistake bank',target:90},bank:{name:'Mistake bank'}};
 const PBY=Object.fromEntries(PASSAGES.map(p=>[p.id,p]));
 
@@ -448,6 +448,12 @@ function bindView(){
     const cb=$('[data-act="check"]');if(cb)cb.disabled=!isAnswered(p.items[p.idx],a);
     clearTimeout(window.__eqSave);window.__eqSave=setTimeout(saveLive,600);};
   const sf=document.getElementById('setupform'); if(sf){sf.onsubmit=saveSetup; sf.oninput=setupPreview; setupPreview();}
+  const af=document.getElementById('aiform');
+  if(af){ af.onsubmit=saveAi;
+    const t=document.getElementById('ai-test'); if(t)t.onclick=testAi;
+    const c=document.getElementById('ai-clear'); if(c)c.onclick=()=>{store.set('ai',{},true);AI.refresh();render();};
+    const pv=document.getElementById('ai-provider'); if(pv)pv.onchange=()=>{const p=AI_PROVIDERS[pv.value];const m=document.getElementById('ai-model'),b=document.getElementById('ai-base');if(p){if(m&&!m.value)m.placeholder=p.defaultModel;if(b&&!b.value)b.placeholder=p.defaultBase;}};
+  }
   v.onchange=e=>{const k=e.target.dataset.plan;if(!k)return;const done=store.get('plandone',{});done[k]=e.target.checked;store.set('plandone',done);render();};
   v.onkeydown=e=>{if(e.key==='Enter'&&e.target.dataset.eq!=null){const n=$(`#eq-${+e.target.dataset.eq+1}`);if(n)n.focus();else{const nb=$('[data-act="check"]')||$('[data-act="next"]');if(nb&&!nb.disabled)nb.click();}}};
 }

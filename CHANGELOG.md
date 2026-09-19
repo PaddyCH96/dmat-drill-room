@@ -2,6 +2,15 @@
 
 All notable changes to the dMAT Drill Room. Dates are in ISO format.
 
+## [1.2.0] — 2026-09-19
+
+### Added
+- **"Explain it differently" for everyone.** Bring your own API key in ⚙ Settings — Anthropic, or any OpenAI-compatible endpoint including a local model — and every explanation gets a second-explanation button. A **Test it** button checks the setup and reports refused keys, wrong models and CORS problems in plain words.
+- The key is stored in this browser only: it is excluded from the backup code and from account sync, and a check in the test suite keeps it that way.
+
+### Changed
+- The explanation code moved into its own file, `src/ai.js`, with three modes: Claude artifact, your own key, or off.
+
 ## [1.1.0] — 2026-09-19
 
 ### Added

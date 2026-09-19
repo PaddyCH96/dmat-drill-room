@@ -982,6 +982,7 @@ function viewSetup(){
       <div class="row" style="grid-column:1/-1"><button class="btn primary big" type="submit">${first?'Build my plan':'Save changes'}</button>${first?'':'<span class="muted" style="font-size:14.5px">Your scores, mistakes and cards are kept.</span>'}</div>
     </form>
   </div>
+  ${first?'':aiPanel()}
   ${first?'':`<div class="panel stack"><h3>Your data</h3><p class="muted">${Sync.ref?'Progress syncs to your Claude account.':'Progress is stored in this browser only. Copy the backup code to move it to another browser or device.'}</p>
   ${storeWarning?`<p class="tag bad" style="white-space:normal">${storeWarning}</p>`:''}
   <p class="muted" style="font-size:14.5px">The backup code carries everything: scores, mistake bank, levels, trick cards, plan ticks and your exam setup. Importing merges it with what's already here; if this browser already has an exam set up, that setup is kept.</p>
@@ -989,6 +990,46 @@ function viewSetup(){
   <label for="codebox" class="muted" hidden>Backup code</label><textarea id="codebox" hidden rows="3" style="width:100%;font-family:var(--mono);font-size:12px;background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px"></textarea><p id="codemsg" class="muted"></p></div>`}
   <p class="muted" style="font-size:13.5px">dMAT Drill Room is an unofficial, open-source practice tool and is not affiliated with g.a.s.t. or the TestDaF-Institut. Always check the official rules at <a href="https://www.d-mat.de/en/" target="_blank" rel="noopener">d-mat.de</a>.</p>
   </div>`;
+}
+function aiPanel(){
+  const c=store.get('ai',{})||{}; const p=AI_PROVIDERS[c.provider];
+  const status=AI.mode==='claude'?`<span class="tag good">On — ${esc(AI.how())}</span>`
+    :AI.mode==='key'?`<span class="tag good">On — ${esc(AI.how())}</span>`
+    :`<span class="tag">Off — no explanation button is shown</span>`;
+  return `<div class="panel stack"><div class="row" style="justify-content:space-between"><h3>"Explain it differently"</h3>${status}</div>
+  <p class="muted" style="max-width:64ch">Every explanation can carry a button that asks a language model for a second explanation: another mental method, a memory hook and a common trap. It is optional — everything else works without it.</p>
+  ${AI.mode==='claude'?'<p class="muted">This copy runs inside Claude, so explanations are already available and your own key is not needed.</p>':`
+  <form id="aiform" class="setup">
+    <label>Provider<select id="ai-provider">
+      <option value="" ${!c.provider?'selected':''}>Off</option>
+      ${Object.entries(AI_PROVIDERS).map(([k,v])=>`<option value="${k}" ${c.provider===k?'selected':''}>${esc(v.label)}</option>`).join('')}
+    </select></label>
+    <label>API key<input type="password" id="ai-key" value="${esc(c.key||'')}" autocomplete="off" spellcheck="false" placeholder="paste your key"></label>
+    <label>Model<input type="text" id="ai-model" value="${esc(c.model||'')}" spellcheck="false" placeholder="${p?esc(p.defaultModel):'model id'}"></label>
+    <label>Base URL <span class="muted" style="font-weight:400">(optional)</span><input type="text" id="ai-base" value="${esc(c.base||'')}" spellcheck="false" placeholder="${p?esc(p.defaultBase):'provider default'}"></label>
+    <p class="muted" style="grid-column:1/-1;font-size:14.5px">${p?esc(p.keyHint):'Pick a provider to see what kind of key it needs.'}</p>
+    <div class="row" style="grid-column:1/-1"><button class="btn primary" type="submit">Save</button><button class="btn" type="button" id="ai-test">Test it</button><button class="btn ghost" type="button" id="ai-clear">Remove key</button></div>
+    <p id="ai-msg" class="muted" style="grid-column:1/-1"></p>
+  </form>
+  <p class="muted" style="font-size:14px">Your key is stored in this browser only. It is left out of the backup code and of any account sync, and it is sent only to the provider you chose, straight from your browser. Anyone with access to this browser profile can read it, so use a key with a spending limit, and remove it here when you are done.</p>`}
+  </div>`;
+}
+function saveAi(e){
+  e&&e.preventDefault(); const g=id=>document.getElementById(id); const msg=g('ai-msg');
+  const provider=g('ai-provider').value;
+  if(!provider){store.set('ai',{},true);AI.refresh();render();return;}
+  const p=AI_PROVIDERS[provider];
+  const cfg={provider,key:g('ai-key').value.trim(),model:g('ai-model').value.trim()||p.defaultModel,base:g('ai-base').value.trim()||p.defaultBase};
+  if(!cfg.key){msg.textContent='Paste an API key first.';return;}
+  store.set('ai',cfg,true); AI.refresh(); render();
+  const m2=document.getElementById('ai-msg'); if(m2)m2.textContent='Saved. The button now appears under every explanation.';
+}
+async function testAi(){
+  const msg=document.getElementById('ai-msg'); saveAi(); const m=document.getElementById('ai-msg')||msg; if(!m)return;
+  if(!AI.available()){m.textContent='Nothing to test yet.';return;}
+  m.textContent='Testing…';
+  try{ const t=await AI.ask('Reply with exactly: ready'); m.textContent=t&&/ready/i.test(t)?'Working — the provider answered.':`Answered: ${String(t).slice(0,80)}`; }
+  catch(e){ m.textContent=(e&&e.message)||'The test failed.'; }
 }
 function setupPreview(){
   const f=id=>document.getElementById(id); if(!f('su-exam'))return;
@@ -1014,6 +1055,8 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 const DAY=86400000;
 const SYNC_KEYS=['log','qlog','cards','plandone','seenP','mistakes','level','todaydone','skin','setup'];
 const BACKUP_KEYS=[...SYNC_KEYS,'examday'];
+/* 'ai' (provider settings and API key) and 'live' (an unfinished session) are
+   deliberately absent from both lists: the key stays in this browser. */
 const MEM={};
 const CAPS={qlog:1000,log:500};
 let storeWarning='';
@@ -1065,8 +1108,6 @@ const Sync={ref:null,status:'local',timer:null,busy:false,again:false,
   }
 };
 function syncBadge(){const el=document.getElementById('syncstate');if(!el)return;el.textContent={synced:'✓ Progress synced to your account',saving:'Saving…',retry:'Sync paused — retrying',local:'Progress saved in this browser'}[Sync.status]||'';}
-/* ---- Claude explanations (sample capability) ---- */
-const AI={fn:null,async init(){try{if(window.claude&&window.claude.use){this.fn=await window.claude.use('sample');if(this.fn&&!session)render();}}catch(e){this.fn=null;}}};
 const SECTIONS={fig:{name:'Figure Sequences',n:20,min:25,gen:genFigures,target:75},eq:{name:'Mathematical Equations',n:20,min:25,gen:genEquations,target:75},latin:{name:'Latin Squares',n:20,min:25,gen:genLatin,target:75},subj:{name:'Subject Module',min:90,target:120},mix:{name:'Mistake bank',target:90},bank:{name:'Mistake bank'}};
 const PBY=Object.fromEntries(PASSAGES.map(p=>[p.id,p]));
 /* ===== subject extensions ===== */
@@ -1527,6 +1568,12 @@ function bindView(){
     const cb=$('[data-act="check"]');if(cb)cb.disabled=!isAnswered(p.items[p.idx],a);
     clearTimeout(window.__eqSave);window.__eqSave=setTimeout(saveLive,600);};
   const sf=document.getElementById('setupform'); if(sf){sf.onsubmit=saveSetup; sf.oninput=setupPreview; setupPreview();}
+  const af=document.getElementById('aiform');
+  if(af){ af.onsubmit=saveAi;
+    const t=document.getElementById('ai-test'); if(t)t.onclick=testAi;
+    const c=document.getElementById('ai-clear'); if(c)c.onclick=()=>{store.set('ai',{},true);AI.refresh();render();};
+    const pv=document.getElementById('ai-provider'); if(pv)pv.onchange=()=>{const p=AI_PROVIDERS[pv.value];const m=document.getElementById('ai-model'),b=document.getElementById('ai-base');if(p){if(m&&!m.value)m.placeholder=p.defaultModel;if(b&&!b.value)b.placeholder=p.defaultBase;}};
+  }
   v.onchange=e=>{const k=e.target.dataset.plan;if(!k)return;const done=store.get('plandone',{});done[k]=e.target.checked;store.set('plandone',done);render();};
   v.onkeydown=e=>{if(e.key==='Enter'&&e.target.dataset.eq!=null){const n=$(`#eq-${+e.target.dataset.eq+1}`);if(n)n.focus();else{const nb=$('[data-act="check"]')||$('[data-act="next"]');if(nb&&!nb.disabled)nb.click();}}};
 }
@@ -1546,6 +1593,115 @@ function actGlobal(a){
       if(!n){msg.textContent='That code contained no progress.';return;}
       buildPlan(); countdown(); render(); const m2=$('#codemsg'); if(m2)m2.textContent=`Imported and merged ${n} kind(s) of progress.`;}catch(e){msg.textContent='That code could not be read. Copy the whole code again and paste it.';}}
 }
+
+/* ---------------------------------------------------------------------------
+ * ai.js — the "Explain it differently" helper.
+ *
+ * Three ways it can run, in order of preference:
+ *   1. "claude"   — the page is published as a Claude artifact with the
+ *                   `sample` capability; Claude answers and the viewer pays.
+ *   2. "key"      — the person pasted their own API key in Settings. The key
+ *                   is kept in this browser only: it is never synced, never
+ *                   part of the backup code, and never leaves the browser
+ *                   except in the request to the provider they chose.
+ *   3. "none"     — no explanation button is shown at all.
+ * ------------------------------------------------------------------------- */
+const AI_PROVIDERS = {
+  anthropic: {
+    label: 'Anthropic (Claude)',
+    defaultModel: 'claude-sonnet-4-5',
+    defaultBase: 'https://api.anthropic.com',
+    keyHint: 'Starts with sk-ant-. Create one at console.anthropic.com.',
+    async call(cfg, prompt) {
+      const res = await fetch(cfg.base.replace(/\/$/, '') + '/v1/messages', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'x-api-key': cfg.key,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        body: JSON.stringify({ model: cfg.model, max_tokens: 500, messages: [{ role: 'user', content: prompt }] }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw httpError(res.status, data);
+      return (data.content || []).map((b) => b.text || '').join('').trim();
+    },
+  },
+  openai: {
+    label: 'OpenAI-compatible (OpenAI, Groq, Ollama, LM Studio …)',
+    defaultModel: 'gpt-4o-mini',
+    defaultBase: 'https://api.openai.com/v1',
+    keyHint: 'Any endpoint that speaks the /chat/completions API. For a local server (Ollama, LM Studio) the key can be anything.',
+    async call(cfg, prompt) {
+      const res = await fetch(cfg.base.replace(/\/$/, '') + '/chat/completions', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', authorization: 'Bearer ' + cfg.key },
+        body: JSON.stringify({ model: cfg.model, max_tokens: 500, messages: [{ role: 'user', content: prompt }] }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw httpError(res.status, data);
+      return ((data.choices || [{}])[0].message || {}).content || '';
+    },
+  },
+};
+function httpError(status, data) {
+  const detail = (data && data.error && (data.error.message || data.error.type)) || '';
+  const msg = status === 401 || status === 403 ? 'The API key was refused. Check it in Settings.'
+    : status === 404 ? 'That model or endpoint was not found. Check the model name and base URL.'
+    : status === 429 ? 'The provider is rate-limiting you. Wait a moment and try again.'
+    : status >= 500 ? 'The provider had a server error. Try again shortly.'
+    : `The request failed (${status}).`;
+  const e = new Error(detail ? `${msg} (${detail})` : msg);
+  e.status = status;
+  return e;
+}
+
+const AI = {
+  mode: 'none',
+  sample: null,
+  cfg() {
+    const c = store.get('ai', {}) || {};
+    const p = AI_PROVIDERS[c.provider];
+    return p ? { provider: c.provider, key: c.key || '', model: c.model || p.defaultModel, base: c.base || p.defaultBase } : null;
+  },
+  available() { return this.mode !== 'none'; },
+  how() {
+    return this.mode === 'claude' ? 'Claude answers these through this artifact.'
+      : this.mode === 'key' ? `Using your own ${AI_PROVIDERS[this.cfg().provider].label} key, stored in this browser.`
+      : 'Not set up.';
+  },
+  async init() {
+    try {
+      if (window.claude && window.claude.use) {
+        const s = await window.claude.use('sample');
+        if (s) { this.sample = s; this.mode = 'claude'; }
+      }
+    } catch (e) { /* not running as an artifact */ }
+    this.refresh();
+    if (!session) render();
+  },
+  refresh() {
+    if (this.sample) { this.mode = 'claude'; return; }
+    const c = this.cfg();
+    this.mode = c && c.key && c.model ? 'key' : 'none';
+  },
+  /** Ask for an explanation. `onText` receives the answer so far, when streaming is available. */
+  async ask(prompt, onText) {
+    if (this.mode === 'claude') {
+      const r = await this.sample(prompt, onText ? { onText: ({ text }) => onText(text) } : undefined);
+      return r.text;
+    }
+    const c = this.cfg();
+    if (!c) throw new Error('No explanation provider is set up.');
+    try {
+      return await AI_PROVIDERS[c.provider].call(c, prompt);
+    } catch (e) {
+      if (e instanceof TypeError) throw new Error('Could not reach the provider. Check your connection, the base URL, and whether the provider allows requests from the browser.');
+      throw e;
+    }
+  },
+};
 
 /* ===== features: mistake bank, today, pacing, keys, AI ===== */
 MORE2.forEach(p=>{PASSAGES.push(p);PBY[p.id]=p;});
@@ -1594,7 +1750,7 @@ document.addEventListener('keydown',e=>{
   if(it.type==='fig'&&/^[1-6]$/.test(k)){const n=+k-1;click(`[data-fig="${n<3?0:1}:${n%3}"]`);return;}
 });
 /* AI explanations */
-function aiBtn(it){ if(!AI.fn||(session&&session.exam&&!session.finished))return ''; if(!window.__aiItems)window.__aiItems=[]; window.__aiItems.push(it); const id=window.__aiItems.length-1;
+function aiBtn(it){ if(!AI.available()||(session&&session.exam&&!session.finished))return ''; if(!window.__aiItems)window.__aiItems=[]; window.__aiItems.push(it); const id=window.__aiItems.length-1;
   return `<div class="ai"><button class="btn ghost" data-explain="${id}">✦ Explain it differently</button><div class="ai-out" id="ai-${id}" hidden></div></div>`; }
 function aiPrompt(it){
   const strip=h=>String(h).replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
@@ -1606,10 +1762,12 @@ function aiPrompt(it){
   return `You are a patient tutor helping a student prepare for the dMAT (a German master's admission test) where notes are NOT allowed, so every method must work in one's head. Explain the solution below in a different way from the official explanation: use a short step-by-step mental method, one concrete memory hook, and one common trap to avoid. Plain text, at most 140 words, no markdown headings.\n\n${task}`;
 }
 async function explainAI(btn){
-  const id=btn.dataset.explain; const it=(window.__aiItems||[])[+id]; const out=document.getElementById('ai-'+id); if(!it||!out||!AI.fn)return;
+  const id=btn.dataset.explain; const it=(window.__aiItems||[])[+id]; const out=document.getElementById('ai-'+id); if(!it||!out||!AI.available())return;
   btn.disabled=true; out.hidden=false; out.textContent='Thinking…';
-  try{ const r=await AI.fn(aiPrompt(it),{onText:({text})=>{out.textContent=text;}}); out.textContent=r.text; btn.textContent='✦ Explained by Claude'; }
-  catch(e){ if(e&&e.code==='not_granted'){out.textContent='Claude explanations are turned off for this page.';}else if(e&&e.code==='rate_limited'){out.textContent='Too many requests right now. Try again in a minute.';btn.disabled=false;}else{out.textContent=(e&&e.text)||'Could not get an explanation. Try again.';btn.disabled=false;} }
+  try{ const text=await AI.ask(aiPrompt(it),t=>{out.textContent=t;}); out.textContent=text||'The provider returned an empty answer.'; btn.textContent='✦ Explained'; }
+  catch(e){ if(e&&e.code==='not_granted'){out.textContent='Explanations are turned off for this page.';}
+    else if(e&&e.code==='rate_limited'){out.textContent='Too many requests right now. Try again in a minute.';btn.disabled=false;}
+    else{out.textContent=(e&&e.message)||(e&&e.text)||'Could not get an explanation. Try again.';btn.disabled=false;} }
 }
 /* pacing */
 function pacePanel(r){

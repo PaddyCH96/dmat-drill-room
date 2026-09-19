@@ -45,7 +45,7 @@ document.addEventListener('keydown',e=>{
   if(it.type==='fig'&&/^[1-6]$/.test(k)){const n=+k-1;click(`[data-fig="${n<3?0:1}:${n%3}"]`);return;}
 });
 /* AI explanations */
-function aiBtn(it){ if(!AI.fn||(session&&session.exam&&!session.finished))return ''; if(!window.__aiItems)window.__aiItems=[]; window.__aiItems.push(it); const id=window.__aiItems.length-1;
+function aiBtn(it){ if(!AI.available()||(session&&session.exam&&!session.finished))return ''; if(!window.__aiItems)window.__aiItems=[]; window.__aiItems.push(it); const id=window.__aiItems.length-1;
   return `<div class="ai"><button class="btn ghost" data-explain="${id}">✦ Explain it differently</button><div class="ai-out" id="ai-${id}" hidden></div></div>`; }
 function aiPrompt(it){
   const strip=h=>String(h).replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
@@ -57,10 +57,12 @@ function aiPrompt(it){
   return `You are a patient tutor helping a student prepare for the dMAT (a German master's admission test) where notes are NOT allowed, so every method must work in one's head. Explain the solution below in a different way from the official explanation: use a short step-by-step mental method, one concrete memory hook, and one common trap to avoid. Plain text, at most 140 words, no markdown headings.\n\n${task}`;
 }
 async function explainAI(btn){
-  const id=btn.dataset.explain; const it=(window.__aiItems||[])[+id]; const out=document.getElementById('ai-'+id); if(!it||!out||!AI.fn)return;
+  const id=btn.dataset.explain; const it=(window.__aiItems||[])[+id]; const out=document.getElementById('ai-'+id); if(!it||!out||!AI.available())return;
   btn.disabled=true; out.hidden=false; out.textContent='Thinking…';
-  try{ const r=await AI.fn(aiPrompt(it),{onText:({text})=>{out.textContent=text;}}); out.textContent=r.text; btn.textContent='✦ Explained by Claude'; }
-  catch(e){ if(e&&e.code==='not_granted'){out.textContent='Claude explanations are turned off for this page.';}else if(e&&e.code==='rate_limited'){out.textContent='Too many requests right now. Try again in a minute.';btn.disabled=false;}else{out.textContent=(e&&e.text)||'Could not get an explanation. Try again.';btn.disabled=false;} }
+  try{ const text=await AI.ask(aiPrompt(it),t=>{out.textContent=t;}); out.textContent=text||'The provider returned an empty answer.'; btn.textContent='✦ Explained'; }
+  catch(e){ if(e&&e.code==='not_granted'){out.textContent='Explanations are turned off for this page.';}
+    else if(e&&e.code==='rate_limited'){out.textContent='Too many requests right now. Try again in a minute.';btn.disabled=false;}
+    else{out.textContent=(e&&e.message)||(e&&e.text)||'Could not get an explanation. Try again.';btn.disabled=false;} }
 }
 /* pacing */
 function pacePanel(r){

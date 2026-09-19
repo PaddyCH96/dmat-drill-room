@@ -6,7 +6,7 @@ import { createHash } from 'node:crypto';
 const read = (f) => readFileSync(new URL(`./src/${f}`, import.meta.url), 'utf8');
 
 // Script order matters: generators → question banks → plan helpers → app core
-// (subjects-and-tricks is spliced in right after the passage index is created) → features.
+// (subjects-and-tricks is spliced in right after the passage index is created) → ai → features.
 const app = read('app.js');
 const marker = 'const PBY=Object.fromEntries(PASSAGES.map(p=>[p.id,p]));';
 if (!app.includes(marker)) throw new Error('build: passage-index marker not found in src/app.js');
@@ -18,6 +18,7 @@ const script = [
   read('questions-3.js'),
   read('plan.js'),
   app.replace(marker, `${marker}\n${read('subjects-and-tricks.js')}`),
+  read('ai.js'),
   read('features.js'),
 ].join('\n');
 
