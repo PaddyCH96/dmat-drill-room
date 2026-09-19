@@ -140,4 +140,33 @@ function viewToday(){
   <p class="muted" style="font-size:14.5px">Buttons start the exact session for each step, and steps tick off when you finish them. You can also tick a step yourself.</p></div>
   ${quick}</div>`;
 }
-buildPlan(); countdown(); render(); Sync.init().then(()=>{buildPlan();countdown();if(!session)render();}); AI.init();
+buildPlan(); countdown(); render();
+/* ---- installable + offline (only when served over http(s), not inside an iframe) ---- */
+(function pwa(){
+  const bar=document.getElementById('appbar'); if(!bar)return;
+  const show=(html)=>{bar.innerHTML=`<div class="appbar">${html}</div>`;};
+  const standalone=window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches;
+  if(location.protocol.startsWith('http')&&window.top===window.self&&'serviceWorker' in navigator){
+    navigator.serviceWorker.register('sw.js').then(reg=>{
+      reg.addEventListener('updatefound',()=>{
+        const w=reg.installing; if(!w)return;
+        w.addEventListener('statechange',()=>{
+          if(w.state==='installed'&&navigator.serviceWorker.controller){
+            show(`<p><b>A new version is ready.</b> Reload to use it.</p><button class="btn primary" id="sw-reload">Reload</button><button class="btn ghost" id="sw-later">Later</button>`);
+            document.getElementById('sw-reload').onclick=()=>{w.postMessage('skip-waiting');location.reload();};
+            document.getElementById('sw-later').onclick=()=>{bar.innerHTML='';};
+          }
+        });
+      });
+    }).catch(()=>{});
+  }
+  let deferred=null;
+  window.addEventListener('beforeinstallprompt',e=>{
+    e.preventDefault(); deferred=e;
+    if(standalone||store.get('installdismissed',false))return;
+    show(`<p><b>Install the Drill Room</b> to study offline and open it from your home screen.</p><button class="btn primary" id="pwa-install">Install</button><button class="btn ghost" id="pwa-no">Not now</button>`);
+    document.getElementById('pwa-install').onclick=async()=>{bar.innerHTML='';try{await deferred.prompt();}catch(e){}deferred=null;};
+    document.getElementById('pwa-no').onclick=()=>{bar.innerHTML='';store.set('installdismissed',true,true);};
+  });
+  window.addEventListener('appinstalled',()=>{bar.innerHTML='';});
+})(); Sync.init().then(()=>{buildPlan();countdown();if(!session)render();}); AI.init();

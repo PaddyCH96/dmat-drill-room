@@ -1,6 +1,7 @@
 // Builds the single-file app (index.html) from the sources in src/.
 // Usage: node build.mjs      (no dependencies needed)
 import { readFileSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 
 const read = (f) => readFileSync(new URL(`./src/${f}`, import.meta.url), 'utf8');
 
@@ -34,4 +35,11 @@ ${script}
 </html>
 `;
 writeFileSync(new URL('./index.html', import.meta.url), html);
-console.log(`Built index.html (${(html.length / 1024).toFixed(0)} KB)`);
+
+// The service worker's cache name carries a hash of the page, so every build
+// invalidates the old offline copy.
+const version = createHash('sha256').update(html).digest('hex').slice(0, 10);
+const sw = read('sw.template.js').replace('__VERSION__', version);
+writeFileSync(new URL('./sw.js', import.meta.url), sw);
+
+console.log(`Built index.html (${(html.length / 1024).toFixed(0)} KB) and sw.js (version ${version})`);

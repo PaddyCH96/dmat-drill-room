@@ -1,0 +1,16 @@
+{
+  "name": "dMAT Drill Room",
+  "short_name": "Drill Room",
+  "description": "Practice app for the dMAT: core-module puzzles, subject tests, mock exams and a study plan built around your exam date.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#F6F7F9",
+  "theme_color": "#2F5BD3",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

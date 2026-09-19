@@ -39,7 +39,7 @@ The dMAT has a **Core Module** (Figure Sequences, Mathematical Equations and Lat
 | **Exam-day mode** | Hides hints, labels and feedback until the end, just like the real test. |
 | **Keyboard shortcuts** | `A–E` Latin squares · `1–4`/`A–D` subject · `1–6` figures · `←/→` move · `F` flag · `Enter` check / next. |
 | **Four themes** | Clean (follows system light/dark), Warm, Forest and Night. |
-| **Works on phones** | Responsive layout and large tap targets. |
+| **Works on phones** | Responsive layout and large tap targets. Install it from the browser menu ("Add to Home Screen") to get an app icon and full offline use. |
 
 ## Quick start
 
@@ -54,6 +54,10 @@ The dMAT has a **Core Module** (Figure Sequences, Mathematical Equations and Lat
 **Option 2: use the hosted version**
 
 If the repo owner has enabled GitHub Pages, open **https://paddych96.github.io/dmat-drill-room/**.
+
+**Install it on a phone**
+
+Open the hosted version in Chrome or Safari and choose "Add to Home Screen". After the first visit it works offline — useful on a commute, and it keeps the browser's tabs and notifications out of your practice.
 
 **Option 3: host your own copy**
 
@@ -109,7 +113,10 @@ You can change any of these later in **⚙ Settings**. Your scores, mistake bank
 ```
 dmat-drill-room/
 ├── index.html                  ← the built app (open this)
-├── build.mjs                   ← bundles src/ into index.html
+├── sw.js                       ← service worker (generated; offline support)
+├── manifest.webmanifest        ← makes it installable on phones
+├── icons/                      ← app icons
+├── build.mjs                   ← bundles src/ into index.html and sw.js
 ├── tests/check.mjs             ← checks the question bank, generators and planner
 ├── src/
 │   ├── styles.html             ← CSS and themes
@@ -126,7 +133,7 @@ dmat-drill-room/
 To make changes, you need [Node.js](https://nodejs.org) 18 or newer. There are no packages to install.
 
 ```bash
-node build.mjs          # rebuild index.html after editing src/
+node build.mjs          # rebuild index.html and sw.js after editing src/
 node tests/check.mjs    # run the checks
 ```
 

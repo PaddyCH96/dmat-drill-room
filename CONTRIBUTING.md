@@ -5,10 +5,12 @@ Thanks for helping other dMAT candidates. There's no framework and no dependenci
 ## Workflow
 
 1. Edit files in `src/`.
-2. Rebuild the single-file app: `node build.mjs` (this regenerates `index.html`).
+2. Rebuild the single-file app: `node build.mjs` (this regenerates `index.html` and `sw.js` — edit `src/sw.template.js`, never `sw.js`).
 3. Run the checks: `node tests/check.mjs`.
 4. Open `index.html` in a browser and try your change.
-5. Commit **both** your `src/` changes and the rebuilt `index.html`, then open a pull request.
+5. Commit **both** your `src/` changes and the rebuilt `index.html` / `sw.js`, then open a pull request.
+
+Offline note: the service worker's cache name contains a hash of the built page, so each build replaces the old offline copy and people are offered a reload.
 
 ## Adding a subject-module text
 
