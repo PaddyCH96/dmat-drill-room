@@ -4,19 +4,19 @@ import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 
 const read = (f) => readFileSync(new URL(`../src/${f}`, import.meta.url), 'utf8');
-const code = ['generators.js', 'questions-1.js', 'questions-2.js', 'questions-3.js', 'plan.js'].map(read).join('\n');
+const code = ['generators.js', 'questions-1.js', 'questions-2.js', 'questions-3.js', 'questions-4.js', 'plan.js'].map(read).join('\n');
 // plan.js expects a few globals that live in app.js at runtime
 const DAY = 86400000;
 const memory = {};
 const storeStub = { get: (k, d) => (k in memory ? memory[k] : d), set: (k, v) => { memory[k] = v; } };
 const ctx = vm.createContext({ console, DAY, store: storeStub, Sync: { queue() {} }, document: undefined });
-const api = vm.runInContext(`${code}\n;({genLatin,genEquations,genFigures,lsSolve,PASSAGES,MORE,MORE2,daySequence,DAY_TYPES,buildPlan,getPlan:()=>({PLAN,TASKS}),addDays,ymd})`, ctx);
+const api = vm.runInContext(`${code}\n;({genLatin,genEquations,genFigures,lsSolve,PASSAGES,MORE,MORE2,OFFICIAL,daySequence,DAY_TYPES,buildPlan,getPlan:()=>({PLAN,TASKS}),addDays,ymd})`, ctx);
 
 let failures = 0;
 const check = (ok, msg) => { if (!ok) { failures++; console.error('✗', msg); } };
 
 // 1. Question bank shape
-const all = [...api.PASSAGES, ...api.MORE, ...api.MORE2];
+const all = [...api.PASSAGES, ...api.MORE, ...api.MORE2, ...api.OFFICIAL];
 const ids = new Set();
 for (const p of all) {
   check(!ids.has(p.id), `duplicate passage id ${p.id}`); ids.add(p.id);
@@ -112,6 +112,27 @@ for (const list of keyLists) {
 }
 check(/store\.set\('ai',[^)]*,\s*true\)/.test(read('plan.js')), 'plan.js: the API key must be saved with the no-sync flag');
 console.log('API key stays local: OK');
+
+// 9. Question types: the drill-by-type mode needs a usable pool of each one,
+//    and the type keys used in the banks must match the ones the app defines.
+const types = [...read('subjects-and-tricks.js').matchAll(/const QTYPES=\{([^}]*)\}/g)]
+  .flatMap((m) => [...m[1].matchAll(/(\w+):'/g)].map((x) => x[1]));
+check(types.length === 6, `subjects-and-tricks.js: expected 6 question types, found ${types.length}`);
+const byType = {};
+for (const p of all) for (const q of p.qs) if (q.t) byType[q.t] = (byType[q.t] || 0) + 1;
+for (const t of Object.keys(byType)) check(types.includes(t), `unknown question type "${t}" in the bank`);
+for (const t of types) check((byType[t] || 0) >= 8, `question type "${t}": only ${byType[t] || 0} questions, a drill needs at least 8`);
+console.log(`Question types: ${types.map((t) => `${t} ${byType[t]}`).join(', ')}`);
+
+// 10. The four texts modelled on the official exercises
+const arch = all.filter((p) => p.arch);
+check(arch.length === 4, `expected 4 archetype texts (arch: 1), found ${arch.length}`);
+check(new Set(arch.map((p) => p.area)).size === arch.length, 'archetype texts must sit in four different subject areas');
+for (const p of arch) {
+  check(p.qs.length >= 6, `${p.id}: an archetype text needs at least 6 questions`);
+  check(p.qs.every((q) => q.t && q.tip), `${p.id}: every archetype question needs a type and a tip`);
+}
+console.log(`Archetype texts: ${arch.map((p) => p.id).join(', ')}`);
 
 if (failures) { console.error(`\n${failures} check(s) failed`); process.exit(1); }
 console.log('All checks passed ✓');

@@ -126,20 +126,34 @@ function viewPractice(){
     ${pr.diff==='adaptive'?`<p class="muted" style="font-size:14.5px;margin-top:-8px">Adaptive moves you up a level after a session at 85% or better and down after one below 60%.</p>`:''}
     <div class="row"><span class="label">Mode</span><div class="seg"><button data-mode="timed" aria-pressed="${pr.mode==='timed'||ex}">Timed · 20 in 25 min</button><button data-mode="drill" aria-pressed="${pr.mode==='drill'&&!ex}" ${ex?'disabled':''}>Drill · 8 items, feedback after each</button></div></div>${exRow}`;
   } else {
-    pr.area=pr.area||'math'; pr.smode=pr.smode||'exam'; pr.skind=pr.skind||'test';
+    pr.area=pr.area||'math'; pr.smode=pr.smode||'exam'; pr.skind=pr.skind||'test'; pr.sview=pr.sview||'area'; pr.slen=pr.slen||8;
+    if(pr.sview==='area'&&pr.skind!=='test'&&pr.skind!=='marathon')pr.skind='test';
     const tests=areaTests(pr.area); const mocks=PASSAGES.filter(p=>p.area===pr.area&&MOCK_OF[p.id]);
-    const testCard=(p,label,extra='')=>{const s=seen[p.id];const types=[...new Set(p.qs.map(q=>q.t))];return `<button class="pick" data-pid="${p.id}" aria-pressed="${pr.skind==='test'&&pr.pid===p.id}"><span class="eyebrow">${label}${extra}</span><h3>${esc(p.title)}</h3><span class="meta">${types.map(t=>QTYPES[t]).join(' · ')}</span><span class="meta" style="margin-top:6px">${s?`<span class="tag ${s.c/s.t>=.8?'good':s.c/s.t>=.5?'warn':'bad'}">Last score ${s.c}/${s.t}</span>`:'Not attempted yet'}</span></button>`};
-    opts=`<div class="row"><span class="label">Subject</span><div class="seg">${Object.entries(AREAS).map(([k,v])=>`<button data-area="${k}" aria-pressed="${pr.area===k}">${v}</button>`).join('')}</div></div>
+    const accT=accBy('t'), accA=accBy('area');
+    const bar=r=>r&&r.n>=3?`<div class="row" style="gap:8px;flex-wrap:nowrap"><div class="bar" style="min-width:72px;width:72px"><i style="width:${Math.round(r.acc*100)}%"></i></div><span class="mono">${Math.round(r.acc*100)}% of ${r.n}</span></div>`:'<span class="muted">Not answered yet</span>';
+    const testCard=(p,label,extra='')=>{const s=seen[p.id];const types=[...new Set(p.qs.map(q=>q.t))];return `<button class="pick" data-pid="${p.id}" aria-pressed="${pr.skind==='test'&&pr.pid===p.id}"><span class="eyebrow">${label}${extra}${p.arch?' · official archetype':''}</span><h3>${esc(p.title)}</h3><span class="meta">${types.map(t=>QTYPES[t]).join(' · ')}</span><span class="meta" style="margin-top:6px">${s?`<span class="tag ${s.c/s.t>=.8?'good':s.c/s.t>=.5?'warn':'bad'}">Last score ${s.c}/${s.t}</span>`:'Not attempted yet'}</span></button>`};
+    const viewRow=`<div class="row"><span class="label">Practise by</span><div class="seg"><button data-sview="area" aria-pressed="${pr.sview==='area'}">Subject</button><button data-sview="type" aria-pressed="${pr.sview==='type'}" ${ex?'disabled':''}>Question type</button><button data-sview="weak" aria-pressed="${pr.sview==='weak'}" ${ex?'disabled':''}>Weakest first</button></div></div>`;
+    const lenRow=`<div class="row"><span class="label">Length</span><div class="seg">${[8,16].map(n=>`<button data-slen="${n}" aria-pressed="${pr.slen===n}">${n} questions</button>`).join('')}</div></div>`;
+    if(pr.sview==='type'&&!ex){
+      opts=`${viewRow}${lenRow}<h3>One question type, every subject</h3><p class="muted" style="max-width:68ch;font-size:15px">Every text in the real module is self-contained, so what carries over between a physics text and an economics one is not the topic — it is the question type. Each drill mixes all eight subject areas and shows the answer and the trick after every question.</p>
+      <div class="grid2">${Object.entries(QTYPES).map(([k,v])=>`<button class="pick" data-qtype="${k}" aria-pressed="${pr.skind==='type'&&pr.qtype===k}"><span class="eyebrow">${typePool(k).length} in the bank</span><h3>${v}</h3><span class="muted">${TYPE_TIP[k]}</span><span class="meta" style="margin-top:6px">${bar(accT[k])}</span></button>`).join('')}</div>`;
+    } else if(pr.sview==='weak'&&!ex){
+      pr.skind='weak';
+      const w=weakSpots();
+      opts=`${viewRow}${lenRow}<h3>Your weakest spots first</h3><p class="muted" style="max-width:68ch;font-size:15px">Picks questions from the subject areas and question types you score lowest on, with anything you have never answered treated as unknown rather than safe. Answer and trick after each question.</p>
+      ${w.length?`<div class="grid2">${w.slice(0,4).map(r=>`<div class="pick"><span class="eyebrow">${r.kind}</span><h3>${r.v}</h3><span class="meta" style="margin-top:6px">${bar(r)}</span></div>`).join('')}</div>`:`<p class="muted">Nothing ranked yet — answer a few Subject Module questions and this fills in. Until then the drill mixes every area and type evenly.</p>`}`;
+    } else {
+      opts=`${viewRow}<div class="row"><span class="label">Subject</span><div class="seg">${Object.entries(AREAS).map(([k,v])=>`<button data-area="${k}" aria-pressed="${pr.area===k}">${v}</button>`).join('')}</div></div>
     <div class="row"><span class="label">Mode</span><div class="seg"><button data-smode="exam" aria-pressed="${pr.smode==='exam'||ex}">Exam · review at the end</button><button data-smode="learn" aria-pressed="${pr.smode==='learn'&&!ex}" ${ex?'disabled':''}>Learn · answer + trick after each</button></div></div>${exRow}
     <h3>${AREAS[pr.area]} · ${tests.length} tests</h3>
     <div class="grid2">${tests.map((p,i)=>testCard(p,`Test ${i+1}`)).join('')}
     ${tests.length>1?`<button class="pick" data-marathon="1" aria-pressed="${pr.skind==='marathon'}"><span class="eyebrow">All ${tests.length} tests</span><h3>${AREAS[pr.area]} marathon</h3><span class="muted">Every test in this subject back to back, ${tests.length*13} min countdown.</span><span class="meta">${tests.reduce((s,p)=>s+p.qs.length,0)} questions</span></button>`:''}</div>
     ${mocks.length?`<p class="muted" style="font-size:15px">Saved for the mock exams (you can still open them):</p><div class="grid2">${mocks.map(p=>testCard(p,'Mock text',` · ${MOCK_OF[p.id]==='mock1'?'Mock 1':'Mock 2'}`)).join('')}</div>`:''}
-    <div class="stack" style="gap:8px;border-top:1px solid var(--line);padding-top:14px" ${ex?'hidden':''}><h3>Or drill one question type</h3><p class="muted" style="font-size:15px">8 questions from all subjects, with the answer and trick after each.</p><div class="seg">${Object.entries(QTYPES).map(([k,v])=>`<button data-qtype="${k}" aria-pressed="${pr.skind==='type'&&pr.qtype===k}">${v}</button>`).join('')}</div></div>
     `;
+    }
   }
   const bc=bankCounts();
-  const can=pr.sec==='bank'?(pr.bankset==='all'?bc.all:bc.due)>0:(pr.sec!=='subj'||(pr.skind==='test'&&pr.pid)||pr.skind==='marathon'||(pr.skind==='type'&&pr.qtype&&!ex));
+  const can=pr.sec==='bank'?(pr.bankset==='all'?bc.all:bc.due)>0:(pr.sec!=='subj'||(pr.skind==='test'&&pr.pid)||pr.skind==='marathon'||(pr.skind==='type'&&pr.qtype&&!ex)||(pr.skind==='weak'&&!ex));
   return `<div class="stack"><div class="step"><i>1</i>Choose a section</div><div class="grid2">${secCard('fig','Spot the movement, rotation and colour rules; pick images 5 and 6.')}${secCard('eq','Solve systems of equations in your head (values 1–20).')}${secCard('latin','5×5 grid: find the letter for the ? cell.')}${secCard('subj','Read an academic text, answer multiple-choice questions.')}${secCard('bank',`Redo the questions you got wrong. ${bc.due} due now, ${bc.all} in the bank.`)}</div>
   <div class="step" style="margin-top:8px"><i>2</i>Set up your session</div><div class="panel stack">${opts}<div class="row" style="border-top:1px solid var(--line);padding-top:18px"><button class="btn primary big" id="startP" ${can?'':'disabled'}>Start session</button><span class="noteban">${can?'Exam rule: no notes. Solve everything in your head.':pr.sec==='bank'?'Nothing to redo yet. Wrong answers from any session land here.':'Pick a test above to continue.'}</span></div></div></div>`;
 }
@@ -148,12 +162,34 @@ function adaptiveDiffs(n,lv){const w={1:[.5,.4,.1],2:[.3,.35,.35],3:[.1,.3,.6]}[
 function buildCore(sec,diff,n){const ds=diff==='mixed'?mixedDiffs(n):diff==='adaptive'?adaptiveDiffs(n,store.get('level',{})[sec]||2):Array(n).fill(diff);return ds.map(d=>({...SECTIONS[sec].gen(d),uid:Math.random().toString(36).slice(2,10)}));}
 function examDay(){return !!store.get('examday',false);}
 function subjItem(id,qi){const q=PBY[id].qs[qi];const order=RNG.shuffle([0,1,2,3]);return {type:'subj',pid:id,q:q.q,o:order.map(i=>q.o[i]),a:order.indexOf(q.a),e:q.e,qi,t:q.t,tip:q.tip,area:PBY[id].area};}
+/* Per-area and per-question-type accuracy, read from the question log.
+   Returns { key: {k, n, acc} }; keys with no answers are absent. */
+function accBy(key){const out={};store.get('qlog',[]).forEach(x=>{const k=x[key];if(!k)return;const r=out[k]||(out[k]={k,n:0,c:0});r.n++;if(x.ok)r.c++;});Object.values(out).forEach(r=>r.acc=r.c/r.n);return out;}
+/* Every non-mock question of one type, as [passageId, questionIndex] pairs. */
+function typePool(t){const pool=[];PASSAGES.filter(p=>!MOCK_OF[p.id]).forEach(p=>p.qs.forEach((q,qi)=>{if(q.t===t)pool.push([p.id,qi]);}));return pool;}
+/* Subject areas and question types ranked worst first, once there is enough
+   answered to rank them (fewer than 3 answers is noise, not a weakness). */
+function weakSpots(){const A=accBy('area'),T=accBy('t');
+  const rows=[...Object.values(A).map(r=>({...r,kind:'Subject',v:AREAS[r.k]})),...Object.values(T).map(r=>({...r,kind:'Question type',v:QTYPES[r.k]}))];
+  return rows.filter(r=>r.v&&r.n>=3).sort((a,b)=>a.acc-b.acc);}
+/* The weakest-first pool: score every question by how badly its area and its
+   type are going, give anything unanswered the benefit of the doubt (0.5) and
+   a nudge for never having been seen, then add jitter so two runs differ. */
+function weakPool(n){const A=accBy('area'),T=accBy('t');
+  const seenQ={};store.get('qlog',[]).forEach(x=>{seenQ[x.pid+':'+x.qi]=1;});
+  const gap=(r)=>r&&r.n>=3?1-r.acc:0.5;
+  const pool=[];PASSAGES.filter(p=>!MOCK_OF[p.id]).forEach(p=>p.qs.forEach((q,qi)=>{
+    const sc=gap(A[p.area])+gap(T[q.t])+(seenQ[p.id+':'+qi]?0:0.4)+Math.random()*0.25;
+    pool.push({id:p.id,qi,sc});}));
+  return pool.sort((a,b)=>b.sc-a.sc).slice(0,n).map(x=>[x.id,x.qi]);}
 function buildSubject(ids){const items=[];ids.forEach(id=>PBY[id].qs.forEach((q,qi)=>items.push(subjItem(id,qi))));return items;}
 function startPractice(task){
   store.set('prsel',pr); const ex=examDay();
   if(pr.sec==='bank'){startBank(pr.bankset==='all',task);return;}
   if(pr.sec==='subj'){ const learn=pr.smode==='learn'&&!ex;
-    if(pr.skind==='type'){const pool=[];PASSAGES.filter(p=>!MOCK_OF[p.id]).forEach(p=>p.qs.forEach((q,qi)=>{if(q.t===pr.qtype)pool.push([p.id,qi]);}));const pick=RNG.shuffle(pool).slice(0,8);newSession({kind:'practice',drill:true,parts:[{sec:'subj',items:pick.map(([id,qi])=>subjItem(id,qi)),limit:null,target:pick.length*120}]});return;}
+    const n=pr.slen||8;
+    if(pr.skind==='type'){const pick=RNG.shuffle(typePool(pr.qtype)).slice(0,n);newSession({kind:'practice',drill:true,parts:[{sec:'subj',items:pick.map(([id,qi])=>subjItem(id,qi)),limit:null,target:pick.length*120}]});return;}
+    if(pr.skind==='weak'){const pick=RNG.shuffle(weakPool(n));newSession({kind:'practice',drill:true,parts:[{sec:'subj',items:pick.map(([id,qi])=>subjItem(id,qi)),limit:null,target:pick.length*120}]});return;}
     if(pr.skind==='marathon'){const ids=areaTests(pr.area).map(p=>p.id);newSession({kind:'practice',drill:learn,task,parts:[{sec:'subj',items:buildSubject(ids),limit:learn?null:ids.length*13*60,target:ids.length*13*60,pids:ids}]});return;}
     newSession({kind:'practice',drill:learn,task,parts:[{sec:'subj',items:buildSubject([pr.pid]),limit:ex?13*60:null,target:13*60,pids:[pr.pid]}]}); }
   else { const timed=pr.mode==='timed'||ex; const n=timed?20:8; newSession({kind:'practice',drill:!timed,diff:pr.diff,task,parts:[{sec:pr.sec,items:buildCore(pr.sec,pr.diff,n),limit:timed?25*60:null}]}); }
@@ -342,11 +378,11 @@ function viewProgress(){
 
 function subjBreakdown(){
   const ql=store.get('qlog',[]); if(!ql.length)return '';
-  const agg=(key,labels)=>Object.entries(labels).map(([k,v])=>{const L=ql.filter(x=>x[key]===k);const c=L.filter(x=>x.ok).length;return {k,v,n:L.length,acc:L.length?c/L.length:null};});
+  const agg=(key,labels)=>{const a=accBy(key);return Object.entries(labels).map(([k,v])=>({k,v,n:a[k]?a[k].n:0,acc:a[k]?a[k].acc:null}));};
   const tbl=(rows,title)=>`<div class="stack" style="gap:6px"><h3>${title}</h3><div class="scroll-x"><table class="data"><tr><th>${title.split(' ').pop()}</th><th>Questions</th><th>Accuracy</th></tr>${rows.map(r=>`<tr><td>${r.v}</td><td class="n">${r.n}</td><td>${r.acc==null?'<span class="muted">—</span>':`<div class="row" style="gap:8px;flex-wrap:nowrap"><div class="bar" style="width:100px"><i style="width:${Math.round(r.acc*100)}%"></i></div><span class="mono">${Math.round(r.acc*100)}%</span></div>`}</td></tr>`).join('')}</table></div></div>`;
   const A=agg('area',AREAS), T=agg('t',QTYPES);
   const weakest=[...A,...T].filter(r=>r.n>=4).sort((a,b)=>a.acc-b.acc)[0];
-  return `<div class="panel stack"><p class="eyebrow">Subject Module · every answered question</p><h2>${weakest?`Weakest spot: ${weakest.v} (${Math.round(weakest.acc*100)}%)`:'Subject Module breakdown'}</h2>${weakest?`<p class="muted">Open Trick cards and review the cards for ${weakest.v}, then run a drill on it from Practice.</p>`:''}<div class="grid2">${tbl(A,'By subject')}${tbl(T,'By question type')}</div></div>`;
+  return `<div class="panel stack"><p class="eyebrow">Subject Module · every answered question</p><h2>${weakest?`Weakest spot: ${weakest.v} (${Math.round(weakest.acc*100)}%)`:'Subject Module breakdown'}</h2>${weakest?`<p class="muted">Review the trick cards for ${weakest.v}, then drill it. Weakest-first pulls questions from every area and type you are scoring lowest on.</p><div class="row"><button class="btn primary" data-weakgo="1">Drill your weakest spots</button><button class="btn ghost" data-go="cards">Open trick cards</button></div>`:''}<div class="grid2">${tbl(A,'By subject')}${tbl(T,'By question type')}</div></div>`;
 }
 
 /* ---------- TRICK CARDS ---------- */
@@ -436,10 +472,13 @@ function bindView(){
     if(d.task){return runTask(d.task);}
     if(d.tick){const [dd,ii]=d.tick.split('|');const T=store.get('todaydone',{});T[dd]=T[dd]||{};T[dd][ii]=T[dd][ii]==='manual'?null:'manual';store.set('todaydone',T);return render();}
     if(d.bankgo){pr.sec='bank';pr.bankset=d.bankgo;return setTab('practice');}
+    if(d.weakgo){pr.sec='subj';pr.sview='weak';pr.skind='weak';return setTab('practice');}
     if(d.area){pr.area=d.area;pr.pid=null;if(pr.skind!=='type')pr.skind='test';return render();}
     if(d.smode){pr.smode=d.smode;return render();}
     if(d.marathon){pr.skind='marathon';return render();}
     if(d.qtype){pr.skind='type';pr.qtype=d.qtype;return render();}
+    if(d.sview){pr.sview=d.sview;pr.skind=d.sview==='type'?'type':d.sview==='weak'?'weak':'test';return render();}
+    if(d.slen){pr.slen=+d.slen;return render();}
     if(d.card!=null){gradeCard(+d.card,d.cardset);return render();}
     if(d.cardflip!=null){const el=document.getElementById('cb-'+d.cardflip);if(el)el.hidden=!el.hidden;return;}
     if(d.cardfilter){cardFilter=d.cardfilter;return render();}

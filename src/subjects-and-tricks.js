@@ -75,6 +75,9 @@ const TRICKS=[
  {g:'Business & Finance',f:'CLV with churn',b:'Lifetime = 1 ÷ churn; CLV = yearly profit × lifetime. Healthy if CLV ≥ 3 × CAC.'},
  {g:'Social Sciences & Humanities',f:'Primary vs secondary source',b:'Primary = made at the time under study. Secondary = later interpretation. Corroborate only with independent sources.'},
  {g:'Chemistry & Biology',f:'Logistic growth',b:'r·N·(1 − N/K): fastest at K/2, zero at K, negative above K.'},
+ {g:'Subject Module',f:'Which subjects can come up?',b:'All of them: mathematics, computational sciences, natural sciences, engineering, business administration, economics, social sciences and humanities. There is no subject choice \u2014 everyone sits the same General Academic Module.'},
+ {g:'Subject Module',f:'You do not know the topic of the text',b:'It does not matter. Every text is self-contained: the rule, formula or definition you need is printed in it. Hunt for the sentence, do not hunt your memory.'},
+ {g:'Subject Module',f:'Where the marks actually are',b:'Not domain knowledge \u2014 speed at finding the right sentence, row or cell and applying it once. That skill is the same in a physics text and an economics one.'},
  {g:'Exam habits',f:'Before you answer a Latin square',b:'Check the ? row and column first. About a third of items are solved right there.'},
  {g:'Exam habits',f:'One minute left in a section',b:'Stop solving and put a guess on every blank item.'},
 ];

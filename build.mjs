@@ -16,6 +16,7 @@ const script = [
   read('questions-1.js'),
   read('questions-2.js'),
   read('questions-3.js'),
+  read('questions-4.js'),
   read('plan.js'),
   app.replace(marker, `${marker}\n${read('subjects-and-tricks.js')}`),
   read('ai.js'),

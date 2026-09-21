@@ -13,7 +13,7 @@
  * This file runs last, so it may use anything defined in the files before it.
  * ------------------------------------------------------------------------- */
 /* ===== features: mistake bank, today, pacing, keys, AI ===== */
-MORE2.forEach(p=>{PASSAGES.push(p);PBY[p.id]=p;});
+[...MORE2,...OFFICIAL].forEach(p=>{PASSAGES.push(p);PBY[p.id]=p;});
 function mkey(it){return it.type==='subj'?`s:${it.pid}:${it.qi}`:`${it.type}:${it.uid||Math.random().toString(36).slice(2,10)}`;}
 function recordOutcome(it,ok,fromBank){
   const M=store.get('mistakes',{}); const k=it.bankKey||mkey(it); const now=Date.now(); const cur=M[k];
