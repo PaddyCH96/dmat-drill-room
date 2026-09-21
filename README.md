@@ -34,7 +34,8 @@ The dMAT has a **Core Module** (Figure Sequences, Mathematical Equations and Lat
 | **Today screen** | Opens on today's steps. Each step has a button that starts the right session and ticks itself off when you finish. |
 | **Unlimited core puzzles** | Generated Figure Sequences (4×4 grids, movement, rotation, colour and *x + 1* rules), Mathematical Equations (values 1–20, one unique solution) and Latin Squares (5×5, one unique answer, step-by-step solution path). |
 | **Adaptive difficulty** | Three levels. You move up after a set at 85% or better and down after one below 60%. |
-| **Subject Module bank** | 38 original texts with 228 questions across 8 subjects: maths, statistics, physics/engineering, chemistry/biology, economics, business, computer science, social sciences/humanities. Six question types: calculation, table/chart reading, concept check, I/II/III statements, EXCEPT, and transfer scenarios. |
+| **Subject Module bank** | 42 original texts with 252 questions across 8 subjects: maths, statistics, physics/engineering, chemistry/biology, economics, business, computer science, social sciences/humanities — the areas the official materials name. Four of them mirror the archetypes in the official preparatory PDF (vector calculations, hydrostatics, optimal order quantity, social research methods). |
+| **Three ways to practise it** | By **subject** (a full 13-minute text), by **question type** (one type, mixed across all eight areas), or **weakest first** (questions drawn from the areas and types you score lowest on, with anything unanswered treated as unknown). |
 | **Exam and Learn modes** | Review at the end, or see the answer plus the trick behind it after every question. |
 | **Mock exams** | Two full mocks (3 × 25 min core → 30 min break → subject set), plus unlimited core-only mocks. |
 | **Mistake bank** | Every wrong answer comes back a day later. It leaves the bank after two correct answers in a row. |
@@ -154,7 +155,7 @@ dmat-drill-room/
 │   ├── styles.html             ← CSS and themes
 │   ├── layout.html             ← page shell (header, tabs, footer)
 │   ├── generators.js           ← Figure Sequences, Equations, Latin Squares
-│   ├── questions-1/2/3.js      ← Subject Module texts and questions
+│   ├── questions-1/2/3/4.js    ← Subject Module texts and questions
 │   ├── subjects-and-tricks.js  ← subject areas, question types, trick cards
 │   ├── plan.js                 ← setup screen and study-plan builder
 │   ├── app.js                  ← sessions, practice, mocks, progress, sync

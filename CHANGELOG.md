@@ -2,6 +2,18 @@
 
 All notable changes to the dMAT Drill Room. Dates are in ISO format.
 
+## [1.3.0] — 2026-09-21
+
+### Added
+- Three ways to practise the Subject Module, chosen with a **Practise by** switch: by subject (unchanged), by **question type** (one type mixed across all eight areas, 8 or 16 questions), and **weakest first** (questions drawn from the areas and types you score lowest on).
+- Four new texts modelled on the archetypes in the official preparatory materials: vector calculations, hydrostatics, optimal order quantity and research strategies in the social sciences. The bank is now 42 texts / 252 questions.
+- A **Drill your weakest spots** button on the Progress breakdown, and three trick cards on what the module actually tests.
+- Checks for the question-type pools and the archetype texts.
+
+### Changed
+- The question-type drill is no longer buried under the subject list; it is a first-class mode with per-type accuracy shown on each card.
+- The Progress breakdown and the weakest-first drill share one `accBy()` helper, so they read the same numbers.
+
 ## [1.2.0] — 2026-09-19
 
 ### Added

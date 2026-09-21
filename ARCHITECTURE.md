@@ -6,7 +6,7 @@ A tour of the code, for anyone who wants to change it. There is no framework, no
 
 ```
 src/generators.js         puzzle generators (Latin squares, equations, figures)
-src/questions-1/2/3.js    the Subject Module bank (38 texts, 228 questions)
+src/questions-1/2/3/4.js  the Subject Module bank (42 texts, 252 questions)
 src/plan.js               exam setup → study plan; the Settings view
 src/app.js                storage, sync, the session engine, most views
 src/subjects-and-tricks.js areas, question types, trick cards
@@ -50,6 +50,31 @@ Two lists in `app.js` decide what travels: `SYNC_KEYS` (synced to the Claude acc
 ## The study plan
 
 `buildPlan()` in `plan.js` reads `setup` and produces `PLAN` (days with human-readable steps) and `TASKS` (the same steps as actions). `daySequence(n)` chooses which day templates a plan of *n* days should contain; `DAY_TYPES` holds the templates, with each step's offset in minutes from the start of the study block, scaled to the person's daily hours. The Today screen maps each action to a real session through `runTask`.
+
+## The Subject Module, and why there is nothing to narrow down
+
+The official preparatory materials state that the topics in the exam "cover a
+variety of areas including mathematics, computational sciences, natural
+sciences, engineering, business administration, economics, social sciences and
+humanities", and that for the current India intake there is no subject
+specialisation — every candidate sits the same General Academic Module. The
+eight areas in `AREAS` are that sentence, so none of them can be ruled out.
+
+What makes the module tractable is that every text is self-contained: the rule,
+formula or definition a question needs is printed in the text. The transferable
+skill is therefore the *question type*, not the topic, which is why the practice
+screen offers three axes:
+
+- `sview: 'area'` — one text end to end, timed like the real thing;
+- `sview: 'type'` — `typePool(t)` gathers every non-mock question of one type
+  across all eight areas;
+- `sview: 'weak'` — `weakPool(n)` scores each question by `1 − accuracy` of its
+  area plus `1 − accuracy` of its type, treats anything with fewer than three
+  answers as 0.5 (unknown, not safe), adds 0.4 for a question never answered and
+  a little jitter, then takes the top n.
+
+`accBy(key)` reads those accuracies straight out of `qlog`, so the Progress
+breakdown and the weakest-first drill can never disagree.
 
 ## Adding things
 

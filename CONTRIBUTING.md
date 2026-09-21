@@ -14,7 +14,7 @@ Offline note: the service worker's cache name contains a hash of the built page,
 
 ## Adding a subject-module text
 
-Add an object to the array in `src/questions-3.js` (or a new file you register in `build.mjs` and `tests/check.mjs`):
+Add an object to the array in `src/questions-3.js` or `src/questions-4.js` (or a new file you register in `build.mjs` and `tests/check.mjs`). Give every question a `t` (one of the six keys in `QTYPES`) — the drill-by-question-type and weakest-first modes are built from it, and the checks require at least 8 questions of each type:
 
 ```js
 {
