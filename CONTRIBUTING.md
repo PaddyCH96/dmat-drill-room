@@ -16,6 +16,8 @@ Offline note: the service worker's cache name contains a hash of the built page,
 
 **No code?** Open a [New subject text](https://github.com/PaddyCH96/dmat-drill-room/issues/new?template=question.yml) issue. The form asks for the text, its area and six questions in a fixed format; a maintainer converts it into an entry. You do not need to install anything.
 
+**In the app:** open **⚙ Settings** and choose **Write a text**. The form keeps the shape for you — id, area, passage and six questions — checks it, and downloads a JSON file. Send that file together with the issue, or keep it handy: a maintainer drops it in with one command.
+
 **Writing code?** Add an object to the array in `src/questions-3.js` or `src/questions-4.js` (or a new file you register in `build.mjs` and `tests/check.mjs`). Give every question a `t` (one of the six keys in `QTYPES`) — the drill-by-question-type and weakest-first modes are built from it, and the checks require at least 8 questions of each type:
 
 ```js
@@ -38,7 +40,7 @@ Offline note: the service worker's cache name contains a hash of the built page,
 }
 ```
 
-If you already have the JSON object, the maintainer path is one command:
+The same JSON the app exports is what the importer reads, so the two paths fit together. If you already have the JSON object, the maintainer path is one command:
 
 ```sh
 node tools/import-question.mjs my-text.json

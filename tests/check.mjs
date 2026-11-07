@@ -204,5 +204,13 @@ check(/const b=e\.target\.closest\('\[data-lang\]'\)/.test(appSrc), 'app.js: the
 check(/'lang'/.test(appSrc.match(/const SYNC_KEYS\s*=\s*\[[^\]]*\]/)?.[0] || ''), 'app.js: the language choice should sync like the theme');
 console.log(`Interface language: ${strings.length} strings in en/de`);
 
+// 16. In-app authoring: the Settings link, the form and the export path (issue 3 step 2)
+check(/data-go="author"/.test(read('plan.js')), 'plan.js: Settings should link to the authoring view');
+check(/function viewAuthor/.test(appSrc), 'app.js: the in-app authoring view should exist');
+check(/function authorProblems/.test(appSrc), 'app.js: the authoring form must validate before export');
+check(/function authorExport/.test(appSrc), 'app.js: the authoring form must export JSON');
+check(/node tools\/import-question\.mjs/.test(appSrc), 'app.js: the export message should point at the importer');
+console.log('In-app authoring: form, checks and export path');
+
 if (failures) { console.error(`\n${failures} check(s) failed`); process.exit(1); }
 console.log('All checks passed ✓');

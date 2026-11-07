@@ -1145,6 +1145,7 @@ function viewSetup(){
   ${first?'':`<p class="muted" style="font-size:14.5px">${t('set.backupDetail')}</p>`}
   <div class="row">${first?'':`<button class="btn" data-act="export">${t('set.copyCode')}</button><button class="btn" data-act="download">${t('set.download')}</button>`}<button class="btn${first?'':' ghost'}" data-act="import">${t('set.importCode')}</button><button class="btn ghost" data-act="importfile">${t('set.importFile')}</button>${first?'':`<button class="btn ghost" data-act="reset" style="color:var(--bad)">${t('set.reset')}</button>`}<input type="file" id="backupfile" accept=".json,.txt,application/json,text/plain" hidden></div>
   <label for="codebox" class="muted" hidden>${t('set.backupCode')}</label><textarea id="codebox" hidden rows="3" style="width:100%;font-family:var(--mono);font-size:12px;background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px"></textarea><p id="codemsg" class="muted"></p></div>
+  ${first?'':`<div class="panel stack"><div class="row" style="justify-content:space-between;align-items:baseline"><h3>Contribute a text</h3><span class="tag">no code needed</span></div><p class="muted" style="max-width:64ch">You found a good dMAT-style text? Turn it into six questions here. The app checks the shape and exports a JSON file a maintainer can drop into the bank with one command.</p><div class="row"><button class="btn" data-go="author">Write a text</button></div></div>`}
   <p class="muted" style="font-size:13.5px">${t('set.unofficial')} <a href="https://www.d-mat.de/en/" target="_blank" rel="noopener">d-mat.de</a>.</p>
   </div>`;
 }
@@ -1751,7 +1752,7 @@ countdown();setInterval(countdown,60000);
 
 function render(){ window.__aiItems=[]; const v=$('#view'); if(session) return renderSession();
   if(!getSetup()&&tab!=='setup')tab='setup'; document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab)); document.getElementById('tabs').hidden=!getSetup();
-  v.innerHTML=resumeBanner()+({setup:viewSetup,today:viewToday,plan:viewPlan,practice:viewPractice,mock:viewMock,progress:viewProgress,guide:viewGuide,tricks:viewTricks})[tab]();
+  v.innerHTML=resumeBanner()+({setup:viewSetup,today:viewToday,plan:viewPlan,practice:viewPractice,mock:viewMock,progress:viewProgress,guide:viewGuide,tricks:viewTricks,author:viewAuthor})[tab]();
   bindView(); }
 
 /* ---------- PLAN ---------- */
@@ -2099,12 +2100,81 @@ function viewGuide(){
   <li>Subject-module refreshers: Khan Academy units on statistics, exponential functions, vectors, basic physics and microeconomics</li></ul></div></div>`;
 }
 
+/* ---------- AUTHOR A QUESTION ---------- */
+function authorWords(html){return html.replace(/<[^>]*>/g,' ').replace(/&[a-z]+;/gi,' ').split(/\s+/).filter(Boolean).length;}
+function authorQ(n){
+  return `<fieldset class="authorq" style="border:1px solid var(--line);border-radius:10px;padding:12px;display:grid;gap:10px"><legend style="padding:0 6px">Question ${n+1}</legend>
+    <label>Type<select id="au-q${n}-t">${Object.entries(QTYPES).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select></label>
+    <label>Question<input id="au-q${n}-q" type="text" autocomplete="off" spellcheck="true"></label>
+    <div class="grid2" style="gap:10px"><label>Option A<input id="au-q${n}-o0" type="text" autocomplete="off"></label><label>Option B<input id="au-q${n}-o1" type="text" autocomplete="off"></label><label>Option C<input id="au-q${n}-o2" type="text" autocomplete="off"></label><label>Option D<input id="au-q${n}-o3" type="text" autocomplete="off"></label></div>
+    <label>Correct option<select id="au-q${n}-a"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option></select></label>
+    <label>Why it is right<input id="au-q${n}-e" type="text" autocomplete="off" spellcheck="true"></label>
+    <label>Trick (one reusable sentence)<input id="au-q${n}-tip" type="text" autocomplete="off" spellcheck="true"></label>
+  </fieldset>`;
+}
+function viewAuthor(){
+  return `<div class="stack"><div class="panel stack"><div class="row" style="justify-content:space-between;align-items:baseline"><div><p class="eyebrow">Contribute</p><h2>Write a new text</h2></div><button class="btn ghost" data-go="setup">Back to Settings</button></div>
+  <p class="muted" style="max-width:68ch">Write original material (never copy official or copyrighted items). The passage must be self-contained: everything needed to answer the six questions has to be in it. Aim for 150–250 words; tables and simple inline SVG charts are fine. The form checks the shape, then exports a JSON file. A maintainer runs <code>node tools/import-question.mjs your-file.json</code> to add it to the bank.</p>
+  <div class="setup">
+    <label>id (lowercase, digits, dashes)<input id="au-id" type="text" autocomplete="off" spellcheck="false" placeholder="causal-loops"></label>
+    <label>Area<select id="au-area">${Object.entries(AREAS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select></label>
+    <label>Title<input id="au-title" type="text" autocomplete="off" spellcheck="true" placeholder="Short title"></label>
+    <label>Domain label<input id="au-domain" type="text" autocomplete="off" spellcheck="true" placeholder="Economics"></label>
+  </div>
+  <label style="display:grid;gap:6px">Passage (HTML allowed)<textarea id="au-text" rows="8" spellcheck="true" placeholder="<p>The passage. Include every formula or definition needed to answer the questions.</p>"></textarea></label>
+  ${[0,1,2,3,4,5].map(authorQ).join('')}
+  <div class="row" style="border-top:1px solid var(--line);padding-top:16px"><button class="btn primary" data-act="authorExport">Check &amp; download JSON</button><button class="btn" data-act="authorCopy">Copy JSON</button><span class="muted" style="font-size:14px">Nothing is sent anywhere; the file stays on your machine.</span></div>
+  <p id="authormsg" class="muted" style="max-width:68ch"></p>
+  </div></div>`;
+}
+function authorPassage(){
+  const g=id=>{const el=document.getElementById(id);return el?el.value.trim():'';};
+  return {id:g('au-id'),area:g('au-area'),title:g('au-title'),domain:g('au-domain'),text:g('au-text'),
+    qs:[0,1,2,3,4,5].map(n=>({t:g(`au-q${n}-t`),q:g(`au-q${n}-q`),o:[0,1,2,3].map(j=>g(`au-q${n}-o${j}`)),a:+g(`au-q${n}-a`),e:g(`au-q${n}-e`),tip:g(`au-q${n}-tip`)}))};
+}
+function authorProblems(p){
+  const out=[];const okType=k=>Object.prototype.hasOwnProperty.call(QTYPES,k);
+  if(!/^[a-z0-9-]+$/.test(p.id||''))out.push('id must contain only lowercase letters, digits and dashes');
+  if(!AREAS[p.area])out.push('pick a valid area');
+  if(!p.title)out.push('title is required');
+  if(!p.domain)out.push('domain is required');
+  const words=authorWords(p.text||'');
+  if(!p.text.trim())out.push('the passage is required');
+  else if(words<120)out.push(`the passage is too short (${words} words); aim for 150–250`);
+  else if(words>320)out.push(`the passage is too long (${words} words); aim for 150–250`);
+  if(PASSAGES.some(x=>x.id===p.id))out.push(`id "${p.id}" is already in the bank`);
+  p.qs.forEach((q,i)=>{const n=i+1;
+    if(!okType(q.t))out.push(`q${n}: pick a valid type`);
+    if(!q.q)out.push(`q${n}: the question is required`);
+    if(q.o.some(o=>!o))out.push(`q${n}: all four options are required`);
+    else if(new Set(q.o).size!==4)out.push(`q${n}: the four options must all be different`);
+    if(!Number.isInteger(q.a)||q.a<0||q.a>3)out.push(`q${n}: pick the correct option`);
+    if(!q.e)out.push(`q${n}: the explanation is required`);
+    if(!q.tip)out.push(`q${n}: the trick is required`);
+  });
+  return out;
+}
+function authorExport(){
+  const p=authorPassage(); const bad=authorProblems(p); const msg=document.getElementById('authormsg');
+  if(bad.length){msg.innerHTML='<b>Not ready yet:</b><ul style="margin:6px 0 0 18px">'+bad.map(x=>`<li>${esc(x)}</li>`).join('')+'</ul>';return;}
+  const blob=new Blob([JSON.stringify(p,null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`dmat-question-${p.id}.json`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(a.href);
+  msg.innerHTML=`Downloaded <code>${esc(a.download)}</code>. A maintainer can run <code>node tools/import-question.mjs ${esc(a.download)}</code> to add it to the bank.`;
+}
+function authorCopy(){
+  const p=authorPassage(); const bad=authorProblems(p); const msg=document.getElementById('authormsg'); const json=JSON.stringify(p,null,1);
+  if(bad.length){msg.innerHTML='<b>Not ready yet:</b><ul style="margin:6px 0 0 18px">'+bad.map(x=>`<li>${esc(x)}</li>`).join('')+'</ul>';return;}
+  const done=()=>{msg.textContent='JSON copied to the clipboard.';};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(json).then(done).catch(()=>{msg.textContent='Copy blocked; use Check & download JSON instead.';});return;}
+  const ta=document.createElement('textarea');ta.value=json;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done();}catch{msg.textContent='Copy blocked; use Check & download JSON instead.';}ta.remove();
+}
 /* ---------- events ---------- */
 function bindView(){
   const v=$('#view');
   v.onclick=e=>{
     const b=e.target.closest('button,[data-plan],a[data-task]'); if(!b)return;
     const d=b.dataset;
+    if(d.act==='authorExport')return authorExport();
+    if(d.act==='authorCopy')return authorCopy();
     if(d.act==='resume')return resumeLive();
     if(d.act==='dropresume'){clearLive();return render();}
     if(d.go)return setTab(d.go);

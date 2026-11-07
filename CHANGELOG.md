@@ -12,6 +12,7 @@ All notable changes to the dMAT Drill Room. Dates are in ISO format.
 - One Statistics text on standard error and sample size (6 questions), bringing the Subject Module bank to 43 texts / 258 questions.
 - An **Adaptive difficulty** section in ARCHITECTURE.md explaining what low/medium/high change in each generator, what Mixed and Adaptive contain, and how the mistake bank relates to levels.
 - A **New subject text** issue form for contributors who do not write JavaScript, plus `tools/import-question.mjs` to validate a JSON text, append it to the bank, rebuild and run the checks, restoring the file if anything fails.
+- The **Write a text** view in Settings: an in-app authoring form that checks a passage and its six questions (shape, word count, duplicate ids) and exports the JSON the importer reads — contributing a text no longer requires hand-writing code.
 
 ## [1.3.0] — 2026-09-21
 
