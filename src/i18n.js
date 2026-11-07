@@ -6,8 +6,10 @@
  * id itself. `tf('id', {n: 3})` fills `{n}` placeholders.
  *
  * The Subject Module texts and questions are deliberately NOT translated: the
- * real module is in English. Trick-card copy is also still English; the deck's
- * controls are translated. A few long resource descriptions stay English.
+ * real module is in English. Trick-card copy and the study-plan step text are
+ * also still English; a few helper strings stay English too.
+ * The deck controls, tabs, Settings, Today, Practice, Mock, Results, Progress
+ * and Tactics are translated.
  *
  * To add a view: put `t('some.key')` in the template and add the key here.
  * ------------------------------------------------------------------------- */
@@ -351,4 +353,5 @@ function applyLang(){
   document.querySelectorAll('[data-i18n-aria]').forEach(el=>{el.setAttribute('aria-label',t(el.dataset.i18nAria));});
   document.querySelectorAll('[data-i18n-html]').forEach(el=>{el.innerHTML=t(el.dataset.i18nHtml);});
   document.querySelectorAll('[data-lang]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.querySelectorAll('#tabs button[data-label]').forEach(b=>delete b.dataset.label);
 }

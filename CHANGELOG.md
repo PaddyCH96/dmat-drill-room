@@ -2,6 +2,21 @@
 
 All notable changes to the dMAT Drill Room. Dates are in ISO format.
 
+## [1.4.1] — 2026-11-07
+
+### Security
+- User-provided Subject Module content (passage text, questions, options, explanations, tricks) is sanitised before it is injected as HTML. The author form and `tools/import-question.mjs` reject scripts, forms, images and event handlers, and `safeHTML()` strips them at render time as a second layer.
+
+### Fixed
+- Importing a backup validates the exam setup and every log/progress entry; invalid ones are skipped and reported (`N invalid entries skipped`) instead of breaking the plan ("Invalid Date", empty days).
+- The same backup file can be imported more than once in a row.
+- The author-export object URL is revoked after the download completes, not synchronously with the click.
+- Switching language mid-session no longer restores a stale English tab label when the "tap again to leave" state expires; labels are rebuilt from the current language.
+- Exam-day mode is restored from a backup like the other keys.
+- Figure generator: fix a dead `step` comparison introduced with the field-step rotation rule.
+- Figure-sequence checks now sample 2,500 generated items and require it to actually produce the still/step/bounce/delayed modes, instead of only hand-built fixtures.
+- Backup-restore test now validates the new signature.
+
 ## [1.4.0] — 2026-11-07
 
 ### Added

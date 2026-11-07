@@ -551,7 +551,7 @@ function makeFigure(diff,used){
   // Rotation tied to distance moved: only meaningful when a move can be longer
   // than one field. A two-field ring walk turns 180° per image; x + 1 turns
   // 90°, 180°, 270° …
-  if(f.rot&&f.mover.kind==='ring'&&f.mover.step!=='1'&&Math.random()<.4)f.rot.mode='step';
+  if(f.rot&&f.mover.kind==='ring'&&f.mover.step!==1&&Math.random()<.4)f.rot.mode='step';
   // Colour that changes only when the figure bounces off the border.
   if(f.cols&&(f.mover.kind==='line'||f.mover.kind==='diag')&&Math.random()<.45)f.colMode='bounce';
   // Hold the orientation for the first few images, then start turning.
@@ -1215,8 +1215,10 @@ function saveSetup(e){
  * id itself. `tf('id', {n: 3})` fills `{n}` placeholders.
  *
  * The Subject Module texts and questions are deliberately NOT translated: the
- * real module is in English. Trick-card copy is also still English; the deck's
- * controls are translated. A few long resource descriptions stay English.
+ * real module is in English. Trick-card copy and the study-plan step text are
+ * also still English; a few helper strings stay English too.
+ * The deck controls, tabs, Settings, Today, Practice, Mock, Results, Progress
+ * and Tactics are translated.
  *
  * To add a view: put `t('some.key')` in the template and add the key here.
  * ------------------------------------------------------------------------- */
@@ -1560,6 +1562,7 @@ function applyLang(){
   document.querySelectorAll('[data-i18n-aria]').forEach(el=>{el.setAttribute('aria-label',t(el.dataset.i18nAria));});
   document.querySelectorAll('[data-i18n-html]').forEach(el=>{el.innerHTML=t(el.dataset.i18nHtml);});
   document.querySelectorAll('[data-lang]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.querySelectorAll('#tabs button[data-label]').forEach(b=>delete b.dataset.label);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1584,6 +1587,7 @@ function applyLang(){
 /* ===== app ===== */
 const $=(s,r=document)=>r.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const safeHTML=s=>{if(s==null)return '';let h=String(s);h=h.replace(/<\s*(script|style|iframe|object|embed|form|input|button|img|base|meta|link)\b[^>]*>[\s\S]*?<\s*\/\s*\1\s*>/gi,'');h=h.replace(/<\s*(script|style|iframe|object|embed|form|input|button|img|base|meta|link)\b[^>]*\/?>/gi,'');h=h.replace(/\son[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi,' ');h=h.replace(/javascript\s*:/gi,'blocked:');return h;};
 const DAY=86400000;
 const SYNC_KEYS=['log','qlog','cards','plandone','seenP','mistakes','level','todaydone','skin','lang','setup'];
 const BACKUP_KEYS=[...SYNC_KEYS,'examday'];
@@ -1744,7 +1748,7 @@ applyLang();
 document.querySelector('.skins').addEventListener('click',e=>{const b=e.target.closest('.skin');if(!b)return;store.set('skin',b.dataset.skin);applySkin(b.dataset.skin);});
 document.querySelector('.lang').addEventListener('click',e=>{const b=e.target.closest('[data-lang]');if(!b)return;LANG=b.dataset.lang;store.set('lang',LANG);applyLang();render();});
 let leaveArmed=null;
-function setTab(t){ if(session&&!session.finished&&leaveArmed!==t){ leaveArmed=t; const b=document.querySelector(`#tabs button[data-tab="${t}"]`); if(b){b.dataset.label=b.dataset.label||b.textContent; b.textContent=t('leave');} setTimeout(()=>{leaveArmed=null;document.querySelectorAll('#tabs button').forEach(x=>{if(x.dataset.label)x.textContent=x.dataset.label;});},3000); return; }
+function setTab(t){ if(session&&!session.finished&&leaveArmed!==t){ leaveArmed=t; const b=document.querySelector(`#tabs button[data-tab="${t}"]`); if(b){b.dataset.label=b.dataset.label||b.textContent; b.textContent=t('leave');} setTimeout(()=>{leaveArmed=null;document.querySelectorAll('#tabs button').forEach(x=>{x.textContent=t('tab.'+x.dataset.tab);delete x.dataset.label;});},3000); return; }
   leaveArmed=null; document.querySelectorAll('#tabs button').forEach(x=>{if(x.dataset.label)x.textContent=x.dataset.label;}); stopTimer(); session=null; tab=t; document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t)); render(); }
 document.getElementById('tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)setTab(b.dataset.tab)});
 function countdown(){const E=examDate();const el=$('#countdown');if(!el)return;if(!E){el.textContent=t('countdown.none');return;}const ms=E-new Date();const d=Math.ceil(dayDiff(ymd(new Date()),getSetup().exam));el.innerHTML=ms>0?(d<=0?t('countdown.today'):tf('countdown.days',{date:fmtDate(getSetup().exam),d})):t('countdown.finished');}
@@ -1980,9 +1984,9 @@ function renderFig(it,a,checked){ a=a||[null,null];
   <p class="muted">${t('ses.figPrompt')}</p><div class="figcols">${cols}</div>${checked?explainFig(it):''}</div>`; }
 function explainFig(it){ return `<div class="explain"><b>${t('ses.figRules')}</b><ul>${it.explain.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><div class="figrow" style="margin-top:8px">${it.answers.map((a,k)=>`<div class="frame">${frameSVG(a.options[a.correct])}<span class="eyebrow">${tf('ses.correctN',{n:k+1})}</span></div>`).join('')}</div>${aiBtn(it)}</div>`; }
 function renderSubj(it,a,checked,p){ const P=PBY[it.pid]; const pos=p.items.filter(x=>x.pid===it.pid); const k=pos.indexOf(it)+1;
-  return `<div class="subj"><div class="passage"><p class="eyebrow">${esc(P.domain)}</p><h3>${esc(P.title)}</h3>${P.text}</div>
-  <div class="stack"><p class="eyebrow">${tf('ses.qOf',{n:k,total:pos.length})}${session&&session.exam?'':' · '+(QTYPES[it.t]?qtypeName(it.t):'')}</p><p class="qtext">${it.q}</p><div class="mcq" role="radiogroup" aria-label="${t('ses.options')}">${it.o.map((o,j)=>{let c='';if(checked){if(j===it.a)c='right';else if(j===a)c='wrong';}return `<button class="${c}" data-mcq="${j}" role="radio" aria-checked="${a===j}" ${checked?'disabled':''}><span class="l">${'abcd'[j]})</span><span>${o}</span>${checked?`<span class="sr">${j===it.a?' — '+t('ses.correct'):j===a?' — '+t('ses.yourWrong'):''}</span>`:''}</button>`}).join('')}</div>${checked?subjExplain(it):''}</div></div>`; }
-function subjExplain(it){return `<div class="explain">${it.e}${tipOf(it)?`<p class="trick"><b>${t('ses.trick')}</b> ${tipOf(it)}</p>`:''}${aiBtn(it)}</div>`;}
+  return `<div class="subj"><div class="passage"><p class="eyebrow">${esc(P.domain)}</p><h3>${esc(P.title)}</h3>${safeHTML(P.text)}</div>
+  <div class="stack"><p class="eyebrow">${tf('ses.qOf',{n:k,total:pos.length})}${session&&session.exam?'':' · '+(QTYPES[it.t]?qtypeName(it.t):'')}</p><p class="qtext">${safeHTML(it.q)}</p><div class="mcq" role="radiogroup" aria-label="${t('ses.options')}">${it.o.map((o,j)=>{let c='';if(checked){if(j===it.a)c='right';else if(j===a)c='wrong';}return `<button class="${c}" data-mcq="${j}" role="radio" aria-checked="${a===j}" ${checked?'disabled':''}><span class="l">${'abcd'[j]})</span><span>${safeHTML(o)}</span>${checked?`<span class="sr">${j===it.a?' — '+t('ses.correct'):j===a?' — '+t('ses.yourWrong'):''}</span>`:''}</button>`}).join('')}</div>${checked?subjExplain(it):''}</div></div>`; }
+function subjExplain(it){return `<div class="explain">${safeHTML(it.e)}${tipOf(it)?`<p class="trick"><b>${t('ses.trick')}</b> ${safeHTML(tipOf(it))}</p>`:''}${aiBtn(it)}</div>`;}
 
 function finishPart(auto){
   const p=session.parts[session.pi]; if(p.sec!=='break'){
@@ -2008,7 +2012,7 @@ function renderResults(){
      if(it.type==='latin')inner=`<p>${t('res.yourAnswer')}: <b>${a??'—'}</b></p>${explainLatin(it)}`;
      if(it.type==='eq')inner=`<div class="eqs">${it.eqs.map(e=>`<div>${esc(e)}</div>`).join('')}</div><p>${t('res.yourAnswer')}: <b class="mono">${a?it.names.map((n,k)=>`${n}=${a[k]||'—'}`).join(', '):'—'}</b></p>${explainEq(it)}`;
      if(it.type==='fig')inner=renderFig(it,a,true);
-     if(it.type==='subj')inner=`<p class="eyebrow">${esc(PBY[it.pid].title)} · ${QTYPES[it.t]?qtypeName(it.t):''}</p><p style="font-weight:600">${it.q}</p><p>${t('res.yourAnswer')}: <b>${a!=null?'abcd'[a]+') '+it.o[a]:'—'}</b> · ${t('res.correctAnswer')}: <b>${'abcd'[it.a]}) ${it.o[it.a]}</b></p>${subjExplain(it)}`;
+     if(it.type==='subj')inner=`<p class="eyebrow">${esc(PBY[it.pid].title)} · ${QTYPES[it.t]?qtypeName(it.t):''}</p><p style="font-weight:600">${safeHTML(it.q)}</p><p>${t('res.yourAnswer')}: <b>${a!=null?safeHTML('abcd'[a]+') '+it.o[a]):'—'}</b> · ${t('res.correctAnswer')}: <b>${'abcd'[it.a]}) ${safeHTML(it.o[it.a])}</b></p>${subjExplain(it)}`;
      return `<details class="reviewitem" ${!ok&&isAnswered(it,a)?'open':''}><summary><span class="tag ${ok?'good':'bad'}">${ok?t('res.correct'):isAnswered(it,a)?t('res.wrong'):t('res.unanswered')}</span> ${t('res.item')} ${i+1} <span class="${p.itemT[i]>1.6*(SECTIONS[r.sec].target||75)?'tag warn':'muted mono'}">${Math.round(p.itemT[i])} s</span>${it.diff?`<span class="muted"> · ${it.diff}</span>`:''}</summary>${inner}</details>`}).join('');}).join('');
   return `<div class="stack"><div class="panel stack"><p class="eyebrow">${session.kind==='mock'?t('res.mock'):t('res.session')}</p>
   <div class="kpis"><div><div class="big">${pct}%</div><span class="muted">${tf('res.ofCorrect',{c:C,t:T})}</span></div></div>
@@ -2132,8 +2136,11 @@ function authorPassage(){
   return {id:g('au-id'),area:g('au-area'),title:g('au-title'),domain:g('au-domain'),text:g('au-text'),
     qs:[0,1,2,3,4,5].map(n=>({t:g(`au-q${n}-t`),q:g(`au-q${n}-q`),o:[0,1,2,3].map(j=>g(`au-q${n}-o${j}`)),a:+g(`au-q${n}-a`),e:g(`au-q${n}-e`),tip:g(`au-q${n}-tip`)}))};
 }
+const DANGER=/<\s*\/?\s*(script|style|iframe|object|embed|form|input|button|img|base|meta|link)\b|\son[a-z]+\s*=|javascript\s*:/i;
 function authorProblems(p){
   const out=[];const okType=k=>Object.prototype.hasOwnProperty.call(QTYPES,k);
+  if(DANGER.test(p.text||''))out.push('the passage must not contain scripts, forms, images or event handlers');
+  p.qs.forEach((q,i)=>{const n=i+1;['q','e','tip'].forEach(k=>{if(DANGER.test(q[k]||''))out.push(`q${n}: the ${k} must not contain scripts, forms, images or event handlers`);});q.o.forEach((o,j)=>{if(DANGER.test(o||''))out.push(`q${n}: option ${j+1} must not contain scripts, forms, images or event handlers`);});});
   if(!/^[a-z0-9-]+$/.test(p.id||''))out.push('id must contain only lowercase letters, digits and dashes');
   if(!AREAS[p.area])out.push('pick a valid area');
   if(!p.title)out.push('title is required');
@@ -2157,7 +2164,7 @@ function authorProblems(p){
 function authorExport(){
   const p=authorPassage(); const bad=authorProblems(p); const msg=document.getElementById('authormsg');
   if(bad.length){msg.innerHTML='<b>Not ready yet:</b><ul style="margin:6px 0 0 18px">'+bad.map(x=>`<li>${esc(x)}</li>`).join('')+'</ul>';return;}
-  const blob=new Blob([JSON.stringify(p,null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`dmat-question-${p.id}.json`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(a.href);
+  const blob=new Blob([JSON.stringify(p,null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`dmat-question-${p.id}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
   msg.innerHTML=`Downloaded <code>${esc(a.download)}</code>. A maintainer can run <code>node tools/import-question.mjs ${esc(a.download)}</code> to add it to the bank.`;
 }
 function authorCopy(){
@@ -2230,20 +2237,44 @@ function bindView(){
   }
   const bf=$('#backupfile');
   if(bf)bf.onchange=()=>{const file=bf.files&&bf.files[0];if(!file)return;const r=new FileReader();
-    r.onload=()=>{try{const raw=JSON.parse(String(r.result));const o=raw&&raw.v?raw.data:raw;const {n,setupRestored}=applyBackup(o);
+    r.onload=()=>{try{const raw=JSON.parse(String(r.result));const o=raw&&raw.v?raw.data:raw;const {n,setupRestored,skipped}=applyBackup(o);
       if(!n){backupNotice('That file contained no progress.');bf.value='';return;}
-      buildPlan(); countdown(); render(); backupNotice(`Imported and merged ${n} kind(s) of progress from the file.${setupRestored?' Exam setup restored.':''}`);}
+      buildPlan(); countdown(); render(); backupNotice(`Imported and merged ${n} kind(s) of progress from the file.${setupRestored?' Exam setup restored.':''}${skipped?` ${skipped} invalid entr${skipped===1?'y':'ies'} skipped.`:''}`); bf.value='';}
       catch(e){backupNotice('That file could not be read. Choose a JSON backup downloaded from this app.');bf.value='';}};
     r.readAsText(file);};
   v.onchange=e=>{const k=e.target.dataset.plan;if(!k)return;const done=store.get('plandone',{});done[k]=e.target.checked;store.set('plandone',done);render();};
   v.onkeydown=e=>{if(e.key==='Enter'&&e.target.dataset.eq!=null){const n=$(`#eq-${+e.target.dataset.eq+1}`);if(n)n.focus();else{const nb=$('[data-act="check"]')||$('[data-act="next"]');if(nb&&!nb.disabled)nb.click();}}};
 }
 function backupData(){const data={};BACKUP_KEYS.forEach(k=>{const v=store.get(k,null);if(v!=null)data[k]=v;});return data;}
+function validSetup(s){
+  if(!s||typeof s!=='object'||Array.isArray(s))return false;
+  const iso=/^\d{4}-\d{2}-\d{2}$/; const hm=/^\d{2}:\d{2}$/;
+  if(!iso.test(s.exam||'')||!iso.test(s.start||'')||!hm.test(s.time||'')||!hm.test(s.from||''))return false;
+  const d1=new Date(s.exam),d2=new Date(s.start);
+  if(isNaN(d1)||isNaN(d2))return false;
+  const h=+s.hours; if(!Number.isFinite(h)||h<1||h>8)return false;
+  return true;
+}
+function cleanRows(rows){ if(!Array.isArray(rows))return []; return rows.filter(r=>r&&typeof r==='object'&&!Array.isArray(r)&&Number.isFinite(+r.ts)&&typeof r.sec==='string'&&Number.isFinite(+r.correct)&&Number.isFinite(+r.total)&&Number.isFinite(+r.secs)); }
 function applyBackup(o){
-  let n=0,setupRestored=false;
-  BACKUP_KEYS.forEach(k=>{if(k==='setup'||!o||o[k]==null)return;store.set(k,mergeVal(k,store.get(k,null),o[k]));n++;});
-  if(o&&o.setup!=null){store.set('setup',o.setup);n++;setupRestored=true;}
-  return {n,setupRestored};
+  let n=0,setupRestored=false,skipped=0;
+  if(!o||typeof o!=='object'||Array.isArray(o))return {n,setupRestored,skipped:0};
+  BACKUP_KEYS.forEach(k=>{
+    if(k==='setup')return;
+    const v=o[k]; if(v==null)return;
+    if(k==='log'||k==='qlog'){
+      const c=cleanRows(v); if(c.length){store.set(k,mergeVal(k,store.get(k,null),c));n++;}
+      skipped+=v.length-c.length; return;
+    }
+    if(k==='examday'){ if(typeof v==='boolean'){ if(v!==store.get('examday',false))store.set('examday',v); n++; } else skipped++; return; }
+    if(k==='skin'||k==='lang'){ if(typeof v==='string'){store.set(k,mergeVal(k,store.get(k,null),v));n++;} else skipped++; return; }
+    if(typeof v!=='object'||Array.isArray(v)){skipped++;return;}
+    if(Object.keys(v).length===0)return;
+    if(k==='seenP'){ const bad=Object.entries(v).filter(([,s])=>!s||typeof s!=='object'||!Number.isFinite(+s.c)||!Number.isFinite(+s.t)); skipped+=bad.length; const good=Object.fromEntries(Object.entries(v).filter(([,s])=>s&&typeof s==='object'&&Number.isFinite(+s.c)&&Number.isFinite(+s.t))); if(Object.keys(good).length===0)return; store.set(k,mergeVal(k,store.get(k,null),good)); n++; return; }
+    store.set(k,mergeVal(k,store.get(k,null),v)); n++;
+  });
+  if(o.setup!=null){ if(validSetup(o.setup)){store.set('setup',o.setup);n++;setupRestored=true;} else skipped++; }
+  return {n,setupRestored,skipped};
 }
 function backupNotice(txt){const m=$('#codemsg');if(m)m.textContent=txt;}
 function actGlobal(a){
@@ -2263,9 +2294,9 @@ function actGlobal(a){
   if(a==='importfile'){const f=$('#backupfile');if(f)f.click();return;}
   if(a==='import'){ if(box.hidden||!box.value.trim()){box.hidden=false;box.value='';box.focus();msg.textContent='Paste your code in the box, then choose Import code again.';return;}
     try{const raw=JSON.parse(decodeURIComponent(escape(atob(box.value.trim()))));const o=raw&&raw.v?raw.data:raw;
-      const {n,setupRestored}=applyBackup(o);
+      const {n,setupRestored,skipped}=applyBackup(o);
       if(!n){msg.textContent='That code contained no progress.';return;}
-      buildPlan(); countdown(); render(); backupNotice(`Imported and merged ${n} kind(s) of progress.${setupRestored?' Exam setup restored.':''}`);}catch(e){msg.textContent='That code could not be read. Copy the whole code again and paste it.';}}
+      buildPlan(); countdown(); render(); backupNotice(`Imported and merged ${n} kind(s) of progress.${setupRestored?' Exam setup restored.':''}${skipped?` ${skipped} invalid entr${skipped===1?'y':'ies'} skipped.`:''}`);}catch(e){msg.textContent='That code could not be read. Copy the whole code again and paste it.';}}
 }
 
 /* ---------------------------------------------------------------------------

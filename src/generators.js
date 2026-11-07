@@ -232,7 +232,7 @@ function makeFigure(diff,used){
   // Rotation tied to distance moved: only meaningful when a move can be longer
   // than one field. A two-field ring walk turns 180° per image; x + 1 turns
   // 90°, 180°, 270° …
-  if(f.rot&&f.mover.kind==='ring'&&f.mover.step!=='1'&&Math.random()<.4)f.rot.mode='step';
+  if(f.rot&&f.mover.kind==='ring'&&f.mover.step!==1&&Math.random()<.4)f.rot.mode='step';
   // Colour that changes only when the figure bounces off the border.
   if(f.cols&&(f.mover.kind==='line'||f.mover.kind==='diag')&&Math.random()<.45)f.colMode='bounce';
   // Hold the orientation for the first few images, then start turning.

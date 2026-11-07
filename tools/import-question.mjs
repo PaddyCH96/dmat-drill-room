@@ -18,6 +18,8 @@ const FILE = resolve(ROOT, 'src/questions-3.js');
 
 const fail = (msg) => { console.error(`✗ ${msg}`); process.exit(1); };
 const words = (html) => html.replace(/<[^>]*>/g, ' ').replace(/&[a-z]+;/gi, ' ').split(/\s+/).filter(Boolean).length;
+const DANGER=/<\s*\/?\s*(script|style|iframe|object|embed|form|input|button|img|base|meta|link)\b|\son[a-z]+\s*=|javascript\s*:/i;
+const danger = (s,label) => { if (DANGER.test(s||'')) fail(`${label} must not contain scripts, forms, images or event handlers`); };
 
 const input = process.argv[2];
 if (!input) fail('Usage: node tools/import-question.mjs path/to/question.json');
@@ -31,6 +33,7 @@ if (!p || typeof p !== 'object' || Array.isArray(p)) fail('Expected one passage 
 if (!/^[a-z0-9-]+$/.test(p.id || '')) fail('id must contain only lowercase letters, digits and dashes');
 if (!AREAS.has(p.area)) fail(`area must be one of: ${[...AREAS].join(', ')}`);
 if (!p.title || !p.domain) fail('title and domain are required');
+danger(p.text, 'the passage');
 if (typeof p.text !== 'string' || !p.text.trim()) fail('text is required');
 const count = words(p.text);
 if (count < 120) fail(`text is too short (${count} words); aim for 150–250`);
@@ -41,6 +44,7 @@ if (!Array.isArray(p.qs) || p.qs.length !== 6) fail('write exactly 6 questions')
 p.qs.forEach((q, i) => {
   const n = i + 1;
   if (!TYPES.has(q.t)) fail(`q${n}: t must be one of ${[...TYPES].join(', ')}`);
+  danger(q.q, `q${n}`); danger(q.e, `q${n} explanation`); danger(q.tip, `q${n} trick`); q.o.forEach((o, j) => danger(o, `q${n} option ${j + 1}`));
   if (!q.q || typeof q.q !== 'string') fail(`q${n}: question text is required`);
   if (!Array.isArray(q.o) || q.o.length !== 4) fail(`q${n}: exactly 4 options are required`);
   if (new Set(q.o.map(String)).size !== 4) fail(`q${n}: options must all be different`);

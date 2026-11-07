@@ -138,7 +138,7 @@ console.log(`Archetype texts: ${arch.map((p) => p.id).join(', ')}`);
 check(/function resumeLive\(\)\{[\s\S]*?session=restored;\s*saveLive\(\);/.test(appSrc), 'app.js: resumeLive must re-save the restored session');
 check(/addEventListener\('pagehide',\s*\(\)\s*=>\s*saveLive\(\)\)/.test(appSrc), 'app.js: pagehide must save the live session');
 check(/addEventListener\('visibilitychange',\s*\(\)\s*=>\s*\{?\s*if\(document\.visibilityState==='hidden'\)\s*saveLive\(\)/.test(appSrc), 'app.js: hiding the page must save the live session');
-check(/if\(o&&o\.setup!=null\)\{store\.set\('setup',o\.setup\)/.test(appSrc), 'app.js: importing a backup must restore its exam setup');
+check(/if\(o\.setup!=null\)\{ if\(validSetup\(o\.setup\)\)\{store\.set\('setup',o\.setup\)/.test(appSrc), 'app.js: importing a backup must restore a valid exam setup');
 console.log('Session persistence and backup restore: OK');
 
 // 12. File backup: download a JSON file and import one back
@@ -146,7 +146,7 @@ check(/data-act="download"/.test(read('plan.js')) && /data-act="download"/.test(
 check(/data-act="importfile"/.test(read('plan.js')) && /data-act="importfile"/.test(appSrc), 'backup UI: both screens need an import-file button');
 check(/new Blob\(\[json\],\{type:'application\/json'\}\)/.test(appSrc), 'app.js: the backup must download as JSON');
 check(/dmat-drill-room-backup-/.test(appSrc) && /\.json`/.test(appSrc), 'app.js: the backup file needs a dated .json name');
-check(/function applyBackup\(o\)\{[\s\S]*?return \{n,setupRestored\};/.test(appSrc), 'app.js: imports should share one applyBackup path');
+check(/function applyBackup\(o\)\{[\s\S]*?return \{n,setupRestored,skipped\};/.test(appSrc), 'app.js: imports should share one applyBackup path');
 check(/const bf=\$\('#backupfile'\);[\s\S]*?r\.readAsText\(file\)/.test(appSrc), 'app.js: the file input must read the chosen file');
 console.log('File backup and import: OK');
 
@@ -211,6 +211,42 @@ check(/function authorProblems/.test(appSrc), 'app.js: the authoring form must v
 check(/function authorExport/.test(appSrc), 'app.js: the authoring form must export JSON');
 check(/node tools\/import-question\.mjs/.test(appSrc), 'app.js: the export message should point at the importer');
 console.log('In-app authoring: form, checks and export path');
+
+// 17. Figure-sequence generator actually produces the new modes over many draws
+{
+  const found={still:0,step:0,bounce:0,late:0};
+  for(let i=0;i<2500;i++){
+    const r=api.genFigures('high');
+    for(const x of r.explain){
+      if(/stays in the same field/.test(x))found.still++;
+      if(/for every field it moves/.test(x))found.step++;
+      if(/changes only when it bounces/.test(x))found.bounce++;
+      if(/holds its orientation/.test(x))found.late++;
+    }
+  }
+  check(found.still>0,'generator: no still mover produced in 2500 high-difficulty items');
+  check(found.step>0,'generator: no field-step rotation produced in 2500 high-difficulty items');
+  check(found.bounce>0,'generator: no bounce-only colour change produced in 2500 high-difficulty items');
+  check(found.late>0,'generator: no delayed rotation produced in 2500 high-difficulty items');
+  console.log(`Figure modes over 2500 items — still ${found.still}, step-rotation ${found.step}, bounce colour ${found.bounce}, delayed rotation ${found.late}`);
+}
+
+// 18. Bank content is safe to inject: the author form, the importer and the renderer all guard HTML
+{
+  const m=appSrc.match(/const safeHTML=.*\n/);
+  check(!!m,'app.js: safeHTML must exist');
+  if(m){
+    const safe=vm.runInNewContext(m[0]+';safeHTML');
+    check(!safe('<img src=x onerror=alert(1)>ok').includes('<img'),'safeHTML must drop images');
+    check(!safe('<p onerror="alert(1)">ok</p>').includes('onerror'),'safeHTML must strip event handlers');
+    check(!safe('<script>alert(1)</script>ok').includes('script'),'safeHTML must drop scripts');
+    check(!safe('javascript:alert(1)').includes('javascript:'),'safeHTML must strip javascript: URLs');
+    check(safe('a<br>b').includes('<br>'),'safeHTML must keep basic markup');
+  }
+  check(/DANGER/.test(appSrc),'app.js: the author form must reject dangerous HTML');
+  check(/DANGER/.test(readFileSync(toolPath,'utf8')),'importer: the importer must reject dangerous HTML');
+}
+console.log('Unsafe input handling: renderer, author form and importer');
 
 if (failures) { console.error(`\n${failures} check(s) failed`); process.exit(1); }
 console.log('All checks passed ✓');

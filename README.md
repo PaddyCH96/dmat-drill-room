@@ -8,7 +8,7 @@
 
 ---
 
-**New in 1.4.0:** download your progress as a dated JSON file, switch the interface to German, more varied generated Figure Sequences, and contribute a Subject Module text without writing code. See the [changelog](CHANGELOG.md).
+**New in 1.4.1:** contributed content is sanitised before it renders, backup imports validate their data, and a few rough edges are smoothed out. See the [changelog](CHANGELOG.md).
 
 ## Contents
 
@@ -34,14 +34,14 @@ The dMAT has a **Core Module** (Figure Sequences, Mathematical Equations and Lat
 | **Today screen** | Opens on today's steps. Each step has a button that starts the right session and ticks itself off when you finish. |
 | **Unlimited core puzzles** | Generated Figure Sequences (4×4 grids, movement, rotation, colour and *x + 1* rules), Mathematical Equations (values 1–20, one unique solution) and Latin Squares (5×5, one unique answer, step-by-step solution path). |
 | **Adaptive difficulty** | Low/medium/high change the puzzle itself (deduction steps, unknowns, moving figures). **Mixed** walks a set from 30% low to 35% high. **Adaptive** keeps a level per core section and moves you up after a set at 85% or better, down after one below 60%. |
-| **German interface** | Switch the interface between English and German next to the theme picker. Setup, Today, Practice, Results, Progress, Tactics and the trick-card controls are translated; the choice is saved and synced like the theme. The Subject Module texts, questions and trick-card copy stay English. |
+| **German interface** | Switch the interface between English and German next to the theme picker. Setup, Today, Practice, Mock, Results, Progress, Tactics and the trick-card controls are translated; the choice is saved and synced like the theme. The study-plan step text, Subject Module texts, questions and trick-card copy stay English. |
 | **Subject Module bank** | 43 original texts with 258 questions across 8 subjects: maths, statistics, physics/engineering, chemistry/biology, economics, business, computer science, social sciences/humanities — the areas the official materials name. Four of them mirror the archetypes in the official preparatory PDF (vector calculations, hydrostatics, optimal order quantity, social research methods). |
 | **Three ways to practise it** | By **subject** (a full 13-minute text), by **question type** (one type, mixed across all eight areas), or **weakest first** (questions drawn from the areas and types you score lowest on, with anything unanswered treated as unknown). |
 | **Exam and Learn modes** | Review at the end, or see the answer plus the trick behind it after every question. |
 | **Mock exams** | Two full mocks (3 × 25 min core → 30 min break → subject set), plus unlimited core-only mocks. |
 | **Mistake bank** | Every wrong answer comes back a day later. It leaves the bank after two correct answers in a row. |
 | **Pacing feedback** | A seconds-per-item chart plus warnings for rushing, overthinking and running out of time. Timed sets show a live "on pace" badge. |
-| **Trick cards** | 59 recall cards with spaced repetition (1 → 3 → 7 → 14 days). |
+| **Trick cards** | 67 recall cards with spaced repetition (1 → 3 → 7 → 14 days). |
 | **Exam-day mode** | Hides hints, labels and feedback until the end, just like the real test. |
 | **Keyboard shortcuts** | `A–E` Latin squares · `1–4`/`A–D` subject · `1–6` figures · `←/→` move · `F` flag · `Enter` check / next. |
 | **"Explain it differently"** | Optional. Add your own API key (Anthropic or any OpenAI-compatible endpoint, including a local model) and every explanation gets a button that asks for a second explanation in different words. |

@@ -1,6 +1,6 @@
 {
   "name": "dmat-drill-room",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Free, open-source practice app for the dMAT (digital Master Test) — core-module generators, subject-module tests, mock exams and a study plan built around your exam date.",
   "private": true,
   "type": "module",
