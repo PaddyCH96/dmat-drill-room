@@ -14,6 +14,11 @@ All notable changes to the dMAT Drill Room. Dates are in ISO format.
 - The question-type drill is no longer buried under the subject list; it is a first-class mode with per-type accuracy shown on each card.
 - The Progress breakdown and the weakest-first drill share one `accBy()` helper, so they read the same numbers.
 
+### Fixed
+- A resumed session is re-saved immediately, so a second reload no longer loses it.
+- Timed sessions snapshot the remaining time when the page is hidden or closed, and every 10 seconds while active.
+- The first screen offers **Import code**, and an imported backup restores the exam setup it carries instead of dropping it.
+
 ## [1.2.0] — 2026-09-19
 
 ### Added

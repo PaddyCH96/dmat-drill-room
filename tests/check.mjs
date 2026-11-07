@@ -134,5 +134,12 @@ for (const p of arch) {
 }
 console.log(`Archetype texts: ${arch.map((p) => p.id).join(', ')}`);
 
+// 11. Session persistence and backup restore wiring
+check(/function resumeLive\(\)\{[\s\S]*?session=restored;\s*saveLive\(\);/.test(appSrc), 'app.js: resumeLive must re-save the restored session');
+check(/addEventListener\('pagehide',\s*\(\)\s*=>\s*saveLive\(\)\)/.test(appSrc), 'app.js: pagehide must save the live session');
+check(/addEventListener\('visibilitychange',\s*\(\)\s*=>\s*\{?\s*if\(document\.visibilityState==='hidden'\)\s*saveLive\(\)/.test(appSrc), 'app.js: hiding the page must save the live session');
+check(/if\(o&&o\.setup!=null\)\{store\.set\('setup',o\.setup\)/.test(appSrc), 'app.js: importing a backup must restore its exam setup');
+console.log('Session persistence and backup restore: OK');
+
 if (failures) { console.error(`\n${failures} check(s) failed`); process.exit(1); }
 console.log('All checks passed ✓');
