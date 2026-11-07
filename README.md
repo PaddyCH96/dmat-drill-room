@@ -8,7 +8,7 @@
 
 ---
 
-**New in 1.3.0:** three ways to practise the Subject Module, adaptive difficulty, 43 texts / 258 questions, file backups, and a German interface that follows the theme switch. See the [changelog](CHANGELOG.md).
+**New in 1.4.0:** download your progress as a dated JSON file, switch the interface to German, more varied generated Figure Sequences, and contribute a Subject Module text without writing code. See the [changelog](CHANGELOG.md).
 
 ## Contents
 

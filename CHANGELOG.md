@@ -2,7 +2,7 @@
 
 All notable changes to the dMAT Drill Room. Dates are in ISO format.
 
-## [Unreleased]
+## [1.4.0] — 2026-11-07
 
 ### Added
 - **Download backup file** and **Import file** on both the first screen and Settings: a dated JSON file carrying the same progress as the backup code, so a backup can be kept outside the clipboard.
