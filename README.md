@@ -8,7 +8,7 @@
 
 ---
 
-**New in 1.1.0:** install it on your phone and use it offline, resume an interrupted session, print your plan, and a backup code that carries everything. See the [changelog](CHANGELOG.md).
+**New in 1.3.0:** three ways to practise the Subject Module, adaptive difficulty, 43 texts / 258 questions, file backups, and a German interface that follows the theme switch. See the [changelog](CHANGELOG.md).
 
 ## Contents
 
@@ -33,8 +33,9 @@ The dMAT has a **Core Module** (Figure Sequences, Mathematical Equations and Lat
 | **Study plan built around your date** | Enter your exam date, start date and daily hours, and get a plan of 1–60 days: baseline → technique → weak areas → high difficulty → core blocks → mocks → light review. |
 | **Today screen** | Opens on today's steps. Each step has a button that starts the right session and ticks itself off when you finish. |
 | **Unlimited core puzzles** | Generated Figure Sequences (4×4 grids, movement, rotation, colour and *x + 1* rules), Mathematical Equations (values 1–20, one unique solution) and Latin Squares (5×5, one unique answer, step-by-step solution path). |
-| **Adaptive difficulty** | Three levels. You move up after a set at 85% or better and down after one below 60%. |
-| **Subject Module bank** | 42 original texts with 252 questions across 8 subjects: maths, statistics, physics/engineering, chemistry/biology, economics, business, computer science, social sciences/humanities — the areas the official materials name. Four of them mirror the archetypes in the official preparatory PDF (vector calculations, hydrostatics, optimal order quantity, social research methods). |
+| **Adaptive difficulty** | Low/medium/high change the puzzle itself (deduction steps, unknowns, moving figures). **Mixed** walks a set from 30% low to 35% high. **Adaptive** keeps a level per core section and moves you up after a set at 85% or better, down after one below 60%. |
+| **German interface** | Switch the interface between English and German next to the theme picker. Setup, Today, Practice, Results, Progress, Tactics and the trick-card controls are translated; the choice is saved and synced like the theme. The Subject Module texts, questions and trick-card copy stay English. |
+| **Subject Module bank** | 43 original texts with 258 questions across 8 subjects: maths, statistics, physics/engineering, chemistry/biology, economics, business, computer science, social sciences/humanities — the areas the official materials name. Four of them mirror the archetypes in the official preparatory PDF (vector calculations, hydrostatics, optimal order quantity, social research methods). |
 | **Three ways to practise it** | By **subject** (a full 13-minute text), by **question type** (one type, mixed across all eight areas), or **weakest first** (questions drawn from the areas and types you score lowest on, with anything unanswered treated as unknown). |
 | **Exam and Learn modes** | Review at the end, or see the answer plus the trick behind it after every question. |
 | **Mock exams** | Two full mocks (3 × 25 min core → 30 min break → subject set), plus unlimited core-only mocks. |
@@ -59,7 +60,7 @@ The dMAT has a **Core Module** (Figure Sequences, Mathematical Equations and Lat
 
 **Option 2: use the hosted version**
 
-If the repo owner has enabled GitHub Pages, open **https://paddych96.github.io/dmat-drill-room/**.
+Open the hosted version at **https://paddych96.github.io/dmat-drill-room/**.
 
 **Install it on a phone**
 

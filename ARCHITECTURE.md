@@ -6,8 +6,9 @@ A tour of the code, for anyone who wants to change it. There is no framework, no
 
 ```
 src/generators.js         puzzle generators (Latin squares, equations, figures)
-src/questions-1/2/3/4.js  the Subject Module bank (42 texts, 252 questions)
+src/questions-1/2/3/4.js  the Subject Module bank (43 texts, 258 questions)
 src/plan.js               exam setup → study plan; the Settings view
+src/i18n.js              English/German interface strings and the t()/tf() helpers
 src/app.js                storage, sync, the session engine, most views
 src/subjects-and-tricks.js areas, question types, trick cards
 src/ai.js                 optional "Explain it differently" providers
@@ -32,9 +33,11 @@ Everything persistent goes through `store` (a thin `localStorage` wrapper in `ap
 | `cards` | trick card box and due date, for spaced repetition |
 | `plandone`, `todaydone` | ticked days and ticked steps |
 | `seenP` | last score per subject text |
-| `skin`, `examday`, `prsel` | theme, exam-day mode, last practice selection |
+| `skin`, `lang`, `examday`, `prsel` | theme, interface language, exam-day mode, last practice selection |
 | `live` | an unfinished session, so it can be resumed after a reload |
 | `ai` | the optional provider settings and API key |
+
+The interface language is stored as `lang` and travels with the theme. `src/i18n.js` holds `STRINGS` (an `en` and a `de` text per key), `t(id)` and `tf(id, vars)`; `applyLang()` rewrites the shell's `data-i18n` elements and the active view is re-rendered. The Subject Module texts and questions stay English on purpose, and trick-card copy is still English; the deck controls are translated. Missing keys fall back to English, then to the key itself.
 
 Two lists in `app.js` decide what travels: `SYNC_KEYS` (synced to the Claude account when the page runs as an artifact) and `BACKUP_KEYS` (the backup code). **`ai` and `live` are in neither** — the API key stays in the browser that entered it, and a half-finished session is local by nature. `tests/check.mjs` fails if that ever changes.
 
@@ -46,6 +49,20 @@ Two lists in `app.js` decide what travels: `SYNC_KEYS` (synced to the Claude acc
 - **Rendering** is a full re-render: `renderSession()` builds a template string, `bindView()` attaches one click handler. Event targets are identified by `data-` attributes, which is also how the keyboard shortcuts work — they find the matching button and click it.
 - **Saving** happens on every answer (`saveLive`), so a reload can restore the session with its remaining time.
 - **Finishing** (`finishPart`) scores the part, writes the logs, updates the mistake bank and the adaptive level, then either starts the next part or shows the results.
+
+## Difficulty and the adaptive level
+
+`low`, `medium` and `high` are passed straight to each core generator, so they change the item, not a label:
+
+- **Latin Squares:** the solution needs 1 / 2–4 / 5–12 deduction steps, and the grid leaves 12–17 / 10–14 / 8–12 givens.
+- **Equations:** 2 / 3 / 4 unknowns. Low may include one single-variable equation; medium and high require every equation to have more than one unknown; high also requires the first equation to have three or more. Every system is brute-forced to exactly one solution in 1–20.
+- **Figure Sequences:** 1–2 / 2–3 / 3–4 moving figures, and 0 / 0–1 / 1–2 extras (rotation or colour). High also forces an *x + 1* rule 70% of the time. Movement is a line, a diagonal, a border walk (step 1, 2 or *x + 1*) or a repeating four-direction cycle; rotation is fixed or *x + 1*; colour cycles through two or three colours.
+
+`mixed` is not a generator level. `mixedDiffs(n)` gives the first 30% of a set low items, the next 35% medium and the rest high, so a set walks from easier to harder. Mocks use `mixed` for all three core sections.
+
+`adaptive` also builds a per-set difficulty list, from the section's saved level: level 1 is 50% low / 40% medium / 10% high, level 2 is 30/35/35 and level 3 is 10/30/60. After an adaptive set, `finishPart` compares correct ÷ total: 85% or better moves that section up (max 3), below 60% moves it down (min 1), and anything between stays. Levels live in `level`, default to 2, and are per core section — changing one does not touch the other two. Only adaptive sets change a level.
+
+The mistake bank is independent of difficulty: every answered item in any practice, mock, drill or bank session passes through `recordOutcome`, so a wrong item enters `mistakes` whatever level produced it. The bank brings an item back after a day, requires two correct answers in a row to clear it, and keeps at most 15 items per core section. Clearing the bank does not reset the adaptive level.
 
 ## The study plan
 

@@ -79,5 +79,10 @@ const TRICKS=[
  {g:'Subject Module',f:'You do not know the topic of the text',b:'It does not matter. Every text is self-contained: the rule, formula or definition you need is printed in it. Hunt for the sentence, do not hunt your memory.'},
  {g:'Subject Module',f:'Where the marks actually are',b:'Not domain knowledge \u2014 speed at finding the right sentence, row or cell and applying it once. That skill is the same in a physics text and an economics one.'},
  {g:'Exam habits',f:'Before you answer a Latin square',b:'Check the ? row and column first. About a third of items are solved right there.'},
- {g:'Exam habits',f:'One minute left in a section',b:'Stop solving and put a guess on every blank item.'},
+  {g:'Exam habits',f:'One minute left in a section',b:'Stop solving and put a guess on every blank item.'},
+  {g:'Figure Sequences',f:'Border walk with step 2 reaches a corner — what next?',b:'A corner is just another border field. Count it once and continue clockwise; the 12-field ring wraps, it never restarts at the corner.'},
+  {g:'Figure Sequences',f:'x + 1 rotation: what is the total turn after each image?',b:'From image 1 the running totals are 90°, 270°, 180°, 180°, 270°. Add the next +90° each time and subtract 360° whenever you pass it.'},
+  {g:'Figure Sequences',f:'Straight-line mover at the edge — bounce or wrap?',b:'Bounce reverses direction (4 then 3); wrap jumps to the opposite edge (4 then 1). Check the next image to tell them apart.'},
+  {g:'Figure Sequences',f:'Which figure do the three options really disagree on?',b:'Ignore every cell where all three options match. The first cell where two options differ is the one figure you must solve.'},
+  {g:'Figure Sequences',f:'Two-colour vs three-colour cycle',b:'Two colours flip every image; three colours rotate A→B→C→A, so image 4 repeats image 1. Check the fastest figure’s colour first.'},
 ];

@@ -1,0 +1,165 @@
+name: New subject text
+description: Propose a text and six questions for the Subject Module bank. No coding needed.
+title: "[Question bank] "
+labels: ["content"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping. You do **not** need to know JavaScript or run the build: fill this in and a maintainer will turn it into an entry.
+
+        Please write **original** material. Do not copy official dMAT/TestAS questions or any copyrighted text. Every answer must follow from your text plus basic school maths.
+
+  - type: input
+    id: passage_title
+    attributes:
+      label: Text title
+      placeholder: e.g. Standard Error and Sample Size
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Subject area
+      options:
+        - Mathematics
+        - Statistics & Probability
+        - Physics & Engineering
+        - Chemistry & Biology
+        - Economics
+        - Business & Finance
+        - Computer Science
+        - Social Sciences & Humanities
+    validations:
+      required: true
+
+  - type: input
+    id: domain
+    attributes:
+      label: Domain label
+      description: The small label shown above the text, e.g. Statistics or Engineering.
+      placeholder: e.g. Statistics
+    validations:
+      required: true
+
+  - type: textarea
+    id: passage
+    attributes:
+      label: The text (150–250 words)
+      description: Include every definition and formula the questions need. Tables are welcome.
+      render: markdown
+      placeholder: |
+        Paste the text here. Keep it self-contained: a reader should not need outside knowledge.
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## The six questions
+
+        Use one block per question and keep this format:
+
+        ```
+        Question: ...
+        Options: A) ... | B) ... | C) ... | D) ...
+        Correct: B
+        Explanation: why that answer is right
+        Trick: the reusable method, one or two sentences
+        Type: calc | data | concept | multi | except | transfer
+        ```
+
+  - type: textarea
+    id: q1
+    attributes:
+      label: Question 1
+      value: |
+        Question:
+        Options: A) ... | B) ... | C) ... | D) ...
+        Correct: A
+        Explanation:
+        Trick:
+        Type: concept
+    validations:
+      required: true
+
+  - type: textarea
+    id: q2
+    attributes:
+      label: Question 2
+      value: |
+        Question:
+        Options: A) ... | B) ... | C) ... | D) ...
+        Correct: A
+        Explanation:
+        Trick:
+        Type: calc
+    validations:
+      required: true
+
+  - type: textarea
+    id: q3
+    attributes:
+      label: Question 3
+      value: |
+        Question:
+        Options: A) ... | B) ... | C) ... | D) ...
+        Correct: A
+        Explanation:
+        Trick:
+        Type: data
+    validations:
+      required: true
+
+  - type: textarea
+    id: q4
+    attributes:
+      label: Question 4
+      value: |
+        Question:
+        Options: A) ... | B) ... | C) ... | D) ...
+        Correct: A
+        Explanation:
+        Trick:
+        Type: multi
+    validations:
+      required: true
+
+  - type: textarea
+    id: q5
+    attributes:
+      label: Question 5
+      value: |
+        Question:
+        Options: A) ... | B) ... | C) ... | D) ...
+        Correct: A
+        Explanation:
+        Trick:
+        Type: except
+    validations:
+      required: true
+
+  - type: textarea
+    id: q6
+    attributes:
+      label: Question 6
+      value: |
+        Question:
+        Options: A) ... | B) ... | C) ... | D) ...
+        Correct: A
+        Explanation:
+        Trick:
+        Type: transfer
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: originality
+    attributes:
+      label: Originality
+      options:
+        - label: This text and its questions are my own original work and are not copied from official or copyrighted material.
+          required: true
+        - label: I checked every calculation and every answer key.
+          required: true

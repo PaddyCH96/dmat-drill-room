@@ -10,8 +10,11 @@
  *                            brute-force checked to have exactly one solution.
  *   genFigures(difficulty)   A 4x4 matrix sequence following the official rules
  *                            (straight and diagonal movement with bounces,
- *                            border walks, x + 1 steps, rotation, colour), plus
- *                            three distinct options for each of images 5 and 6.
+ *                            border walks, x + 1 steps, rotation, colour) and a
+ *                            few variations: a still figure, rotation tied to
+ *                            distance moved, a late rotation, and colour that
+ *                            changes only on a bounce. Three distinct options
+ *                            for each of images 5 and 6.
  *
  * Difficulty is 'low' | 'medium' | 'high'. Each generator retries until it has
  * a valid item, so callers never see a malformed one. tests/check.mjs verifies
@@ -195,10 +198,25 @@ function makeMover(){
   return m;
 }
 function posAt(m,t){
+  if(m.kind==='still')return [m.r,m.c];
   if(m.kind==='line'){const p=bounce(4,m.start,m.dir,t);return m.axis==='h'?[m.fixed,p]:[p,m.fixed];}
   if(m.kind==='diag'){const p=bounce(m.seg.length,m.start,m.dir,t);return m.seg[p];}
   if(m.kind==='ring'){const d=m.step==='x+1'?tri(t):m.step*t;const i=(((m.start+m.dir*d)%12)+12)%12;return RING[i];}
   if(m.kind==='cycle'){let r=m.r,c=m.c;for(let k=0;k<t;k++){r+=m.seq[k%4][0];c+=m.seq[k%4][1];}return [r,c];}
+}
+function movedSteps(m,t){
+  if(m.kind==='ring')return m.step==='x+1'?tri(t):m.step*t;
+  if(m.kind==='line'||m.kind==='diag'||m.kind==='cycle')return t;
+  return 0;
+}
+function bounceCount(m,t){
+  let n=0;
+  for(let s=1;s<=t;s++){
+    const a=posAt(m,s-1),b=posAt(m,s),c=posAt(m,s+1);
+    const d1=[b[0]-a[0],b[1]-a[1]],d2=[c[0]-b[0],c[1]-b[1]];
+    if((d1[0]&&d2[0]&&Math.sign(d1[0])!==Math.sign(d2[0]))||(d1[1]&&d2[1]&&Math.sign(d1[1])!==Math.sign(d2[1])))n++;
+  }
+  return n;
 }
 function makeFigure(diff,used){
   const shape=RNG.pick(SHAPES.filter(s=>!used.has(s))); used.add(shape);
@@ -211,20 +229,35 @@ function makeFigure(diff,used){
   const nc=RNG.pick([2,2,3]); const cl=RNG.shuffle(COLN2).slice(0,nc);
   if(opts.includes('col')) f.cols=cl; else f.color=cl[0];
   if(f.rot&&f.rot.mode===2&&!ORIENTED[shape])f.rot=null;
+  // Rotation tied to distance moved: only meaningful when a move can be longer
+  // than one field. A two-field ring walk turns 180° per image; x + 1 turns
+  // 90°, 180°, 270° …
+  if(f.rot&&f.mover.kind==='ring'&&f.mover.step!=='1'&&Math.random()<.4)f.rot.mode='step';
+  // Colour that changes only when the figure bounces off the border.
+  if(f.cols&&(f.mover.kind==='line'||f.mover.kind==='diag')&&Math.random()<.45)f.colMode='bounce';
+  // Hold the orientation for the first few images, then start turning.
+  if(f.rot&&Math.random()<.3)f.rotDelay=RNG.pick([2,3]);
   return f;
 }
 function stateAt(f,t){
   const [r,c]=posAt(f.mover,t);
+  const d=f.rotDelay||0; const tt=Math.max(0,t-(d?d-1:0));
   let rot=f.baseRot;
-  if(f.rot){const k=f.rot.mode==='x+1'?tri(t):f.rot.mode*t; rot=(((f.baseRot+f.rot.dir*90*k)%360)+360)%360;}
-  const color=f.cols?f.cols[t%f.cols.length]:f.color;
+  if(f.rot){const k=f.rot.mode==='x+1'?tri(tt):f.rot.mode==='step'?movedSteps(f.mover,tt):f.rot.mode*tt; rot=(((f.baseRot+f.rot.dir*90*k)%360)+360)%360;}
+  const color=f.cols?(f.colMode==='bounce'?f.cols[bounceCount(f.mover,t)%f.cols.length]:f.cols[t%f.cols.length]):f.color;
   return {shape:f.shape,r,c,rot,color};
 }
 function figDesc(f){
   const nm={tri:'triangle',hex:'hexagon',sq:'square',half:'half-circle',ell:'L-corner',trap:'arrow-head',arrow:'arrow',circ:'circle'}[f.shape];
   let s=`The ${f.cols?'':f.color+' '}${nm} ${f.mover.desc}`;
-  if(f.rot){s+=f.rot.mode==='x+1'?`; it turns 90° ${f.rot.dir>0?'right':'left'} x + 1 times (1×, 2×, 3× …)`:`; it turns ${90*f.rot.mode}° to the ${f.rot.dir>0?'right':'left'} each image`;}
-  if(f.cols){s+=`; its colour cycles ${f.cols.join(' → ')}`;}
+  if(f.rotDelay)s+=`; it holds its orientation for the first ${f.rotDelay} images`;
+  if(f.rot){
+    const dir=f.rot.dir>0?'right':'left';
+    if(f.rot.mode==='x+1')s+=`; it turns 90° ${dir} x + 1 times (1×, 2×, 3× …)`;
+    else if(f.rot.mode==='step')s+=`; it turns 90° ${dir} for every field it moves`;
+    else s+=`; it turns ${90*f.rot.mode}° to the ${dir} each image`;
+  }
+  if(f.cols){s+=f.colMode==='bounce'?`; its colour stays the same and changes only when it bounces off the border`:`; its colour cycles ${f.cols.join(' → ')}`;}
   return s+'.';
 }
 const key=fr=>fr.map(s=>`${s.shape}${s.r}${s.c}${s.rot}${s.color}`).sort().join('|');
@@ -247,6 +280,7 @@ function genFigures(diff){
   const nf={low:RNG.pick([1,1,2]),medium:RNG.pick([2,3]),high:RNG.pick([3,4])}[diff];
   for(let attempt=0;attempt<300;attempt++){
     const used=new Set(); const figs=Array.from({length:nf},()=>makeFigure(diff,used));
+    if(nf>1&&Math.random()<.18){const f=figs[RNG.int(0,nf-1)];f.mover={kind:'still',r:RNG.int(0,3),c:RNG.int(0,3),desc:'stays in the same field while the other figures move'};}
     if(diff==='high'&&!figs.some(f=>f.mover.step==='x+1'||(f.rot&&f.rot.mode==='x+1'))&&Math.random()<.7){const f=figs[0];if(f.mover.kind==='ring')f.mover.step='x+1';else if(ORIENTED[f.shape]){f.rot={dir:1,mode:'x+1'};}}
     if(diff==='high'){for(const f of figs)f.mover.desc=makeDescFix(f.mover);}
     const frames=[0,1,2,3,4,5].map(t=>figs.map(f=>stateAt(f,t)));

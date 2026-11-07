@@ -2,6 +2,17 @@
 
 All notable changes to the dMAT Drill Room. Dates are in ISO format.
 
+## [Unreleased]
+
+### Added
+- **Download backup file** and **Import file** on both the first screen and Settings: a dated JSON file carrying the same progress as the backup code, so a backup can be kept outside the clipboard.
+- Five more Figure Sequences trick cards: border walks with step 2, the running turn of an *x + 1* rotation, bounce versus wrap, finding the figure the options disagree on, and two- versus three-colour cycles.
+- More varied generated Figure Sequences: a figure can stay still for one image, rotations can advance by a fixed step (including *x + 1*), line and diagonal movers can bounce instead of wrapping, and some rotation rules start one image late. The explanation text names the rule that was used.
+- A **German interface** next to the theme picker. The setup screen, Today, Practice, Results, Progress, Tactics and the trick-card controls are translated, the choice is stored as `lang` and synced like the theme, and English remains the fallback. Subject texts, questions and trick-card copy stay English on purpose.
+- One Statistics text on standard error and sample size (6 questions), bringing the Subject Module bank to 43 texts / 258 questions.
+- An **Adaptive difficulty** section in ARCHITECTURE.md explaining what low/medium/high change in each generator, what Mixed and Adaptive contain, and how the mistake bank relates to levels.
+- A **New subject text** issue form for contributors who do not write JavaScript, plus `tools/import-question.mjs` to validate a JSON text, append it to the bank, rebuild and run the checks, restoring the file if anything fails.
+
 ## [1.3.0] — 2026-09-21
 
 ### Added

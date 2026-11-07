@@ -1,22 +1,22 @@
 // Sanity checks for the question banks, puzzle generators and plan builder.
 // Usage: node tests/check.mjs     (no dependencies needed)
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import vm from 'node:vm';
 
 const read = (f) => readFileSync(new URL(`../src/${f}`, import.meta.url), 'utf8');
-const code = ['generators.js', 'questions-1.js', 'questions-2.js', 'questions-3.js', 'questions-4.js', 'plan.js'].map(read).join('\n');
+const code = ['generators.js', 'questions-1.js', 'questions-2.js', 'questions-3.js', 'questions-4.js', 'plan.js', 'i18n.js'].map(read).join('\n');
 // plan.js expects a few globals that live in app.js at runtime
 const DAY = 86400000;
 const memory = {};
 const storeStub = { get: (k, d) => (k in memory ? memory[k] : d), set: (k, v) => { memory[k] = v; } };
 const ctx = vm.createContext({ console, DAY, store: storeStub, Sync: { queue() {} }, document: undefined });
-const api = vm.runInContext(`${code}\n;({genLatin,genEquations,genFigures,lsSolve,PASSAGES,MORE,MORE2,OFFICIAL,daySequence,DAY_TYPES,buildPlan,getPlan:()=>({PLAN,TASKS}),addDays,ymd})`, ctx);
+const api = vm.runInContext(`${code}\n;({genLatin,genEquations,genFigures,lsSolve,posAt,stateAt,figDesc,movedSteps,bounceCount,STRINGS,t,tf,PASSAGES,MORE,MORE2,MORE3,OFFICIAL,daySequence,DAY_TYPES,buildPlan,getPlan:()=>({PLAN,TASKS}),addDays,ymd})`, ctx);
 
 let failures = 0;
 const check = (ok, msg) => { if (!ok) { failures++; console.error('✗', msg); } };
 
 // 1. Question bank shape
-const all = [...api.PASSAGES, ...api.MORE, ...api.MORE2, ...api.OFFICIAL];
+const all = [...api.PASSAGES, ...api.MORE, ...api.MORE2, ...api.OFFICIAL, ...api.MORE3];
 const ids = new Set();
 for (const p of all) {
   check(!ids.has(p.id), `duplicate passage id ${p.id}`); ids.add(p.id);
@@ -140,6 +140,69 @@ check(/addEventListener\('pagehide',\s*\(\)\s*=>\s*saveLive\(\)\)/.test(appSrc),
 check(/addEventListener\('visibilitychange',\s*\(\)\s*=>\s*\{?\s*if\(document\.visibilityState==='hidden'\)\s*saveLive\(\)/.test(appSrc), 'app.js: hiding the page must save the live session');
 check(/if\(o&&o\.setup!=null\)\{store\.set\('setup',o\.setup\)/.test(appSrc), 'app.js: importing a backup must restore its exam setup');
 console.log('Session persistence and backup restore: OK');
+
+// 12. File backup: download a JSON file and import one back
+check(/data-act="download"/.test(read('plan.js')) && /data-act="download"/.test(appSrc), 'backup UI: both the first-run screen and Settings need a download button');
+check(/data-act="importfile"/.test(read('plan.js')) && /data-act="importfile"/.test(appSrc), 'backup UI: both screens need an import-file button');
+check(/new Blob\(\[json\],\{type:'application\/json'\}\)/.test(appSrc), 'app.js: the backup must download as JSON');
+check(/dmat-drill-room-backup-/.test(appSrc) && /\.json`/.test(appSrc), 'app.js: the backup file needs a dated .json name');
+check(/function applyBackup\(o\)\{[\s\S]*?return \{n,setupRestored\};/.test(appSrc), 'app.js: imports should share one applyBackup path');
+check(/const bf=\$\('#backupfile'\);[\s\S]*?r\.readAsText\(file\)/.test(appSrc), 'app.js: the file input must read the chosen file');
+console.log('File backup and import: OK');
+
+// 13. Non-developer contribution path: an issue form and a validating importer
+const formPath = new URL('../.github/ISSUE_TEMPLATE/question.yml', import.meta.url);
+const toolPath = new URL('../tools/import-question.mjs', import.meta.url);
+check(existsSync(formPath), 'issue template: .github/ISSUE_TEMPLATE/question.yml is missing');
+check(existsSync(toolPath), 'importer: tools/import-question.mjs is missing');
+if (existsSync(formPath)) {
+  const form = readFileSync(formPath, 'utf8');
+  check(/name:\s*New subject text/.test(form), 'issue template: needs a title');
+  check(['q1', 'q2', 'q3', 'q4', 'q5', 'q6'].every((id) => form.includes(`id: ${id}`)), 'issue template: needs six question fields');
+  check(/required: true/.test(form), 'issue template: fields must be required');
+}
+if (existsSync(toolPath)) {
+  const tool = readFileSync(toolPath, 'utf8');
+  check(/questions-3\.js/.test(tool), 'importer: should append to src/questions-3.js');
+  check(/writeFileSync\(FILE, original\)/.test(tool), 'importer: must restore the file when checks fail');
+  check(/tests\/check\.mjs/.test(tool), 'importer: should run the checks after appending');
+}
+console.log('Non-developer contribution path: OK');
+
+// 14. Figure-sequence variations: still, distance-linked rotation, bounce colour, late rotation
+const ring = { kind: 'ring', start: 0, dir: 1, step: 2, desc: 'moves two fields clockwise' };
+const stepFig = { shape: 'tri', mover: ring, rot: { dir: 1, mode: 'step' }, baseRot: 0, rotDelay: 2, color: 'black' };
+check(api.stateAt(stepFig, 1).rot === 0, 'figures: a late rotation must hold for the first images');
+check(api.stateAt(stepFig, 2).rot === 180, 'figures: rotation tied to a two-field move should turn 180°');
+check(api.stateAt(stepFig, 3).rot === 0, 'figures: two 180° turns should return to the start');
+
+const line = { kind: 'line', axis: 'h', fixed: 0, start: 0, dir: 1, step: 1, desc: 'moves horizontally' };
+const bounceFig = { shape: 'tri', mover: line, rot: null, baseRot: 0, cols: ['black', 'pink'], colMode: 'bounce' };
+check(api.stateAt(bounceFig, 2).color === 'black', 'figures: bounce colour should not change before the wall');
+check(api.stateAt(bounceFig, 3).color === 'pink', 'figures: bounce colour should change at the wall');
+check(api.stateAt(bounceFig, 5).color === 'pink', 'figures: bounce colour should hold between bounces');
+check(api.stateAt(bounceFig, 6).color === 'black', 'figures: bounce colour should change on the next bounce');
+
+const still = { kind: 'still', r: 1, c: 2, desc: 'stays in the same field while the other figures move' };
+check(JSON.stringify(api.posAt(still, 7)) === '[1,2]', 'figures: a still figure must not move');
+check(/stays in the same field/.test(api.figDesc({ shape: 'tri', mover: still, rot: null, color: 'black' })), 'figures: a still figure needs its plain-English line');
+
+const delayed = { shape: 'tri', mover: still, rot: { dir: 1, mode: 1 }, baseRot: 0, rotDelay: 3 };
+check(api.stateAt(delayed, 2).rot === 0 && api.stateAt(delayed, 3).rot === 90, 'figures: a delayed rotation starts on the next image');
+console.log('Figure-sequence variations: OK');
+
+// 15. Interface language: every string has English and German, and the switch is wired
+const strings = Object.entries(api.STRINGS);
+check(strings.length >= 60, `i18n: expected a useful string set, found ${strings.length}`);
+const missing = strings.filter(([, v]) => !v.en || !v.de).map(([k]) => k);
+check(missing.length === 0, `i18n: missing en/de for ${missing.join(', ')}`);
+check(api.t('tab.today') === 'Today', 'i18n: t() should return English by default');
+check(api.tf('today.due', { due: 2, all: 5 }) === '2 due · 5 total', 'i18n: tf() should fill placeholders');
+check(/applyLang\(\)/.test(appSrc), 'app.js: applyLang must run at startup');
+check(/class="skins lang"[\s\S]*?data-lang="de"/.test(read('layout.html')), 'layout.html: needs a language switch');
+check(/const b=e\.target\.closest\('\[data-lang\]'\)/.test(appSrc), 'app.js: the language buttons need a click handler');
+check(/'lang'/.test(appSrc.match(/const SYNC_KEYS\s*=\s*\[[^\]]*\]/)?.[0] || ''), 'app.js: the language choice should sync like the theme');
+console.log(`Interface language: ${strings.length} strings in en/de`);
 
 if (failures) { console.error(`\n${failures} check(s) failed`); process.exit(1); }
 console.log('All checks passed ✓');

@@ -70,48 +70,48 @@ function viewSetup(){
   const def={exam:s.exam||addDays(today,10),time:s.time||'09:00',start:s.start||today,hours:s.hours||6,from:s.from||'09:00'};
   return `<div class="stack">
   <div class="panel stack">
-    ${first?`<div><p class="eyebrow">Welcome</p><h2>Set up your dMAT prep</h2><p class="muted" style="max-width:62ch;margin-top:6px">Tell the Drill Room when your exam is and how much time you have each day. It builds a day-by-day plan from today to your test. You can change this any time in Settings.</p></div>`:`<div><p class="eyebrow">Settings</p><h2>Your exam and study plan</h2></div>`}
+    ${first?`<div><p class="eyebrow">${t('set.welcomeEyebrow')}</p><h2>${t('set.welcomeTitle')}</h2><p class="muted" style="max-width:62ch;margin-top:6px">${t('set.welcomeBody')}</p></div>`:`<div><p class="eyebrow">${t('set.eyebrow')}</p><h2>${t('set.title')}</h2></div>`}
     <form id="setupform" class="setup">
-      <label>Exam date<input type="date" id="su-exam" required value="${def.exam}" min="${today}"></label>
-      <label>Exam start time<input type="time" id="su-time" required value="${def.time}"></label>
-      <label>Start the plan on<input type="date" id="su-start" required value="${def.start}"></label>
-      <label>Study hours per day<select id="su-hours">${[1,2,3,4,5,6,7,8].map(h=>`<option value="${h}" ${+def.hours===h?'selected':''}>${h} ${h===1?'hour':'hours'}</option>`).join('')}</select></label>
-      <label>Daily study starts at<input type="time" id="su-from" required value="${def.from}"></label>
+      <label>${t('set.examDate')}<input type="date" id="su-exam" required value="${def.exam}" min="${today}"></label>
+      <label>${t('set.examTime')}<input type="time" id="su-time" required value="${def.time}"></label>
+      <label>${t('set.start')}<input type="date" id="su-start" required value="${def.start}"></label>
+      <label>${t('set.hours')}<select id="su-hours">${[1,2,3,4,5,6,7,8].map(h=>`<option value="${h}" ${+def.hours===h?'selected':''}>${h} ${h===1?t('set.hour'):t('set.hoursPlural')}</option>`).join('')}</select></label>
+      <label>${t('set.dailyFrom')}<input type="time" id="su-from" required value="${def.from}"></label>
       <p id="su-preview" class="muted" style="grid-column:1/-1"></p>
       <p id="su-err" class="tag bad" hidden style="grid-column:1/-1;justify-self:start"></p>
-      <div class="row" style="grid-column:1/-1"><button class="btn primary big" type="submit">${first?'Build my plan':'Save changes'}</button>${first?'':'<span class="muted" style="font-size:14.5px">Your scores, mistakes and cards are kept.</span>'}</div>
+      <div class="row" style="grid-column:1/-1"><button class="btn primary big" type="submit">${first?t('set.build'):t('set.save')}</button>${first?'':`<span class="muted" style="font-size:14.5px">${t('set.kept')}</span>`}</div>
     </form>
   </div>
   ${first?'':aiPanel()}
-  <div class="panel stack"><h3>${first?'Already have a backup?':'Your data'}</h3><p class="muted">${first?'Already have a backup code from another device? Choose Import code to restore your scores, mistake bank, levels, trick cards, plan ticks and exam setup.':(Sync.ref?'Progress syncs to your Claude account.':'Progress is stored in this browser only. Copy the backup code to move it to another browser or device.')}</p>
+  <div class="panel stack"><h3>${first?t('set.backupFirst'):t('set.backup')}</h3><p class="muted">${first?t('set.backupFirstBody'):(Sync.ref?t('set.backupBodySync'):t('set.backupBodyLocal'))}</p>
   ${storeWarning?`<p class="tag bad" style="white-space:normal">${storeWarning}</p>`:''}
-  ${first?'':`<p class="muted" style="font-size:14.5px">The backup code carries everything: scores, mistake bank, levels, trick cards, plan ticks and your exam setup. Importing merges it with what's already here; if the code includes an exam setup, it replaces the setup in this browser.</p>`}
-  <div class="row">${first?'':'<button class="btn" data-act="export">Copy backup code</button>'}<button class="btn${first?'':' ghost'}" data-act="import">Import code</button>${first?'':'<button class="btn ghost" data-act="reset" style="color:var(--bad)">Reset all progress</button>'}</div>
-  <label for="codebox" class="muted" hidden>Backup code</label><textarea id="codebox" hidden rows="3" style="width:100%;font-family:var(--mono);font-size:12px;background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px"></textarea><p id="codemsg" class="muted"></p></div>
-  <p class="muted" style="font-size:13.5px">dMAT Drill Room is an unofficial, open-source practice tool and is not affiliated with g.a.s.t. or the TestDaF-Institut. Always check the official rules at <a href="https://www.d-mat.de/en/" target="_blank" rel="noopener">d-mat.de</a>.</p>
+  ${first?'':`<p class="muted" style="font-size:14.5px">${t('set.backupDetail')}</p>`}
+  <div class="row">${first?'':`<button class="btn" data-act="export">${t('set.copyCode')}</button><button class="btn" data-act="download">${t('set.download')}</button>`}<button class="btn${first?'':' ghost'}" data-act="import">${t('set.importCode')}</button><button class="btn ghost" data-act="importfile">${t('set.importFile')}</button>${first?'':`<button class="btn ghost" data-act="reset" style="color:var(--bad)">${t('set.reset')}</button>`}<input type="file" id="backupfile" accept=".json,.txt,application/json,text/plain" hidden></div>
+  <label for="codebox" class="muted" hidden>${t('set.backupCode')}</label><textarea id="codebox" hidden rows="3" style="width:100%;font-family:var(--mono);font-size:12px;background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px"></textarea><p id="codemsg" class="muted"></p></div>
+  <p class="muted" style="font-size:13.5px">${t('set.unofficial')} <a href="https://www.d-mat.de/en/" target="_blank" rel="noopener">d-mat.de</a>.</p>
   </div>`;
 }
 function aiPanel(){
   const c=store.get('ai',{})||{}; const p=AI_PROVIDERS[c.provider];
-  const status=AI.mode==='claude'?`<span class="tag good">On — ${esc(AI.how())}</span>`
-    :AI.mode==='key'?`<span class="tag good">On — ${esc(AI.how())}</span>`
-    :`<span class="tag">Off — no explanation button is shown</span>`;
-  return `<div class="panel stack"><div class="row" style="justify-content:space-between"><h3>"Explain it differently"</h3>${status}</div>
-  <p class="muted" style="max-width:64ch">Every explanation can carry a button that asks a language model for a second explanation: another mental method, a memory hook and a common trap. It is optional — everything else works without it.</p>
-  ${AI.mode==='claude'?'<p class="muted">This copy runs inside Claude, so explanations are already available and your own key is not needed.</p>':`
+  const status=AI.mode==='claude'?`<span class="tag good">${tf('ai.on',{how:esc(AI.how())})}</span>`
+    :AI.mode==='key'?`<span class="tag good">${tf('ai.on',{how:esc(AI.how())})}</span>`
+    :`<span class="tag">${t('ai.off')}</span>`;
+  return `<div class="panel stack"><div class="row" style="justify-content:space-between"><h3>${t('ai.title')}</h3>${status}</div>
+  <p class="muted" style="max-width:64ch">${t('ai.body')}</p>
+  ${AI.mode==='claude'?`<p class="muted">${t('ai.claude')}</p>`:`
   <form id="aiform" class="setup">
-    <label>Provider<select id="ai-provider">
-      <option value="" ${!c.provider?'selected':''}>Off</option>
+    <label>${t('ai.provider')}<select id="ai-provider">
+      <option value="" ${!c.provider?'selected':''}>${t('ai.offOption')}</option>
       ${Object.entries(AI_PROVIDERS).map(([k,v])=>`<option value="${k}" ${c.provider===k?'selected':''}>${esc(v.label)}</option>`).join('')}
     </select></label>
-    <label>API key<input type="password" id="ai-key" value="${esc(c.key||'')}" autocomplete="off" spellcheck="false" placeholder="paste your key"></label>
-    <label>Model<input type="text" id="ai-model" value="${esc(c.model||'')}" spellcheck="false" placeholder="${p?esc(p.defaultModel):'model id'}"></label>
-    <label>Base URL <span class="muted" style="font-weight:400">(optional)</span><input type="text" id="ai-base" value="${esc(c.base||'')}" spellcheck="false" placeholder="${p?esc(p.defaultBase):'provider default'}"></label>
+    <label>${t('ai.key')}<input type="password" id="ai-key" value="${esc(c.key||'')}" autocomplete="off" spellcheck="false" placeholder="${t('ai.paste')}"></label>
+    <label>${t('ai.model')}<input type="text" id="ai-model" value="${esc(c.model||'')}" spellcheck="false" placeholder="${p?esc(p.defaultModel):'model id'}"></label>
+    <label>${t('ai.base')} <span class="muted" style="font-weight:400">${t('ai.optional')}</span><input type="text" id="ai-base" value="${esc(c.base||'')}" spellcheck="false" placeholder="${p?esc(p.defaultBase):'provider default'}"></label>
     <p class="muted" style="grid-column:1/-1;font-size:14.5px">${p?esc(p.keyHint):'Pick a provider to see what kind of key it needs.'}</p>
-    <div class="row" style="grid-column:1/-1"><button class="btn primary" type="submit">Save</button><button class="btn" type="button" id="ai-test">Test it</button><button class="btn ghost" type="button" id="ai-clear">Remove key</button></div>
+    <div class="row" style="grid-column:1/-1"><button class="btn primary" type="submit">${t('ai.save')}</button><button class="btn" type="button" id="ai-test">${t('ai.test')}</button><button class="btn ghost" type="button" id="ai-clear">${t('ai.remove')}</button></div>
     <p id="ai-msg" class="muted" style="grid-column:1/-1"></p>
   </form>
-  <p class="muted" style="font-size:14px">Your key is stored in this browser only. It is left out of the backup code and of any account sync, and it is sent only to the provider you chose, straight from your browser. Anyone with access to this browser profile can read it, so use a key with a spending limit, and remove it here when you are done.</p>`}
+  <p class="muted" style="font-size:14px">${t('ai.keyNote')}</p>`}
   </div>`;
 }
 function saveAi(e){

@@ -13,7 +13,7 @@
  * This file runs last, so it may use anything defined in the files before it.
  * ------------------------------------------------------------------------- */
 /* ===== features: mistake bank, today, pacing, keys, AI ===== */
-[...MORE2,...OFFICIAL].forEach(p=>{PASSAGES.push(p);PBY[p.id]=p;});
+[...MORE2,...OFFICIAL,...MORE3].forEach(p=>{PASSAGES.push(p);PBY[p.id]=p;});
 function mkey(it){return it.type==='subj'?`s:${it.pid}:${it.qi}`:`${it.type}:${it.uid||Math.random().toString(36).slice(2,10)}`;}
 function recordOutcome(it,ok,fromBank){
   const M=store.get('mistakes',{}); const k=it.bankKey||mkey(it); const now=Date.now(); const cur=M[k];
@@ -135,25 +135,25 @@ function runTask(ref){
 }
 function viewToday(){
   const S=getSetup(); let d=todayStr(); const days=PLAN.map(p=>p.d); let note='';
-  if(days.length&&d<days[0]){note=`Your plan starts on ${fmtDate(days[0])}. Here's Day 1 so you can preview it.`;d=days[0];}
+  if(days.length&&d<days[0]){note=tf('today.planStarts',{date:fmtDate(days[0])});d=days[0];}
   const exam=d===S.exam, after=d>S.exam;
   const bc=bankCounts(), cd=cardsDue();
   const quick=`<div class="grid2">
-    <div class="card"><span class="eyebrow">Mistake bank</span><h3>${bc.due} due · ${bc.all} total</h3><p class="muted" style="font-size:15px">Questions you got wrong come back a day later.</p><div class="row"><button class="btn ${bc.due?'primary':''}" data-bankgo="${bc.due?'due':'all'}" ${bc.all?'':'disabled'}>Redo mistakes</button></div></div>
-    <div class="card"><span class="eyebrow">Trick cards</span><h3>${cd} to review</h3><p class="muted" style="font-size:15px">Five minutes of recall before you start.</p><div class="row"><button class="btn" data-go="tricks">Review cards</button></div></div>
-    <div class="card"><span class="eyebrow">Your levels</span><h3>${['fig','eq','latin'].map(k=>({fig:'Fig',eq:'Eq',latin:'Latin'}[k])+' '+((store.get('level',{})[k])||2)).join(' · ')}</h3><p class="muted" style="font-size:15px">Adaptive sets move you up at 85%+ and down below 60%.</p><div class="row"><button class="btn" data-go="progress">See progress</button></div></div></div>`;
-  if(exam||after)return `<div class="stack"><div class="panel stack"><p class="eyebrow">${exam?parseYmd(S.exam).toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'}):'After the exam'}</p><h2>${exam?'Exam day. You\'ve done the work.':'The exam is behind you'}</h2>${exam?`<ul class="clean"><li>Morning: one relaxed 10-minute drill, then stop.</li><li>Bring your admission confirmation and ID; arrive early.</li><li>Core 90 min → 30 min break → Subject 90 min. No notes. Never leave a question blank.</li></ul><div class="row"><button class="btn" data-go="tricks">Glance at trick cards</button></div>`:`<p class="muted">Results are usually published a couple of weeks after the test. Taking another dMAT? Set a new date in Settings.</p><div class="row"><button class="btn primary" data-go="setup">Set a new exam date</button></div>`}</div></div>`;
-  const pi=days.indexOf(d); if(pi<0)return `<div class="panel"><h2>Nothing scheduled today</h2><div class="row" style="margin-top:12px"><button class="btn primary" data-go="practice">Open practice</button></div></div>`;
+    <div class="card"><span class="eyebrow">${t('today.mistakes')}</span><h3>${tf('today.due',{due:bc.due,all:bc.all})}</h3><p class="muted" style="font-size:15px">${t('today.mistakesNote')}</p><div class="row"><button class="btn ${bc.due?'primary':''}" data-bankgo="${bc.due?'due':'all'}" ${bc.all?'':'disabled'}>${t('today.redo')}</button></div></div>
+    <div class="card"><span class="eyebrow">${t('today.cards')}</span><h3>${tf('today.reviewCount',{n:cd})}</h3><p class="muted" style="font-size:15px">${t('today.cardsNote')}</p><div class="row"><button class="btn" data-go="tricks">${t('today.reviewCards')}</button></div></div>
+    <div class="card"><span class="eyebrow">${t('today.levels')}</span><h3>${['fig','eq','latin'].map(k=>({fig:'Fig',eq:'Eq',latin:'Latin'}[k])+' '+((store.get('level',{})[k])||2)).join(' · ')}</h3><p class="muted" style="font-size:15px">${t('today.adaptiveNote')}</p><div class="row"><button class="btn" data-go="progress">${t('today.seeProgress')}</button></div></div></div>`;
+  if(exam||after)return `<div class="stack"><div class="panel stack"><p class="eyebrow">${exam?parseYmd(S.exam).toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'}):t('today.after')}</p><h2>${exam?t('today.examDay'):t('today.after')}</h2>${exam?`<ul class="clean"><li>Morning: one relaxed 10-minute drill, then stop.</li><li>Bring your admission confirmation and ID; arrive early.</li><li>Core 90 min → 30 min break → Subject 90 min. No notes. Never leave a question blank.</li></ul><div class="row"><button class="btn" data-go="tricks">${t('today.reviewCards')}</button></div>`:`<p class="muted">${t('today.afterNote')}</p><div class="row"><button class="btn primary" data-go="setup">${t('today.newDate')}</button></div>`}</div></div>`;
+  const pi=days.indexOf(d); if(pi<0)return `<div class="panel"><h2>${t('today.nothing')}</h2><div class="row" style="margin-top:12px"><button class="btn primary" data-go="practice">${t('today.openPractice')}</button></div></div>`;
   const P=PLAN[pi]; const acts=TASKS[d]||[]; const nDone=P.items.filter((x,i)=>itemDone(d,i)).length;
   const rows=P.items.map((txt,i)=>{const done=itemDone(d,i);const m=txt.match(/^(\d\d:\d\d)\s(.*)$/);const time=m?m[1]:'';const body=m?m[2]:txt;
     const btns=(acts[i]||[]).map((a,j)=>{if(a.k==='none')return '';const c=taskCount(d,i,j),n=a.n||1;const full=c>=n;
       if(a.k==='link')return `<a class="btn ${full?'':'primary'} sm" href="${a.url}" target="_blank" rel="noopener" data-task="${d}|${i}|${j}">${full?'✓ ':''}${actLabel(a)}</a>`;
       return `<button class="btn ${full?'':'primary'} sm" data-task="${d}|${i}|${j}">${full?'✓ ':''}${actLabel(a)}${n>1?` · ${Math.min(c,n)}/${n}`:''}</button>`;}).join('');
-    return `<div class="task ${done?'done':''}"><button class="tick" data-tick="${d}|${i}" aria-pressed="${done}" aria-label="Mark step done">${done?'✓':''}</button><div class="stack" style="gap:8px"><p><span class="mono muted" style="font-size:14px">${time}</span> ${esc(body)}</p>${btns?`<div class="row" style="gap:8px">${btns}</div>`:''}</div></div>`;}).join('');
+    return `<div class="task ${done?'done':''}"><button class="tick" data-tick="${d}|${i}" aria-pressed="${done}" aria-label="${t('today.markDone')}">${done?'✓':''}</button><div class="stack" style="gap:8px"><p><span class="mono muted" style="font-size:14px">${time}</span> ${esc(body)}</p>${btns?`<div class="row" style="gap:8px">${btns}</div>`:''}</div></div>`;}).join('');
   return `<div class="stack">${note?`<p class="tag warn" style="align-self:flex-start">${note}</p>`:''}
-  <div class="panel stack"><div class="row" style="justify-content:space-between"><div><p class="eyebrow">Day ${pi+1} of ${PLAN.length} · ${parseYmd(d).toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'})}</p><h2>${esc(P.t)}</h2></div><div class="progressring" style="--p:${Math.round(100*nDone/P.items.length)}"><span>${nDone}/${P.items.length}</span></div></div>
+  <div class="panel stack"><div class="row" style="justify-content:space-between"><div><p class="eyebrow">${tf('today.eyebrow',{n:pi+1,total:PLAN.length})} · ${parseYmd(d).toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'})}</p><h2>${esc(P.t)}</h2></div><div class="progressring" style="--p:${Math.round(100*nDone/P.items.length)}"><span>${nDone}/${P.items.length}</span></div></div>
   <div class="tasks">${rows}</div>
-  <p class="muted" style="font-size:14.5px">Buttons start the exact session for each step, and steps tick off when you finish them. You can also tick a step yourself.</p></div>
+  <p class="muted" style="font-size:14.5px">${t('today.tickNote')}</p></div>
   ${quick}</div>`;
 }
 buildPlan(); countdown(); render();
