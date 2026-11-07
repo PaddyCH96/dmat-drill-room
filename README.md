@@ -137,7 +137,7 @@ A note on browsers: Anthropic's API needs the `anthropic-dangerous-direct-browse
 ## Your data
 
 - Progress is saved in your browser's `localStorage`. Nothing is sent anywhere, except the explanation requests you trigger yourself (see above).
-- To move to another browser or device, use **⚙ Settings → Copy backup code**, then **Import code** on the other device.
+- To move to another browser or device, use **⚙ Settings → Copy backup code**. On the new device, choose **Import code** on the first screen (or in Settings). A code that includes an exam setup restores that setup too.
 - **Reset all progress** in Settings clears scores, mistakes and cards. It keeps your exam setup.
 - *Optional:* if you publish `index.html` as a [Claude](https://claude.ai) artifact with the `db`, `user` and `sample` capabilities, progress syncs to your Claude account and every explanation gets an **"Explain it differently"** button. Outside Claude, these features simply stay hidden.
 

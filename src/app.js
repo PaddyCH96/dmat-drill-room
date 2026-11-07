@@ -79,7 +79,7 @@ function syncBadge(){const el=document.getElementById('syncstate');if(!el)return
 const SECTIONS={fig:{name:'Figure Sequences',n:20,min:25,gen:genFigures,target:75},eq:{name:'Mathematical Equations',n:20,min:25,gen:genEquations,target:75},latin:{name:'Latin Squares',n:20,min:25,gen:genLatin,target:75},subj:{name:'Subject Module',min:90,target:120},mix:{name:'Mistake bank',target:90},bank:{name:'Mistake bank'}};
 const PBY=Object.fromEntries(PASSAGES.map(p=>[p.id,p]));
 
-let tab='today', session=null, timerId=null;
+let tab='today', session=null, timerId=null, liveSavedAt=0;
 function applySkin(k){ if(k&&k!=='auto')document.documentElement.setAttribute('data-skin',k); else document.documentElement.removeAttribute('data-skin');
   document.querySelectorAll('.skin').forEach(b=>b.setAttribute('aria-pressed',String((b.dataset.skin)===(k||'auto'))));}
 applySkin(store.get('skin','auto'));
@@ -219,6 +219,7 @@ function packPart(p){return {sec:p.sec,items:p.items,limit:p.limit,target:p.targ
 function unpackPart(o){const p={...o,flags:new Set(o.flags||[]),checked:new Set(o.checked||[])};p.t0=Date.now()-(o.elapsed||0)*1000;p.lastSwitch=Date.now();return p;}
 function saveLive(){
   if(!session||session.finished)return;
+  liveSavedAt=Date.now();
   try{ const p=session.parts[session.pi]; if(p&&p.sec!=='break')p.itemT[p.idx]+=(Date.now()-p.lastSwitch)/1000, p.lastSwitch=Date.now();
     store.set('live',{ts:Date.now(),kind:session.kind,drill:session.drill,diff:session.diff,exam:session.exam,mock:session.mock,task:session.task,pi:session.pi,
       parts:session.parts.map(packPart),results:session.results.map(r=>({...r,part:packPart(r.part)}))},true);
@@ -226,10 +227,14 @@ function saveLive(){
 }
 function clearLive(){store.set('live',null,true);}
 function liveSession(){const L=store.get('live',null);return L&&L.parts&&Date.now()-L.ts<LIVE_MAX?L:null;}
+window.addEventListener('pagehide',()=>saveLive());
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')saveLive();});
 function resumeLive(){
-  const L=liveSession(); if(!L)return; clearLive();
-  session={kind:L.kind,drill:L.drill,diff:L.diff,exam:L.exam,mock:L.mock,task:L.task,pi:L.pi,finished:false,
+  const L=liveSession(); if(!L)return;
+  const restored={kind:L.kind,drill:L.drill,diff:L.diff,exam:L.exam,mock:L.mock,task:L.task,pi:L.pi,finished:false,
     parts:L.parts.map(unpackPart),results:(L.results||[]).map(r=>({...r,part:unpackPart(r.part)}))};
+  session=restored;
+  saveLive();
   stopTimer(); timerId=setInterval(tick,500); renderSession(); window.scrollTo({top:0});
 }
 function resumeBanner(){
@@ -252,7 +257,8 @@ function announce(msg){const el=document.getElementById('announce');if(el)el.tex
 function tick(){ const p=session.parts[session.pi]; const el=$('#timer'); if(!el)return; const e=elapsed(p);
   if(p.limit){const left=p.limit-e; el.textContent=fmt(Math.max(0,left)); el.className='timer'+(left<=60?' crit':left<=300?' warn':''); paceHint(p,e);
     p.said=p.said||{}; [[300,'Five minutes left'],[60,'One minute left. Put an answer on every question.']].forEach(([t,m])=>{if(left<=t&&left>t-3&&!p.said[t]){p.said[t]=1;announce(m);}}); if(left<=0){ finishPart(true);} }
-  else { el.textContent=fmt(e); if(p.target&&e>p.target)el.className='timer warn'; } }
+  else { el.textContent=fmt(e); if(p.target&&e>p.target)el.className='timer warn'; }
+  if(Date.now()-liveSavedAt>10000)saveLive(); }
 function paceHint(p,e){const el=$('#pace');if(!el)return;if(session.exam||!p.items.length){el.textContent='';return;}
   const per=p.limit/p.items.length; const expected=Math.min(p.items.length,Math.floor(e/per)); const done=p.items.filter((x,i)=>isAnswered(x,p.ans[i])).length; const d=expected-done;
   el.textContent=d>=2?`${d} behind pace`:d<=-2?`${-d} ahead of pace`:'On pace'; el.className='pace '+(d>=3?'bad':d>=2?'warn':'good');}
@@ -526,8 +532,9 @@ function actGlobal(a){
     try{navigator.clipboard.writeText(code).then(()=>msg.textContent='Copied. On the other device, paste it here and choose Import code.',()=>msg.textContent='Select the code above and copy it.');}catch(e){msg.textContent='Select the code above and copy it.';}}
   if(a==='import'){ if(box.hidden||!box.value.trim()){box.hidden=false;box.value='';box.focus();msg.textContent='Paste your code in the box, then choose Import code again.';return;}
     try{const raw=JSON.parse(decodeURIComponent(escape(atob(box.value.trim()))));
-      const o=raw&&raw.v?raw.data:raw; let n=0;
-      BACKUP_KEYS.forEach(k=>{if(o&&o[k]!=null){store.set(k,mergeVal(k,store.get(k,null),o[k]));n++;}});
+      const o=raw&&raw.v?raw.data:raw; let n=0,setupRestored=false;
+      BACKUP_KEYS.forEach(k=>{if(k==='setup'||!o||o[k]==null)return;store.set(k,mergeVal(k,store.get(k,null),o[k]));n++;});
+      if(o&&o.setup!=null){store.set('setup',o.setup);n++;setupRestored=true;}
       if(!n){msg.textContent='That code contained no progress.';return;}
-      buildPlan(); countdown(); render(); const m2=$('#codemsg'); if(m2)m2.textContent=`Imported and merged ${n} kind(s) of progress.`;}catch(e){msg.textContent='That code could not be read. Copy the whole code again and paste it.';}}
+      buildPlan(); countdown(); render(); const m2=$('#codemsg'); if(m2)m2.textContent=`Imported and merged ${n} kind(s) of progress.${setupRestored?' Exam setup restored.':''}`;}catch(e){msg.textContent='That code could not be read. Copy the whole code again and paste it.';}}
 }
