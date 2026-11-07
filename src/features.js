@@ -39,8 +39,8 @@ function startBank(all,task){
 }
 /* keyboard */
 function keyHint(it,canCheck){
-  const base=it.type==='latin'?'Keys: A–E answer':it.type==='subj'?'Keys: 1–4 or A–D answer':it.type==='fig'?'Keys: 1–3 image 1, 4–6 image 2':'Type numbers, Tab between boxes';
-  return `${base} · ←/→ move · F flag${canCheck?' · Enter check':''}`;
+  const base=it.type==='latin'?t('key.latin'):it.type==='subj'?t('key.subj'):it.type==='fig'?t('key.fig'):t('key.eq');
+  return `${base} · ${t('key.move')} · ${t('key.flag')}${canCheck?' · '+t('key.check'):''}`;
 }
 document.addEventListener('keydown',e=>{
   if(!session||session.finished||e.metaKey||e.ctrlKey||e.altKey)return;
@@ -60,7 +60,7 @@ document.addEventListener('keydown',e=>{
 });
 /* AI explanations */
 function aiBtn(it){ if(!AI.available()||(session&&session.exam&&!session.finished))return ''; if(!window.__aiItems)window.__aiItems=[]; window.__aiItems.push(it); const id=window.__aiItems.length-1;
-  return `<div class="ai"><button class="btn ghost" data-explain="${id}">✦ Explain it differently</button><div class="ai-out" id="ai-${id}" hidden></div></div>`; }
+  return `<div class="ai"><button class="btn ghost" data-explain="${id}">✦ ${t('ai.title')}</button><div class="ai-out" id="ai-${id}" hidden></div></div>`; }
 function aiPrompt(it){
   const strip=h=>String(h).replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
   let task='';
@@ -72,11 +72,11 @@ function aiPrompt(it){
 }
 async function explainAI(btn){
   const id=btn.dataset.explain; const it=(window.__aiItems||[])[+id]; const out=document.getElementById('ai-'+id); if(!it||!out||!AI.available())return;
-  btn.disabled=true; out.hidden=false; out.textContent='Thinking…';
-  try{ const text=await AI.ask(aiPrompt(it),t=>{out.textContent=t;}); out.textContent=text||'The provider returned an empty answer.'; btn.textContent='✦ Explained'; }
-  catch(e){ if(e&&e.code==='not_granted'){out.textContent='Explanations are turned off for this page.';}
-    else if(e&&e.code==='rate_limited'){out.textContent='Too many requests right now. Try again in a minute.';btn.disabled=false;}
-    else{out.textContent=(e&&e.message)||(e&&e.text)||'Could not get an explanation. Try again.';btn.disabled=false;} }
+  btn.disabled=true; out.hidden=false; out.textContent=t('ai.thinking');
+  try{ const text=await AI.ask(aiPrompt(it),t=>{out.textContent=t;}); out.textContent=text||t('ai.empty'); btn.textContent=t('ai.explained'); }
+  catch(e){ if(e&&e.code==='not_granted'){out.textContent=t('ai.off');}
+    else if(e&&e.code==='rate_limited'){out.textContent=t('ai.rateLimit');btn.disabled=false;}
+    else{out.textContent=(e&&e.message)||(e&&e.text)||t('ai.failed');btn.disabled=false;} }
 }
 /* pacing */
 function pacePanel(r){
@@ -87,25 +87,26 @@ function pacePanel(r){
   const fast=ans.filter(x=>x.t<0.35*target), slow=rows.filter(x=>x.t>1.6*target);
   const pc=a=>a.length?Math.round(100*a.filter(x=>x.ok).length/a.length):0;
   const msgs=[];
-  if(fast.length>=3&&pc(fast)/100<acc-0.15)msgs.push(['warn',`Rushing: ${fast.length} quick answers (under ${Math.round(0.35*target)} s) were only ${pc(fast)}% correct. Spend 10 more seconds checking.`]);
-  if(slow.length>=3&&pc(slow)<50)msgs.push(['warn',`Overthinking: ${slow.length} items took over ${Math.round(1.6*target)} s and only ${pc(slow)}% were right. Guess, flag and move on sooner.`]);
-  if(r.answered<r.total&&p.limit)msgs.push(['bad',`Time ran out with ${r.total-r.answered} unanswered. Always leave the last minute to guess the rest.`]);
-  if(!msgs.length)msgs.push(['good',`Good pacing: an average of ${Math.round(r.secs/n)} s per item against a ${target} s target.`]);
+  if(fast.length>=3&&pc(fast)/100<acc-0.15)msgs.push(['warn',tf('pace.rushing',{n:fast.length,s:Math.round(0.35*target),p:pc(fast)})]);
+  if(slow.length>=3&&pc(slow)<50)msgs.push(['warn',tf('pace.overthinking',{n:slow.length,s:Math.round(1.6*target),p:pc(slow)})]);
+  if(r.answered<r.total&&p.limit)msgs.push(['bad',tf('pace.out',{n:r.total-r.answered})]);
+  if(!msgs.length)msgs.push(['good',tf('pace.good',{s:Math.round(r.secs/n),target})]);
   const W=Math.max(260,n*18), H=110, maxT=Math.max(target*2,...rows.map(x=>x.t))||1; const bw=W/n;
   const y=v=>H-8-(Math.min(v,maxT)/maxT)*(H-24);
   const bars=rows.map((x,i)=>`<rect x="${i*bw+2}" y="${y(x.t)}" width="${Math.max(3,bw-4)}" height="${H-8-y(x.t)}" rx="2" fill="${!x.ans?'var(--grid)':x.ok?'var(--good)':'var(--bad)'}"><title>Item ${i+1}: ${Math.round(x.t)} s, ${!x.ans?'unanswered':x.ok?'correct':'wrong'}</title></rect>`).join('');
-  return `<div class="panel stack" style="gap:12px"><div class="row" style="justify-content:space-between"><h3>Pacing · ${SECTIONS[r.sec].name}</h3><span class="muted" style="font-size:14px">Bars: seconds per item · <span style="color:var(--good)">■</span> right <span style="color:var(--bad)">■</span> wrong <span style="color:var(--grid)">■</span> unanswered · dashed line = ${target} s target</span></div>
+  return `<div class="panel stack" style="gap:12px"><div class="row" style="justify-content:space-between"><h3>Pacing · ${SECTIONS[r.sec].name}</h3><span class="muted" style="font-size:14px">${tf('pace.legend',{target})}</span></div>
   ${msgs.map(([c,m])=>`<p class="tag ${c}" style="align-self:flex-start;white-space:normal;font-size:14.5px;padding:6px 12px">${m}</p>`).join('')}
   <div class="scroll-x"><svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Seconds per item">${bars}<line x1="0" x2="${W}" y1="${y(target)}" y2="${y(target)}" stroke="var(--ink)" stroke-dasharray="4 4" opacity=".5"/><line x1="0" x2="${W}" y1="${H-8}" y2="${H-8}" stroke="var(--line)"/></svg></div></div>`;
 }
 /* today */
 const todayStr=()=>ymd(new Date());
+const GROUP_DE={'Figure Sequences':'Figurenfolgen','Equations':'Gleichungen','Latin Squares':'Lateinische Quadrate','Subject Module':'Fachmodul','Question types':'Fragetypen','Mathematics':'Mathematik','Statistics & Probability':'Statistik & Wahrscheinlichkeit','Physics & Engineering':'Physik & Technik','Chemistry & Biology':'Chemie & Biologie','Economics':'Wirtschaftswissenschaften','Business & Finance':'BWL & Finanzen','Computer Science':'Informatik','Social Sciences & Humanities':'Sozial- & Geisteswissenschaften','Exam habits':'Prüfungsgewohnheiten'};
+const groupName=g=>LANG==='de'&&GROUP_DE[g]?GROUP_DE[g]:g;
 function actLabel(a){
-  const sn={fig:'Figure Sequences',eq:'Equations',latin:'Latin Squares'};
-  if(a.k==='core')return `${sn[a.sec]} · ${a.mode==='timed'?'timed set':'drill'}${a.diff==='high'||a.diff==='low'||a.diff==='medium'?' · '+a.diff:''}`;
-  if(a.k==='subj')return `${a.n} subject tests`; if(a.k==='bank')return 'Redo mistakes'; if(a.k==='cards')return `Trick cards${a.g?' · '+a.g:''}`;
-  if(a.k==='link')return 'Open official videos'; if(a.k==='tab')return 'Open tactics'; if(a.k==='weak')return `Weakest section · timed set`;
-  if(a.k==='block')return 'Core block · 3 × 25 min'; if(a.k==='mock')return a.m==='mock1'?'Start Mock 1':a.m==='mock2'?'Start Mock 2':'Start core mock'; return '';
+  if(a.k==='core')return `${secName(a.sec)} · ${a.mode==='timed'?t('act.timed'):t('act.drill')}${a.diff==='high'||a.diff==='low'||a.diff==='medium'?' · '+t('diff.'+a.diff):''}`;
+  if(a.k==='subj')return tf('act.tests',{n:a.n}); if(a.k==='bank')return t('today.redo'); if(a.k==='cards')return `${t('tr.title')}${a.g?' · '+groupName(a.g):''}`;
+  if(a.k==='link')return t('act.videos'); if(a.k==='tab')return t('act.tactics'); if(a.k==='weak')return t('act.weakest');
+  if(a.k==='block')return t('act.block'); if(a.k==='mock')return a.m==='mock1'?t('act.mock1'):a.m==='mock2'?t('act.mock2'):t('act.mockcore'); return '';
 }
 function weakestCore(){const log=store.get('log',[]);let best=null;['fig','eq','latin'].forEach(k=>{const L=log.filter(l=>l.sec===k&&l.mode!=='drill');const t=L.reduce((s,l)=>s+l.total,0);const acc=t?L.reduce((s,l)=>s+l.correct,0)/t:0.5;if(!best||acc<best.acc)best={k,acc};});return best.k;}
 function nextSubjectTests(n){
@@ -142,7 +143,7 @@ function viewToday(){
     <div class="card"><span class="eyebrow">${t('today.mistakes')}</span><h3>${tf('today.due',{due:bc.due,all:bc.all})}</h3><p class="muted" style="font-size:15px">${t('today.mistakesNote')}</p><div class="row"><button class="btn ${bc.due?'primary':''}" data-bankgo="${bc.due?'due':'all'}" ${bc.all?'':'disabled'}>${t('today.redo')}</button></div></div>
     <div class="card"><span class="eyebrow">${t('today.cards')}</span><h3>${tf('today.reviewCount',{n:cd})}</h3><p class="muted" style="font-size:15px">${t('today.cardsNote')}</p><div class="row"><button class="btn" data-go="tricks">${t('today.reviewCards')}</button></div></div>
     <div class="card"><span class="eyebrow">${t('today.levels')}</span><h3>${['fig','eq','latin'].map(k=>({fig:'Fig',eq:'Eq',latin:'Latin'}[k])+' '+((store.get('level',{})[k])||2)).join(' · ')}</h3><p class="muted" style="font-size:15px">${t('today.adaptiveNote')}</p><div class="row"><button class="btn" data-go="progress">${t('today.seeProgress')}</button></div></div></div>`;
-  if(exam||after)return `<div class="stack"><div class="panel stack"><p class="eyebrow">${exam?parseYmd(S.exam).toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'}):t('today.after')}</p><h2>${exam?t('today.examDay'):t('today.after')}</h2>${exam?`<ul class="clean"><li>Morning: one relaxed 10-minute drill, then stop.</li><li>Bring your admission confirmation and ID; arrive early.</li><li>Core 90 min → 30 min break → Subject 90 min. No notes. Never leave a question blank.</li></ul><div class="row"><button class="btn" data-go="tricks">${t('today.reviewCards')}</button></div>`:`<p class="muted">${t('today.afterNote')}</p><div class="row"><button class="btn primary" data-go="setup">${t('today.newDate')}</button></div>`}</div></div>`;
+  if(exam||after)return `<div class="stack"><div class="panel stack"><p class="eyebrow">${exam?parseYmd(S.exam).toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'}):t('today.after')}</p><h2>${exam?t('today.examDay'):t('today.after')}</h2>${exam?`<ul class="clean"><li>${t('today.examL1')}</li><li>${t('today.examL2')}</li><li>${t('today.examL3')}</li></ul><div class="row"><button class="btn" data-go="tricks">${t('today.reviewCards')}</button></div>`:`<p class="muted">${t('today.afterNote')}</p><div class="row"><button class="btn primary" data-go="setup">${t('today.newDate')}</button></div>`}</div></div>`;
   const pi=days.indexOf(d); if(pi<0)return `<div class="panel"><h2>${t('today.nothing')}</h2><div class="row" style="margin-top:12px"><button class="btn primary" data-go="practice">${t('today.openPractice')}</button></div></div>`;
   const P=PLAN[pi]; const acts=TASKS[d]||[]; const nDone=P.items.filter((x,i)=>itemDone(d,i)).length;
   const rows=P.items.map((txt,i)=>{const done=itemDone(d,i);const m=txt.match(/^(\d\d:\d\d)\s(.*)$/);const time=m?m[1]:'';const body=m?m[2]:txt;

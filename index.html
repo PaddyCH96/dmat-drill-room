@@ -15,24 +15,24 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500;700&display=swap">
 <style>
 :root{
-  --ground:#F6F7F9; --surface:#FFFFFF; --sunk:#F0F2F5; --ink:#111827; --muted:#4B5563; --faint:#6B7280; --line:#E3E6EB;
+  --ground:#F6F7F9; --surface:#FFFFFF; --sunk:#F0F2F5; --ink:#111827; --muted:#4B5563; --faint:#5F6673; --line:#E3E6EB;
   --accent:#2F5BD3; --accent-ink:#FFFFFF; --accent-soft:#EAF0FD;
-  --good:#15803D; --good-soft:#E7F6EC; --bad:#C2352B; --bad-soft:#FCEBEA; --warn:#A16207; --warn-soft:#FDF3DC;
+  --good:#14763B; --good-soft:#E7F6EC; --bad:#C2352B; --bad-soft:#FCEBEA; --warn:#8F5705; --warn-soft:#FDF3DC;
   --grid:#9CA3AF; --cell:#FFFFFF; --shadow:0 1px 2px rgba(17,24,39,.05),0 2px 8px rgba(17,24,39,.04);
   --body:"Atkinson Hyperlegible",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
   --display:var(--body);
   --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --ground:#0E1116; --surface:#171B22; --sunk:#1F242D; --ink:#EEF1F5; --muted:#B4BCC8; --faint:#8C95A3; --line:#2A303A;
-  --accent:#7EA2FF; --accent-ink:#0B1530; --accent-soft:#1C2742;
-  --good:#5FD08A; --good-soft:#14301F; --bad:#FF8A80; --bad-soft:#3A1D1B; --warn:#F2C45A; --warn-soft:#3A2F14;
+  --ground:#0E1116; --surface:#171B22; --sunk:#1F242D; --ink:#EEF1F5; --muted:#B4BCC8; --faint:#97A0AE; --line:#2A303A;
+  --accent:#8AADFF; --accent-ink:#0B1530; --accent-soft:#1C2742;
+  --good:#6AD797; --good-soft:#14301F; --bad:#FF8A80; --bad-soft:#3A1D1B; --warn:#F5CD74; --warn-soft:#3A2F14;
   --grid:#6B7280; --cell:#EEF1F5; --shadow:none;
 }}
 :root[data-theme="dark"]{
-  --ground:#0E1116; --surface:#171B22; --sunk:#1F242D; --ink:#EEF1F5; --muted:#B4BCC8; --faint:#8C95A3; --line:#2A303A;
-  --accent:#7EA2FF; --accent-ink:#0B1530; --accent-soft:#1C2742;
-  --good:#5FD08A; --good-soft:#14301F; --bad:#FF8A80; --bad-soft:#3A1D1B; --warn:#F2C45A; --warn-soft:#3A2F14;
+  --ground:#0E1116; --surface:#171B22; --sunk:#1F242D; --ink:#EEF1F5; --muted:#B4BCC8; --faint:#97A0AE; --line:#2A303A;
+  --accent:#8AADFF; --accent-ink:#0B1530; --accent-soft:#1C2742;
+  --good:#6AD797; --good-soft:#14301F; --bad:#FF8A80; --bad-soft:#3A1D1B; --warn:#F5CD74; --warn-soft:#3A2F14;
   --grid:#6B7280; --cell:#EEF1F5; --shadow:none;
 }
 *{box-sizing:border-box}
@@ -190,27 +190,27 @@ ul.clean b{color:var(--ink)}
 
 /* ---- user-selectable themes (override system light/dark) ---- */
 :root[data-skin="warm"]{
-  --ground:#FAF6EF; --surface:#FFFDF8; --sunk:#F3ECE0; --ink:#2A2118; --muted:#5C4F42; --faint:#7D6F60; --line:#E8DDCC;
-  --accent:#B4531F; --accent-ink:#FFFFFF; --accent-soft:#FBE9DC;
-  --good:#3F7D3A; --good-soft:#E6F2E1; --bad:#B63A2E; --bad-soft:#FBE6E2; --warn:#9A6408; --warn-soft:#FBF0D6;
+  --ground:#FAF6EF; --surface:#FFFDF8; --sunk:#F3ECE0; --ink:#2A2118; --muted:#5C4F42; --faint:#6E6254; --line:#E8DDCC;
+  --accent:#9E4419; --accent-ink:#FFFFFF; --accent-soft:#FBE9DC;
+  --good:#356A31; --good-soft:#E6F2E1; --bad:#B63A2E; --bad-soft:#FBE6E2; --warn:#885505; --warn-soft:#FBF0D6;
   --grid:#A8998A; --cell:#FFFDF8; --shadow:0 1px 2px rgba(60,40,20,.06),0 2px 8px rgba(60,40,20,.05);
 }
 :root[data-skin="forest"]{
-  --ground:#F2F6F3; --surface:#FFFFFF; --sunk:#E8F0EA; --ink:#13241B; --muted:#43574B; --faint:#62756A; --line:#D7E3DB;
+  --ground:#F2F6F3; --surface:#FFFFFF; --sunk:#E8F0EA; --ink:#13241B; --muted:#43574B; --faint:#556760; --line:#D7E3DB;
   --accent:#1F7A55; --accent-ink:#FFFFFF; --accent-soft:#DDF0E6;
-  --good:#1F7A3D; --good-soft:#E2F4E8; --bad:#B8392F; --bad-soft:#FBE7E5; --warn:#936A0C; --warn-soft:#FAF1D8;
+  --good:#1C6F38; --good-soft:#E2F4E8; --bad:#B8392F; --bad-soft:#FBE7E5; --warn:#816008; --warn-soft:#FAF1D8;
   --grid:#93A69A; --cell:#FFFFFF; --shadow:0 1px 2px rgba(19,36,27,.05),0 2px 8px rgba(19,36,27,.04);
 }
 :root[data-skin="night"]{
-  --ground:#0B0F17; --surface:#131A26; --sunk:#1B2332; --ink:#E9EDF5; --muted:#AEB8C8; --faint:#8791A3; --line:#263044;
+  --ground:#0B0F17; --surface:#131A26; --sunk:#1B2332; --ink:#E9EDF5; --muted:#AEB8C8; --faint:#95A0B3; --line:#263044;
   --accent:#F5B84A; --accent-ink:#1D1403; --accent-soft:#33291A;
-  --good:#62D394; --good-soft:#14301F; --bad:#FF8C82; --bad-soft:#3B1D1C; --warn:#F5C866; --warn-soft:#3A2F14;
+  --good:#6CD89F; --good-soft:#14301F; --bad:#FF8C82; --bad-soft:#3B1D1C; --warn:#F7D380; --warn-soft:#3A2F14;
   --grid:#5E6B80; --cell:#E9EDF5; --shadow:none;
 }
 :root[data-skin="clean"]{
-  --ground:#F6F7F9; --surface:#FFFFFF; --sunk:#F0F2F5; --ink:#111827; --muted:#4B5563; --faint:#6B7280; --line:#E3E6EB;
+  --ground:#F6F7F9; --surface:#FFFFFF; --sunk:#F0F2F5; --ink:#111827; --muted:#4B5563; --faint:#5F6673; --line:#E3E6EB;
   --accent:#2F5BD3; --accent-ink:#FFFFFF; --accent-soft:#EAF0FD;
-  --good:#15803D; --good-soft:#E7F6EC; --bad:#C2352B; --bad-soft:#FCEBEA; --warn:#A16207; --warn-soft:#FDF3DC;
+  --good:#14763B; --good-soft:#E7F6EC; --bad:#C2352B; --bad-soft:#FCEBEA; --warn:#8F5705; --warn-soft:#FDF3DC;
   --grid:#9CA3AF; --cell:#FFFFFF; --shadow:0 1px 2px rgba(17,24,39,.05),0 2px 8px rgba(17,24,39,.04);
 }
 :root[data-skin="warm"],:root[data-skin="forest"],:root[data-skin="clean"]{color-scheme:light}
@@ -312,7 +312,7 @@ a.btn.primary{color:var(--accent-ink)} a.btn{color:var(--ink)}
 </header>
 <div id="announce" class="sr" role="status" aria-live="polite"></div>
 <main id="view" tabindex="-1"></main>
-<div id="appbar"></div>
+<div id="appbar" role="status" aria-live="polite"></div>
 <footer class="foot noprint">dMAT Drill Room · open source (MIT) · <a href="https://github.com/PaddyCH96/dmat-drill-room" target="_blank" rel="noopener">GitHub</a> · <span data-i18n="footer.unofficial">Unofficial practice tool, not affiliated with g.a.s.t.</span></footer>
 </div>
 
@@ -1095,6 +1095,18 @@ const DAY_TYPES={
  mock2:{t:'Mock exam 2',items:[[30,'Mock 2: core (75 min) → 30 min break → subject set 2',[A.M('mock2')]],[270,'Review and compare with Mock 1',[A.B()]],[330,'Re-read the official example solutions once more',[A.N()]]]},
  light:{t:'Light review',items:[[0,'One relaxed drill per core section',[A.C('fig','medium','drill'),A.C('eq','medium','drill'),A.C('latin','medium','drill')]],[90,'Review your due trick cards — no new material',[A.K('')]],[150,'Logistics: admission details, ID, route, arrival time, rules for the day',[A.N()]],[null,'Rest for the rest of the day and sleep early',[A.N()]]]},
 };
+const DAY_TYPES_DE={
+ baseline:{t:'Baseline',items:[[0,'Lies die offiziellen Anleitungen zu allen vier Aufgabentypen und schau dir die dMAT-Tutorialvideos an',[A.L()]],[60,'Arbeite die offiziellen Beispielaufgaben ohne Notizen durch',[A.N()]],[150,'Diagnose: eine Zeiteinheit pro Kernabschnitt (Stufe Gemischt)',[A.C('fig','mixed','timed'),A.C('eq','mixed','timed'),A.C('latin','mixed','timed')]],[300,'Fachmodul: 2 Übungstests, dann jeden Fehler aufarbeiten und deinen schwächsten Bereich notieren',[A.S(2),A.B()]]]},
+ latinEq:{t:'Lateinische Quadrate + Gleichungstechnik',items:[[0,'Tab Taktik: die Absuchreihenfolge für Lateinische Quadrate, dann eine Einheit ohne Zeitdruck',[A.G('guide'),A.C('latin','adaptive','drill')]],[60,'Zwei Zeiteinheiten Lateinische Quadrate',[A.C('latin','adaptive','timed',2)]],[135,'Gleichungen: Einsetzmuster — eine schwierige Einheit, dann zwei Zeiteinheiten',[A.C('eq','high','drill'),A.C('eq','adaptive','timed',2)]],[300,'Fachmodul: 2 Tests + Auswertung',[A.S(2),A.B()]]]},
+ fig:{t:'Figurenfolgen: Vertiefung',items:[[0,'Trickkarten: die Regeln für Figurenfolgen (Bewegung, Abprall, Randlauf, x + 1, Drehung, Farbe)',[A.K('Figure Sequences')]],[30,'Übe Stufe Niedrig → Mittel → Hoch und lies jede Erklärung',[A.C('fig','low','drill'),A.C('fig','medium','drill'),A.C('fig','high','drill')]],[120,'Drei Zeiteinheiten Figurenfolgen',[A.C('fig','adaptive','timed',3)]],[300,'Fachmodul: 2 Tests + Auswertung',[A.S(2),A.B()]]]},
+ weakest:{t:'Schwächster Bereich zuerst',items:[[0,'Greife deinen Kernabschnitt mit der niedrigsten Trefferquote an: drei Zeiteinheiten',[A.W(3)]],[120,'Eine Zeiteinheit pro Kernabschnitt',[A.C('fig','adaptive','timed'),A.C('eq','adaptive','timed'),A.C('latin','adaptive','timed')]],[210,'Kopf-Rechnung als Warm-up: Brüche, Quadrate, Zweier- und Zehnerpotenzen',[A.N()]],[300,'Fachmodul: 2 Tests + Auswertung',[A.S(2),A.B()]]]},
+ high:{t:'Hohe Schwierigkeit',items:[[0,'Eine schwierige Zeiteinheit pro Kernabschnitt',[A.C('fig','high','timed'),A.C('eq','high','timed'),A.C('latin','high','timed')]],[120,'Wiederhole deine Fehler und erkläre jede Regel laut',[A.B()]],[210,'Tempo: eine Einheit Lateinische Quadrate mit unter 60 s pro Aufgabe',[A.C('latin','adaptive','timed')]],[300,'Fachmodul: 2 Tests + Auswertung',[A.S(2)]]]},
+ block:{t:'Kompletter Kernblock',items:[[0,'Kernblock: 3 × 25 Min. am Stück, ohne Pausen',[A.CB()]],[90,'Wiederhole deine Fehler',[A.B()]],[150,'Zweiter Kernblock — übe dein Tempo: markieren, weitermachen, raten, bevor die Zeit abläuft',[A.CB()]],[300,'Fachmodul: 2 Tests + Auswertung',[A.S(2),A.B()]]]},
+ coremock:{t:'Kern-Probetest + Fachmodul',items:[[0,'Kern-Probetest (75 Min.) mit neuen Aufgaben',[A.M('core')]],[120,'Wiederhole deine Fehler',[A.B()]],[240,'Fachmodul: 2 Tests + Auswertung',[A.S(2)]]]},
+ mock1:{t:'Probetest 1',items:[[30,'Probetest 1: Kern (75 Min.) → 30 Min. Pause → Fachmodul-Set 1',[A.M('mock1')]],[270,'Arbeite jeden Fehler auf und notiere die Regeln oder Formeln, die du vergessen hast',[A.B()]],[330,'Leichte Einheit in deinem schwächsten Abschnitt',[A.W(1)]]]},
+ mock2:{t:'Probetest 2',items:[[30,'Probetest 2: Kern (75 Min.) → 30 Min. Pause → Fachmodul-Set 2',[A.M('mock2')]],[270,'Arbeite jeden Fehler auf und vergleiche mit Probetest 1',[A.B()]],[330,'Lies die offiziellen Beispiellösungen noch einmal',[A.N()]]]},
+ light:{t:'Lockere Wiederholung',items:[[0,'Eine entspannte Einheit pro Kernabschnitt',[A.C('fig','medium','drill'),A.C('eq','medium','drill'),A.C('latin','medium','drill')]],[90,'Wiederhole deine fälligen Trickkarten — kein neuer Stoff',[A.K('')]],[150,'Logistik: Zulassung, Ausweis, Anfahrt, Ankunftszeit, Regeln für den Tag',[A.N()]],[null,'Ruh den Rest des Tages aus und geh früh schlafen',[A.N()]]]},
+};
 const CANON=['baseline','latinEq','fig','weakest','high','block','coremock','mock1','mock2','light'];
 function daySequence(n){
   if(n<=0)return [];
@@ -1108,12 +1120,12 @@ function buildPlan(){
   const start=s.start||ymd(new Date()); const n=Math.min(60,dayDiff(start,s.exam)); const hours=Math.max(1,Math.min(10,+s.hours||6));
   const [fh,fm]=(s.from||'09:00').split(':').map(Number); const scale=hours/6;
   daySequence(n).forEach((type,i)=>{
-    const d=addDays(start,i); const T=DAY_TYPES[type];
+    const d=addDays(start,i); const T=LANG==='de'?DAY_TYPES_DE[type]:DAY_TYPES[type];
     const items=[],acts=[];
     T.items.forEach(([off,txt,a])=>{
       let label=txt;
       if(off!=null){let mins=fh*60+fm+Math.round(off*scale/15)*15;label=`${pad2(Math.floor(mins/60)%24)}:${pad2(mins%60)} ${txt}`;}
-      if(type.startsWith('mock')&&off===30&&hours<4)label+=' (this takes about 3 h 15 min — plan a longer session today)';
+      if(type.startsWith('mock')&&off===30&&hours<4)label+=LANG==='de'?' (das dauert etwa 3 Std. 15 Min. — plane heute einen längeren Block)':' (this takes about 3 h 15 min — plan a longer session today)';
       items.push(label); acts.push(a.map(x=>x.n>1&&hours<4?{...x,n:1}:x));
     });
     PLAN.push({d,t:T.t,type,items}); TASKS[d]=acts;
@@ -1145,7 +1157,7 @@ function viewSetup(){
   ${first?'':`<p class="muted" style="font-size:14.5px">${t('set.backupDetail')}</p>`}
   <div class="row">${first?'':`<button class="btn" data-act="export">${t('set.copyCode')}</button><button class="btn" data-act="download">${t('set.download')}</button>`}<button class="btn${first?'':' ghost'}" data-act="import">${t('set.importCode')}</button><button class="btn ghost" data-act="importfile">${t('set.importFile')}</button>${first?'':`<button class="btn ghost" data-act="reset" style="color:var(--bad)">${t('set.reset')}</button>`}<input type="file" id="backupfile" accept=".json,.txt,application/json,text/plain" hidden></div>
   <label for="codebox" class="muted" hidden>${t('set.backupCode')}</label><textarea id="codebox" hidden rows="3" style="width:100%;font-family:var(--mono);font-size:12px;background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px"></textarea><p id="codemsg" class="muted"></p></div>
-  ${first?'':`<div class="panel stack"><div class="row" style="justify-content:space-between;align-items:baseline"><h3>Contribute a text</h3><span class="tag">no code needed</span></div><p class="muted" style="max-width:64ch">You found a good dMAT-style text? Turn it into six questions here. The app checks the shape and exports a JSON file a maintainer can drop into the bank with one command.</p><div class="row"><button class="btn" data-go="author">Write a text</button></div></div>`}
+  ${first?'':`<div class="panel stack"><div class="row" style="justify-content:space-between;align-items:baseline"><h3>${t('set.contribTitle')}</h3><span class="tag">${t('set.contribBtn')}</span></div><p class="muted" style="max-width:64ch">${t('set.contribBody')}</p><div class="row"><button class="btn" data-go="author">${t('set.contribBtn')}</button></div></div>`}
   <p class="muted" style="font-size:13.5px">${t('set.unofficial')} <a href="https://www.d-mat.de/en/" target="_blank" rel="noopener">d-mat.de</a>.</p>
   </div>`;
 }
@@ -1196,7 +1208,7 @@ function setupPreview(){
   const n=dayDiff(start,exam);
   if(n<1){err.hidden=false;err.textContent='The plan must start at least one day before the exam.';pv.textContent='';return;}
   err.hidden=true; const seq=daySequence(Math.min(60,n));
-  pv.innerHTML=`<b>${Math.min(60,n)}-day plan</b>${n>60?' (capped at 60 days; the plan will start later)':''}: ${seq.map(t=>DAY_TYPES[t].t).filter((v,i,a)=>a.indexOf(v)===i).join(' → ')}.`;
+  pv.innerHTML=`<b>${Math.min(60,n)}-${LANG==='de'?'Tage-Plan':'day plan'}</b>${n>60?(LANG==='de'?' (auf 60 Tage begrenzt; der Plan beginnt später)':' (capped at 60 days; the plan will start later)'):''}: ${seq.map(t=>(LANG==='de'?DAY_TYPES_DE:DAY_TYPES)[t].t).filter((v,i,a)=>a.indexOf(v)===i).join(' → ')}.`;
 }
 function saveSetup(e){
   e.preventDefault(); const f=id=>document.getElementById(id);
@@ -1496,6 +1508,129 @@ const STRINGS={
   'ses.correct':{en:'correct',de:'richtig'},
   'ses.yourWrong':{en:'your answer, wrong',de:'deine Antwort, falsch'},
 
+
+  'set.contribTitle':{en:'Contribute a text',de:'Einen Text beitragen'},
+  'set.contribBody':{en:'You found a good dMAT-style text? Turn it into six questions here. The app checks the shape and exports a JSON file a maintainer can drop into the bank with one command.',de:'Du hast einen guten dMAT-artigen Text gefunden? Verwandle ihn hier in sechs Fragen. Die App prüft die Form und exportiert eine JSON-Datei, die ein Maintainer mit einem Befehl in die Bank einfügt.'},
+  'set.contribBtn':{en:'Write a text',de:'Text schreiben'},
+  'author.eyebrow':{en:'Contribute',de:'Mitwirken'},
+  'author.title':{en:'Write a new text',de:'Einen neuen Text schreiben'},
+  'author.back':{en:'Back to Settings',de:'Zurück zu den Einstellungen'},
+  'author.body':{en:'Write original material (never copy official or copyrighted items). The passage must be self-contained: everything needed to answer the six questions has to be in it. Aim for 150–250 words; tables and simple inline SVG charts are fine. The form checks the shape, then exports a JSON file. A maintainer runs node tools/import-question.mjs your-file.json to add it to the bank.',de:'Schreibe eigenes Material (niemals offizielle oder urheberrechtlich geschützte Inhalte). Der Text muss in sich geschlossen sein: alles, was zur Beantwortung der sechs Fragen nötig ist, muss darin stehen. Zielt auf 150–250 Wörter; Tabellen und einfache inline SVG-Grafiken sind erlaubt. Das Formular prüft die Form und exportiert eine JSON-Datei. Ein Maintainer fügt sie mit node tools/import-question.mjs deine-datei.json der Bank hinzu.'},
+  'author.id':{en:'id (lowercase, digits, dashes)',de:'id (Kleinbuchstaben, Ziffern, Bindestriche)'},
+  'author.area':{en:'Area',de:'Bereich'},
+  'author.titleField':{en:'Title',de:'Titel'},
+  'author.domain':{en:'Domain label',de:'Domänenlabel'},
+  'author.passage':{en:'Passage (HTML allowed)',de:'Text (HTML erlaubt)'},
+  'author.passagePlaceholder':{en:'<p>The passage. Include every formula or definition needed to answer the questions.</p>',de:'<p>Der Text. Enthalte jede Formel oder Definition, die zur Beantwortung der Fragen nötig ist.</p>'},
+  'author.questionN':{en:'Question {n}',de:'Frage {n}'},
+  'author.type':{en:'Type',de:'Typ'},
+  'author.question':{en:'Question',de:'Frage'},
+  'author.correct':{en:'Correct option',de:'Richtige Option'},
+  'author.why':{en:'Why it is right',de:'Warum sie richtig ist'},
+  'author.trick':{en:'Trick (one reusable sentence)',de:'Trick (ein wiederverwendbarer Satz)'},
+  'author.check':{en:'Check & download JSON',de:'Prüfen & JSON herunterladen'},
+  'author.copy':{en:'Copy JSON',de:'JSON kopieren'},
+  'author.local':{en:'Nothing is sent anywhere; the file stays on your machine.',de:'Nichts wird irgendwohin gesendet; die Datei bleibt auf deinem Gerät.'},
+  'author.notReady':{en:'Not ready yet:',de:'Noch nicht fertig:'},
+
+  'author.optionA':{en:'Option A',de:'Option A'},
+  'author.optionB':{en:'Option B',de:'Option B'},
+  'author.optionC':{en:'Option C',de:'Option C'},
+  'author.optionD':{en:'Option D',de:'Option D'},
+  'author.errDangerText':{en:'the passage must not contain scripts, forms, images or event handlers',de:'der Text darf keine Skripte, Formulare, Bilder oder Eventhandler enthalten'},
+  'author.errDangerQ':{en:'q{n}: {k} must not contain scripts, forms, images or event handlers',de:'q{n}: {k} darf keine Skripte, Formulare, Bilder oder Eventhandler enthalten'},
+  'author.errDangerOpt':{en:'q{n}: option {n2} must not contain scripts, forms, images or event handlers',de:'q{n}: Option {n2} darf keine Skripte, Formulare, Bilder oder Eventhandler enthalten'},
+  'author.errId':{en:'id must contain only lowercase letters, digits and dashes',de:'id darf nur Kleinbuchstaben, Ziffern und Bindestriche enthalten'},
+  'author.errArea':{en:'pick a valid area',de:'wähle einen gültigen Bereich'},
+  'author.errTitle':{en:'title is required',de:'der Titel ist erforderlich'},
+  'author.errDomain':{en:'domain is required',de:'das Domänenlabel ist erforderlich'},
+  'author.errText':{en:'the passage is required',de:'der Text ist erforderlich'},
+  'author.errTooShort':{en:'the passage is too short ({n} words); aim for 150–250',de:'der Text ist zu kurz ({n} Wörter); Ziel sind 150–250'},
+  'author.errTooLong':{en:'the passage is too long ({n} words); aim for 150–250',de:'der Text ist zu lang ({n} Wörter); Ziel sind 150–250'},
+  'author.errTaken':{en:'id "{id}" is already in the bank',de:'id „{id}“ ist schon in der Bank'},
+  'author.errType':{en:'q{n}: pick a valid type',de:'q{n}: wähle einen gültigen Typ'},
+  'author.errQ':{en:'q{n}: the question is required',de:'q{n}: die Frage ist erforderlich'},
+  'author.errOpts':{en:'q{n}: all four options are required',de:'q{n}: alle vier Optionen sind erforderlich'},
+  'author.errDupe':{en:'q{n}: the four options must all be different',de:'q{n}: die vier Optionen müssen alle verschieden sein'},
+  'author.errCorrect':{en:'q{n}: pick the correct option',de:'q{n}: wähle die richtige Option'},
+  'author.errWhy':{en:'q{n}: the explanation is required',de:'q{n}: die Erklärung ist erforderlich'},
+  'author.errTrick':{en:'q{n}: the trick is required',de:'q{n}: der Trick ist erforderlich'},
+  'author.okDownload':{en:'Downloaded {file}. A maintainer can run node tools/import-question.mjs {file} to add it to the bank.',de:'{file} wurde heruntergeladen. Ein Maintainer fügt sie mit node tools/import-question.mjs {file} der Bank hinzu.'},
+  'author.copyOk':{en:'JSON copied to the clipboard.',de:'JSON in die Zwischenablage kopiert.'},
+  'author.copyBlocked':{en:'Copy blocked; use Check & download JSON instead.',de:'Kopieren blockiert; nutze stattdessen „Prüfen & JSON herunterladen“.'},
+
+  'diff.low':{en:'Low',de:'Niedrig'},
+  'diff.medium':{en:'Medium',de:'Mittel'},
+  'diff.high':{en:'High',de:'Hoch'},
+  'diff.mixed':{en:'Mixed',de:'Gemischt'},
+  'plan.title':{en:'Your {n}-day plan',de:'Dein {n}-Tage-Plan'},
+  'plan.done':{en:'{n} / {total} days done',de:'{n} / {total} Tage erledigt'},
+  'plan.print':{en:'Print this plan',de:'Diesen Plan drucken'},
+  'plan.tickNote':{en:'Tick a day off when it\'s done. Take a 10-minute break every hour.',de:'Hake einen Tag ab, wenn er erledigt ist. Mach jede Stunde eine 10-Minuten-Pause.'},
+  'plan.changeIn':{en:'Change dates or hours in',de:'Daten oder Stunden ändern in'},
+  'plan.dayN':{en:'Day {n}',de:'Tag {n}'},
+  'plan.todayTag':{en:'today',de:'heute'},
+  'plan.examTitle':{en:'dMAT exam (from {time})',de:'dMAT-Prüfung (ab {time})'},
+  'plan.examL1':{en:'Light breakfast, one 10-minute warm-up set in the morning, then stop',de:'Leichtes Frühstück, ein 10-Minuten-Warm-up am Morgen, dann aufhören'},
+  'plan.examL2':{en:'Core Module 90 min → 30 min break → Subject Module 90 min',de:'Kernmodul 90 Min. → 30 Min. Pause → Fachmodul 90 Min.'},
+  'plan.ready':{en:'Ready to start?',de:'Bereit?'},
+  'plan.logged':{en:'{n} sessions logged',de:'{n} Einheiten protokolliert'},
+  'plan.examDay':{en:'Exam',de:'Prüfung'},
+  'act.timed':{en:'timed set',de:'Zeiteinheit'},
+  'act.drill':{en:'drill',de:'Übungseinheit'},
+  'act.tests':{en:'{n} subject tests',de:'{n} Fachmodul-Tests'},
+  'act.videos':{en:'Open official videos',de:'Offizielle Videos öffnen'},
+  'act.tactics':{en:'Open tactics',de:'Taktik öffnen'},
+  'act.weakest':{en:'Weakest section · timed set',de:'Schwächster Bereich · Zeiteinheit'},
+  'act.block':{en:'Core block · 3 × 25 min',de:'Kernblock · 3 × 25 Min.'},
+  'act.mock1':{en:'Start Mock 1',de:'Probetest 1 starten'},
+  'act.mock2':{en:'Start Mock 2',de:'Probetest 2 starten'},
+  'act.mockcore':{en:'Start core mock',de:'Kern-Probetest starten'},
+  'key.latin':{en:'Keys: A–E answer',de:'Tasten: A–E antworten'},
+  'key.subj':{en:'Keys: 1–4 or A–D answer',de:'Tasten: 1–4 oder A–D antworten'},
+  'key.fig':{en:'Keys: 1–3 image 1, 4–6 image 2',de:'Tasten: 1–3 Bild 1, 4–6 Bild 2'},
+  'key.eq':{en:'Type numbers, Tab between boxes',de:'Zahlen eingeben, Tab zwischen Feldern'},
+  'key.move':{en:'←/→ move',de:'←/→ bewegen'},
+  'key.flag':{en:'F flag',de:'F markieren'},
+  'key.check':{en:'Enter check',de:'Enter prüfen'},
+  'ses.warn5':{en:'Five minutes left',de:'Noch fünf Minuten'},
+  'ses.warn1':{en:'One minute left. Put an answer on every question.',de:'Noch eine Minute. Beantworte jede Frage.'},
+  'resume.title':{en:'Unfinished session',de:'Unfertige Einheit'},
+  'resume.left':{en:' · {time} left',de:' · {time} übrig'},
+  'resume.body':{en:'You left this session open. Pick it up where you stopped, with the time you had left.',de:'Du hast diese Einheit offengelassen. Mach dort weiter, wo du aufgehört hast, mit der Restzeit.'},
+  'resume.resume':{en:'Resume',de:'Fortsetzen'},
+  'resume.discard':{en:'Discard it',de:'Verwerfen'},
+  'pace.legend':{en:'Bars: seconds per item · <span style="color:var(--good)">■</span> right <span style="color:var(--bad)">■</span> wrong <span style="color:var(--grid)">■</span> unanswered · dashed line = {target} s target',de:'Balken: Sekunden pro Aufgabe · <span style="color:var(--good)">■</span> richtig <span style="color:var(--bad)">■</span> falsch <span style="color:var(--grid)">■</span> unbeantwortet · gestrichelte Linie = {target}-s-Ziel'},
+  'pace.rushing':{en:'Rushing: {n} quick answers (under {s} s) were only {p}% correct. Spend 10 more seconds checking.',de:'Zu schnell: {n} schnelle Antworten (unter {s} s) waren nur zu {p} % richtig. Prüf 10 Sekunden länger nach.'},
+  'pace.overthinking':{en:'Overthinking: {n} items took over {s} s and only {p}% were right. Guess, flag and move on sooner.',de:'Zu lange: {n} Aufgaben brauchten über {s} s und nur {p} % waren richtig. Rate, markiere und mach früher weiter.'},
+  'pace.out':{en:'Time ran out with {n} unanswered. Always leave the last minute to guess the rest.',de:'Die Zeit war um: {n} unbeantwortet. Lass dir immer die letzte Minute zum Raten übrig.'},
+  'pace.good':{en:'Good pacing: an average of {s} s per item against a {target} s target.',de:'Gutes Tempo: durchschnittlich {s} s pro Aufgabe, Ziel: {target} s.'},
+  'ai.thinking':{en:'Thinking…',de:'Denkt nach …'},
+  'ai.empty':{en:'The provider returned an empty answer.',de:'Der Anbieter hat eine leere Antwort geliefert.'},
+  'ai.explained':{en:'✦ Explained',de:'✦ Erklärt'},
+  'ai.off':{en:'Explanations are turned off for this page.',de:'Erklärungen sind für diese Seite ausgeschaltet.'},
+  'ai.rateLimit':{en:'Too many requests right now. Try again in a minute.',de:'Zu viele Anfragen. Versuch es in einer Minute noch einmal.'},
+  'ai.failed':{en:'Could not get an explanation. Try again.',de:'Keine Erklärung erhalten. Versuch es noch einmal.'},
+  'today.examL1':{en:'Morning: one relaxed 10-minute drill, then stop.',de:'Morgen: eine entspannte 10-Minuten-Übung, dann aufhören.'},
+  'today.examL2':{en:'Bring your admission confirmation and ID; arrive early.',de:'Nimm deine Zulassung und einen Ausweis mit; komm früh.'},
+  'today.examL3':{en:'Core 90 min → 30 min break → Subject 90 min. No notes. Never leave a question blank.',de:'Kern 90 Min. → 30 Min. Pause → Fach 90 Min. Keine Notizen. Lass nie eine Frage leer.'},
+  'mock.completed':{en:'completed',de:'abgeschlossen'},
+  'mock.notTaken':{en:'not taken yet',de:'noch nicht gemacht'},
+  'mock.mock1':{en:'Mock 1',de:'Probetest 1'},
+  'mock.mock2':{en:'Mock 2',de:'Probetest 2'},
+  'mock.eyebrow':{en:'Full exam simulation',de:'Komplette Prüfungssimulation'},
+  'mock.title':{en:'Sit it like the real thing',de:'Sitz es wie im Ernstfall'},
+  'mock.alwaysExam':{en:'Mocks always run in exam-day mode: no hints or feedback until the end.',de:'Probetests laufen immer im Prüfungstag-Modus: keine Hinweise oder Rückmeldungen bis zum Ende.'},
+  'mock.body':{en:'Each core section is 20 fresh items at mixed difficulty with a hard 25-minute cut-off. The subject set has 4 unseen texts (24 questions) in 60 minutes. The real module is 90 minutes and may contain more texts, so treat 60 minutes for 24 questions as the pace to hold. Phone away, no paper, one sitting.',de:'Jeder Kernabschnitt hat 20 neue Aufgaben mit gemischter Schwierigkeit und einem harten 25-Minuten-Limit. Das Fachmodul-Set hat 4 ungesehene Texte (24 Fragen) in 60 Minuten. Das echte Modul ist 90 Minuten lang und kann mehr Texte enthalten — 60 Minuten für 24 Fragen sind das Tempo, das du halten musst. Handy weg, kein Papier, an einem Stück.'},
+  'mock.sched1':{en:'Your plan schedules Mock 1 on {date}. ',de:'Dein Plan setzt Probetest 1 auf den {date}. '},
+  'mock.sched2':{en:'Mock 2 on {date}. ',de:'Probetest 2 auf den {date}. '},
+  'mock.extra':{en:'Want an extra core-only mock? Start one below; it generates new items every time.',de:'Willst du einen zusätzlichen Kern-Probetest? Starte unten einen — es werden jedes Mal neue Aufgaben erzeugt.'},
+  'mock.core':{en:'Core-only mock (75 min)',de:'Kern-Probetest (75 Min.)'},
+  'mock.total':{en:'≈ 3 h 15 min in total',de:'≈ 3 Std. 15 Min. insgesamt'},
+  'mock.chain':{en:'Figure Sequences 25′ → Equations 25′ → Latin Squares 25′ → 30′ break → Subject set ({s})',de:'Figurenfolgen 25′ → Gleichungen 25′ → Lateinische Quadrate 25′ → 30′ Pause → Fachmodul-Set ({s})'},
+
+  'plan.hoursDay':{en:'{hours} h per day from {from}',de:'{hours} Std. täglich ab {from}'},
+  'plan.doneShort':{en:'Done',de:'Erledigt'},
   'guide.eyebrow':{en:'Exam format (from the official preparatory materials, as of September 2026)',de:'Prüfungsformat (aus den offiziellen Vorbereitungsmaterialien, Stand September 2026)'},
   'guide.title':{en:'What you are facing',de:'Was dich erwartet'},
   'guide.thPart':{en:'Part',de:'Teil'},
@@ -1674,6 +1809,11 @@ const MOCK_OF={};Object.entries(MOCK_SETS).forEach(([k,ids])=>ids.forEach(id=>MO
 const areaTests=a=>PASSAGES.filter(p=>p.area===a&&!MOCK_OF[p.id]);
 const tipOf=it=>it.tip||TYPE_TIP[it.t]||'';
 
+const QTYPES_DE={calc:'Berechnung',data:'Tabelle / Diagramm lesen',concept:'Konzeptprüfung',multi:'Aussagen I / II / III',except:'AUSSER / NICHT',transfer:'Transferszenario'};
+
+const TRICK_DE={"Three options differ — where do you look first?":{"f":"Drei Optionen unterscheiden sich — wo schaust du zuerst hin?","b":"Finde die eine Figur, deren Zustand sich zwischen den Optionen unterscheidet, und löse nur diese Figur."},"x + 1 steps: total distance after 1, 2, 3, 4, 5 transitions?":{"f":"x + 1 Schritte: Gesamtdistanz nach 1, 2, 3, 4, 5 Übergängen?","b":"1, 3, 6, 10, 15. Bild 5 = Bild 4 + 4 Schritte, Bild 6 = Bild 5 + 5 Schritte."},"Outer ring of a 4×4 grid: how many fields?":{"f":"Außenring eines 4×4-Rasters: wie viele Felder?","b":"12. Rechne Randläufe modulo 12."},"Diagonal mover hits a wall — what happens?":{"f":"Diagonal bewegte Figur trifft auf eine Wand — was passiert?","b":"Sie kommt auf derselben Diagonale zurück. Sie wechselt nie zu gerader Bewegung."},"A 4-direction cycle (e.g. left, up, right, down)":{"f":"Ein 4-Richtungszyklus (z. B. links, oben, rechts, unten)","b":"Nach 4 Schritten ist sie wieder am Start, also hat Bild 5 dieselbe Position wie Bild 1."},"An option shows two figures in one cell":{"f":"Eine Option zeigt zwei Figuren in einem Feld","b":"Immer falsch. Figuren überlappen nie und verschwinden nie."},"First move on a new system?":{"f":"Erster Zug bei einem neuen System?","b":"Beginne mit der Gleichung mit einer Unbekannten oder einer, die einen Buchstaben definiert („5 × B = A“)."},"A − (13 − C) = …":{"f":"A − (13 − C) = …","b":"A − 13 + C. Ein Minus vor der Klammer dreht jedes Vorzeichen."},"A + B = 24 and A − B = 14":{"f":"A + B = 24 und A − B = 14","b":"Addiere sie: 2A = 38, also A = 19 und B = 5."},"B ÷ 2 = A with values 1–20":{"f":"B ÷ 2 = A mit Werten 1–20","b":"B ist gerade und höchstens 20, also ist A höchstens 10. Nutze die Spanne zum Eingrenzen."},"Last 5 seconds of every item?":{"f":"Die letzten 5 Sekunden jeder Aufgabe?","b":"Setze deine Werte in JEDE Gleichung ein."},"First 10 seconds?":{"f":"Die ersten 10 Sekunden?","b":"Lies die ?-Zeile und -Spalte. Stehen dort vier verschiedene Buchstaben, ist der fünfte die Antwort."},"Hidden single":{"f":"Versteckter Einzelgänger","b":"Nimm einen Buchstaben, der in einer Zeile fehlt, und frage, wohin er kann. Übersteht nur eine Zelle die Spaltenprüfung, setz ihn dort."},"A letter already appears 4 times":{"f":"Ein Buchstabe kommt schon 4-mal vor","b":"Seine 5. Position ist erzwungen: die einzige Zeile und Spalte, in der er noch fehlt."},"Keeping deductions without notes":{"f":"Schlüsse ohne Notizen behalten","b":"Sag sie leise mit Koordinaten („β4 ist D“). Behalte höchstens 2–3 im Kopf."},"Order of reading":{"f":"Lesereihenfolge","b":"Lies zuerst die Frage, dann suche im Text nach der Formel oder Definition, die sie braucht."},"Options are 1 / 10 / 100 / 1,000":{"f":"Die Optionen sind 1 / 10 / 100 / 1.000","b":"Schätze die Größenordnung und spar dir die exakte Rechnung."},"\"If X doubles, what happens to Y?\"":{"f":"„Wenn X sich verdoppelt, was passiert mit Y?“","b":"Schau auf den Exponent von X in der Formel: x² → ×4, √x → ×1,41, 1/x → ÷2, 1/√x → ÷1,41."},"Unit traps":{"f":"Einheitenfallen","b":"°C → K (+273), km/h ÷ 3,6 = m/s, mL → L (÷1.000), kW = kJ pro Sekunde."},"Option says > 100 % efficiency or a negative count":{"f":"Option sagt > 100 % Wirkungsgrad oder eine negative Anzahl","b":"Physikalisch unmöglich, also sofort aussortieren."},"\"Among those who …\" in a question":{"f":"„Unter denen, die …“ in einer Frage","b":"Bedingte Frage: Verkleinere den Nenner auf diese Gruppe."},"Time budget":{"f":"Zeitbudget","b":"Etwa 2 Minuten pro Frage. Markiere die langsamen und komm zurück. Lass nie eine leer."},"Infinite geometric sum":{"f":"Unendliche geometrische Reihe","b":"Erstes Glied ÷ (1 − Quotient), gilt nur wenn |Quotient| < 1."},"f′(x) = 0 means…?":{"f":"f′(x) = 0 bedeutet…?","b":"Ein Kandidat für ein Maximum oder Minimum, keine Garantie (x³ bei 0 ist keins von beidem)."},"Order matters? Repetition allowed?":{"f":"Reihenfolge wichtig? Wiederholung erlaubt?","b":"Beantworte beide Fragen, dann wählst du n!, n!/(n−k)!, C(n,k) oder n^k."},"68–95–99.7":{"f":"68–95–99,7","b":"Anteil innerhalb von ±1σ, ±2σ und ±3σ. Der Anteil über +2σ liegt bei etwa 2,5 %."},"Adding a constant vs multiplying":{"f":"Addieren vs. Multiplizieren","b":"Addieren verschiebt nur den Mittelwert. Multiplizieren mit k skaliert die Standardabweichung mit k und die Varianz mit k²."},"Bayes questions":{"f":"Bayes-Fragen","b":"Stell dir 10.000 Menschen vor und zähle die echten und falschen Positiven."},"Type I vs Type II":{"f":"Typ I vs. Typ II","b":"Typ I = Fehlalarm (eine wahre H₀ wird abgelehnt). Typ II = übersehener Effekt."},"Energy conservation fall":{"f":"Energieerhaltung beim Fall","b":"v = √(2gh). Die Masse kürzt sich heraus."},"Series vs parallel":{"f":"Reihe vs. Parallel","b":"In Reihe addieren sich die Widerstände. Parallel ist der Gesamtwiderstand kleiner als der kleinste Einzelwiderstand."},"Gas laws":{"f":"Gasgesetze","b":"Immer in Kelvin rechnen. p·V = konst. bei konstantem T; V ∝ T bei konstantem p."},"pH step of 1":{"f":"pH-Schritt von 1","b":"Ein Faktor 10 bei [H⁺]. Eine 3-stufige Differenz bedeutet 1.000×."},"Aa × Aa":{"f":"Aa × Aa","b":"1 AA : 2 Aa : 1 aa. Unter den dominanten Nachkommen sind 2/3 Aa."},"Stoichiometry chain":{"f":"Stöchiometrie-Kette","b":"Masse → Mol → Koeffizientenverhältnis → Mol → Masse."},"|E| > 1":{"f":"|E| > 1","b":"Elastisch: eine Preiserhöhung senkt den Umsatz."},"Real vs nominal":{"f":"Real vs. nominal","b":"Real = nominal ÷ (VPI/100). Reales Wachstum ≈ nominales Wachstum − Inflation."},"Comparative advantage":{"f":"Komparativer Vorteil","b":"Vergleiche Alternativkosten, nicht Stunden. Die für beide vorteilhaften Konditionen liegen zwischen den beiden Alternativkosten."},"Break-even":{"f":"Gewinnschwelle","b":"Fixkosten ÷ (Preis − variable Kosten)."},"NPV & rates":{"f":"Kapitalwert & Zinssätze","b":"Ein höherer Zinssatz ergibt einen niedrigeren NPV. Bei NPV = 0 entspricht der Zinssatz dem IRR."},"Critical path":{"f":"Kritischer Pfad","b":"Der längste Pfad. Eine Verzögerung jenseits des Puffers einer Aufgabe verlängert das Projekt um (Verzögerung − Puffer)."},"Binary search on 1,024 items":{"f":"Binäre Suche in 1.024 Einträgen","b":"Etwa 10 Vergleiche (2¹⁰ = 1.024)."},"INNER vs LEFT JOIN":{"f":"INNER vs. LEFT JOIN","b":"LEFT JOIN = die Inner-Join-Zeilen plus die nicht zugeordneten linken Zeilen."},"Dijkstra requirement":{"f":"Dijkstra-Voraussetzung","b":"Alle Kantengewichte müssen nicht negativ sein."},"Halve the margin of error":{"f":"Fehlergrenze halbieren","b":"Nimm eine 4× so große Stichprobe."},"Valid vs sound":{"f":"Gültig vs. stichhaltig","b":"Gültig = die Struktur hält. Stichhaltig = gültig UND die Prämissen sind wahr."},"Absolute majority":{"f":"Absolute Mehrheit","b":"Mehr als 50 %. Eine relative Mehrheit ist einfach die meisten Stimmen."},"Policy rate goes up":{"f":"Leitzins steigt","b":"Kredite werden teurer, also sinken Investitionen und Nachfrage, und die Inflation geht mit Verzögerung zurück. Die Währung tendiert zur Stärkung, Anleihekurse fallen."},"CLV with churn":{"f":"CLV mit Abwanderungsrate","b":"Kundenlebensdauer = 1 ÷ Abwanderungsrate; CLV = Jahresgewinn × Lebensdauer. Gesund ab CLV ≥ 3 × CAC."},"Primary vs secondary source":{"f":"Primär- vs. Sekundärquelle","b":"Primär = zur Zeit des Studiums entstanden. Sekundär = spätere Deutung. Nur mit unabhängigen Quellen absichern."},"Logistic growth":{"f":"Logistisches Wachstum","b":"r·N·(1 − N/K): am schnellsten bei K/2, null bei K, negativ über K."},"Which subjects can come up?":{"f":"Welche Fächer können vorkommen?","b":"Alle: Mathematik, Computerwissenschaften, Naturwissenschaften, Technik, BWL, Wirtschaft, Sozial- und Geisteswissenschaften. Es gibt keine Fächerwahl — alle schreiben dasselbe General-Academic-Modul."},"You do not know the topic of the text":{"f":"Du kennst das Thema des Textes nicht","b":"Egal. Jeder Text ist in sich geschlossen: die Regel, Formel oder Definition, die du brauchst, steht darin. Such den Satz, nicht dein Gedächtnis."},"Where the marks actually are":{"f":"Wo die Punkte wirklich liegen","b":"Nicht Fachwissen — Geschwindigkeit, den richtigen Satz, die richtige Zeile oder Zelle zu finden und einmal anzuwenden. Diese Fähigkeit ist im Physik- wie im Wirtschaftstext dieselbe."},"Before you answer a Latin square":{"f":"Bevor du ein lateinisches Quadrat beantwortest","b":"Prüfe zuerst die ?-Zeile und -Spalte. Etwa ein Drittel der Aufgaben löst du direkt dort."},"One minute left in a section":{"f":"Noch eine Minute in einem Abschnitt","b":"Hör auf zu rechnen und rate jede leere Aufgabe."},"Border walk with step 2 reaches a corner — what next?":{"f":"Randlauf mit Schritt 2 erreicht eine Ecke — was nun?","b":"Eine Ecke ist nur ein weiteres Randfeld. Zähl sie einmal mit und geh im Uhrzeigersinn weiter; der 12-Felder-Ring läuft um, er startet nie an der Ecke neu."},"x + 1 rotation: what is the total turn after each image?":{"f":"x + 1-Drehung: Wie groß ist die Gesamtdrehung nach jedem Bild?","b":"Vom Bild 1 sind die laufenden Summen 90°, 270°, 180°, 180°, 270°. Addiere jedes Mal weitere +90° und zieh 360° ab, sobald du darüber kommst."},"Straight-line mover at the edge — bounce or wrap?":{"f":"Geradlinig bewegte Figur am Rand — Abprall oder Umlauf?","b":"Abprall kehrt die Richtung um (4 dann 3); Umlauf springt an den gegenüberliegenden Rand (4 dann 1). Schau dir das nächste Bild an, um sie zu unterscheiden."},"Which figure do the three options really disagree on?":{"f":"Auf welche Figur unterscheiden sich die drei Optionen wirklich?","b":"Ignoriere jedes Feld, in dem alle drei Optionen übereinstimmen. Das erste Feld, in dem zwei Optionen abweichen, ist die eine Figur, die du lösen musst."},"Two-colour vs three-colour cycle":{"f":"Zwei-Farben- vs. Drei-Farben-Zyklus","b":"Zwei Farben wechseln jedes Bild; drei Farben rotieren A→B→C→A, also wiederholt Bild 4 das Bild 1. Prüf zuerst die Farbe der schnellsten Figur."}};
+const TYPE_TIP_DE={"calc": "Schätze die Größenordnung, bevor du rechnest, und sortiere Optionen aus, die weit danebenliegen.", "data": "Finde zuerst die genaue Zeile, Spalte oder den Balken; die meisten Fehler kommen vom falschen Feld.", "concept": "Die Antwort steht im Text. Finde den Satz, der den Begriff definiert, und gleiche ihn Wort für Wort ab.", "multi": "Beurteile I, II und III einzeln. Eine falsche Aussage streicht jede Option, die sie enthält.", "except": "Drei Optionen sind wahr. Prüfe jede und wähle die, die scheitert.", "transfer": "Ändere nur das, was sich im Szenario ändert, rechne neu und halte alles andere konstant."};
+
 const TRICKS=[
  {g:'Figure Sequences',f:'Three options differ — where do you look first?',b:'Find the one figure whose state differs between the options and solve only that figure.'},
  {g:'Figure Sequences',f:'x + 1 steps: total distance after 1, 2, 3, 4, 5 transitions?',b:'1, 3, 6, 10, 15. Image 5 = image 4 + 4 steps, image 6 = image 5 + 5 steps.'},
@@ -1697,7 +1837,7 @@ const TRICKS=[
  {g:'Subject Module',f:'Option says > 100 % efficiency or a negative count',b:'Physically impossible, so eliminate it immediately.'},
  {g:'Subject Module',f:'"Among those who …" in a question',b:'Conditional question: shrink the denominator to that group.'},
  {g:'Subject Module',f:'Time budget',b:'About 2 minutes per question. Flag the slow ones and come back. Never leave a blank.'},
- ...Object.entries(QTYPES).map(([k,v])=>({g:'Question types',f:v,b:TYPE_TIP[k]})),
+ ...Object.entries(QTYPES).map(([k,v])=>({g:'Question types',f:v,b:TYPE_TIP[k],df:QTYPES_DE[k],db:TYPE_TIP_DE[k]})),
  {g:'Mathematics',f:'Infinite geometric sum',b:'First term ÷ (1 − ratio), valid only if |ratio| < 1.'},
  {g:'Mathematics',f:'f′(x) = 0 means…?',b:'A candidate for a maximum or minimum, not a guarantee (x³ at 0 is neither).'},
  {g:'Mathematics',f:'Order matters? Repetition allowed?',b:'Answer both questions, then choose n!, n!/(n−k)!, C(n,k) or n^k.'},
@@ -1746,7 +1886,7 @@ function applySkin(k){ if(k&&k!=='auto')document.documentElement.setAttribute('d
 applySkin(store.get('skin','auto'));
 applyLang();
 document.querySelector('.skins').addEventListener('click',e=>{const b=e.target.closest('.skin');if(!b)return;store.set('skin',b.dataset.skin);applySkin(b.dataset.skin);});
-document.querySelector('.lang').addEventListener('click',e=>{const b=e.target.closest('[data-lang]');if(!b)return;LANG=b.dataset.lang;store.set('lang',LANG);applyLang();render();});
+document.querySelector('.lang').addEventListener('click',e=>{const b=e.target.closest('[data-lang]');if(!b)return;LANG=b.dataset.lang;store.set('lang',LANG);buildPlan();applyLang();render();});
 let leaveArmed=null;
 function setTab(t){ if(session&&!session.finished&&leaveArmed!==t){ leaveArmed=t; const b=document.querySelector(`#tabs button[data-tab="${t}"]`); if(b){b.dataset.label=b.dataset.label||b.textContent; b.textContent=t('leave');} setTimeout(()=>{leaveArmed=null;document.querySelectorAll('#tabs button').forEach(x=>{x.textContent=t('tab.'+x.dataset.tab);delete x.dataset.label;});},3000); return; }
   leaveArmed=null; document.querySelectorAll('#tabs button').forEach(x=>{if(x.dataset.label)x.textContent=x.dataset.label;}); stopTimer(); session=null; tab=t; document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t)); render(); }
@@ -1763,13 +1903,13 @@ function render(){ window.__aiItems=[]; const v=$('#view'); if(session) return r
 function viewPlan(){
   const done=store.get('plandone',{}); const today=ymd(new Date()); const S=getSetup();
   const log=store.get('log',[]);
-  return `<div class="stack"><div class="panel"><div class="row" style="justify-content:space-between"><div><p class="eyebrow">${planSpan()} · ${S.hours} h per day from ${S.from}</p><h2>Your ${PLAN.length}-day plan</h2></div><span class="tag">${Object.values(done).filter(Boolean).length} / ${PLAN.length} days done</span></div>
-  <div class="row noprint" style="margin-top:8px"><button class="btn" data-act="print">Print this plan</button></div>
-  <p class="muted" style="margin-top:6px;max-width:64ch">Tick a day off when it's done. Take a 10-minute break every hour.<span class="noprint"> Change dates or hours in <button class="linkbtn" data-go="setup">Settings</button>.</span></p>
-  <div style="margin-top:12px">${PLAN.map((p,i)=>{const dt=parseYmd(p.d);const isT=p.d===today;return `<div class="day ${isT?'today':''} ${done[p.d]?'done':''}"><div class="date">${dt.toLocaleDateString(undefined,{weekday:'short'})}<b>${fmtDate(p.d)}</b>Day ${i+1}</div><div><h3>${p.t}${isT?' <span class="tag good">today</span>':''}</h3><ul>${p.items.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div><label class="check"><input type="checkbox" id="pd-${p.d}" data-plan="${p.d}" ${done[p.d]?'checked':''}> Done</label></div>`}).join('')}
-  <div class="day"><div class="date">${parseYmd(S.exam).toLocaleDateString(undefined,{weekday:'short'})}<b>${fmtDate(S.exam)}</b>Exam</div><div><h3>dMAT exam (from ${S.time})</h3><ul><li>Light breakfast, one 10-minute warm-up set in the morning, then stop</li><li>Core Module 90 min → 30 min break → Subject Module 90 min</li></ul></div><span></span></div></div></div>
-  <div class="panel"><div class="row" style="justify-content:space-between"><h3>Ready to start?</h3><span class="muted">${log.length} sessions logged</span></div>
-  <div class="row" style="margin-top:12px"><button class="btn primary" data-go="practice">Open practice</button><button class="btn" data-go="mock">Mock exam</button><button class="btn ghost" data-go="progress">See progress</button></div></div></div>`;
+  return `<div class="stack"><div class="panel"><div class="row" style="justify-content:space-between"><div><p class="eyebrow">${planSpan()} · ${tf('plan.hoursDay',{hours:S.hours,from:S.from})}</p><h2>${tf('plan.title',{n:PLAN.length})}</h2></div><span class="tag">${tf('plan.done',{n:Object.values(done).filter(Boolean).length,total:PLAN.length})}</span></div>
+  <div class="row noprint" style="margin-top:8px"><button class="btn" data-act="print">${t('plan.print')}</button></div>
+  <p class="muted" style="margin-top:6px;max-width:64ch">${t('plan.tickNote')}<span class="noprint"> ${t('plan.changeIn')} <button class="linkbtn" data-go="setup">${t('tab.setup')}</button>.</span></p>
+  <div style="margin-top:12px">${PLAN.map((p,i)=>{const dt=parseYmd(p.d);const isT=p.d===today;return `<div class="day ${isT?'today':''} ${done[p.d]?'done':''}"><div class="date">${dt.toLocaleDateString(undefined,{weekday:'short'})}<b>${fmtDate(p.d)}</b>${tf('plan.dayN',{n:i+1})}</div><div><h3>${p.t}${isT?` <span class="tag good">${t('plan.todayTag')}</span>`:''}</h3><ul>${p.items.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div><label class="check"><input type="checkbox" id="pd-${p.d}" data-plan="${p.d}" ${done[p.d]?'checked':''}> ${t('plan.doneShort')}</label></div>`}).join('')}
+  <div class="day"><div class="date">${parseYmd(S.exam).toLocaleDateString(undefined,{weekday:'short'})}<b>${fmtDate(S.exam)}</b>${t('plan.examDay')}</div><div><h3>${tf('plan.examTitle',{time:S.time})}</h3><ul><li>${t('plan.examL1')}</li><li>${t('plan.examL2')}</li></ul></div><span></span></div></div></div>
+  <div class="panel"><div class="row" style="justify-content:space-between"><h3>${t('plan.ready')}</h3><span class="muted">${tf('plan.logged',{n:log.length})}</span></div>
+  <div class="row" style="margin-top:12px"><button class="btn primary" data-go="practice">${t('prog.open')}</button><button class="btn" data-go="mock">${t('tab.mock')}</button><button class="btn ghost" data-go="progress">${t('today.seeProgress')}</button></div></div></div>`;
 }
 
 /* ---------- PRACTICE ---------- */
@@ -1778,14 +1918,14 @@ function viewPractice(){
   const seen=store.get('seenP',{});
   const secCard=(k,desc)=>`<button class="pick" data-sec="${k}" aria-pressed="${pr.sec===k}"><h3>${secName(k)}</h3><span class="muted">${desc}</span><span class="meta">${k==='subj'?t('sec.metaSubj'):k==='bank'?t('sec.metaBank'):t('sec.metaCore')}</span></button>`;
   let opts=''; const ex=examDay();
-  const exRow=`<div class="row"><span class="label">${t('prac.examday')}</span><button class="switch" data-examday="1" role="switch" aria-checked="${ex}"><i></i></button><span class="muted" style="font-size:14.5px">${ex?t('prac.on'):t('prac.off')}</span></div>`;
+  const exRow=`<div class="row"><span class="label">${t('prac.examday')}</span><button class="switch" data-examday="1" role="switch" aria-checked="${ex}" aria-label="${t('prac.examday')}"><i></i></button><span class="muted" style="font-size:14.5px">${ex?t('prac.on'):t('prac.off')}</span></div>`;
   if(pr.sec==='bank'){
     const {due,all}=bankCounts();
     opts=`<h3>${t('prac.bankTitle')}</h3><p class="muted" style="max-width:62ch">${t('prac.bankBody')}</p>
     <div class="row"><span class="label">${t('prac.questions')}</span><div class="seg"><button data-bankset="due" aria-pressed="${pr.bankset!=='all'}">${tf('prac.dueNow',{n:due})}</button><button data-bankset="all" aria-pressed="${pr.bankset==='all'}">${tf('prac.everything',{n:all})}</button></div></div>`;
   } else if(pr.sec!=='subj'){
     const lv=store.get('level',{})[pr.sec]||2;
-    opts=`<div class="row"><span class="label">${t('prac.difficulty')}</span><div class="seg">${['adaptive','mixed','low','medium','high'].map(d=>`<button data-diff="${d}" aria-pressed="${pr.diff===d}">${d==='adaptive'?tf('prac.adaptiveLevel',{n:lv}):d[0].toUpperCase()+d.slice(1)}</button>`).join('')}</div></div>
+    opts=`<div class="row"><span class="label">${t('prac.difficulty')}</span><div class="seg">${['adaptive','mixed','low','medium','high'].map(d=>`<button data-diff="${d}" aria-pressed="${pr.diff===d}">${d==='adaptive'?tf('prac.adaptiveLevel',{n:lv}):t('diff.'+d)}</button>`).join('')}</div></div>
     ${pr.diff==='adaptive'?`<p class="muted" style="font-size:14.5px;margin-top:-8px">${t('prac.adaptiveNote')}</p>`:''}
     <div class="row"><span class="label">${t('prac.mode')}</span><div class="seg"><button data-mode="timed" aria-pressed="${pr.mode==='timed'||ex}">${t('prac.timed')}</button><button data-mode="drill" aria-pressed="${pr.mode==='drill'&&!ex}" ${ex?'disabled':''}>${t('prac.drill')}</button></div></div>${exRow}`;
   } else {
@@ -1817,7 +1957,7 @@ function viewPractice(){
   }
   const bc=bankCounts();
   const can=pr.sec==='bank'?(pr.bankset==='all'?bc.all:bc.due)>0:(pr.sec!=='subj'||(pr.skind==='test'&&pr.pid)||pr.skind==='marathon'||(pr.skind==='type'&&pr.qtype&&!ex)||(pr.skind==='weak'&&!ex));
-  return `<div class="stack"><div class="step"><i>1</i>${t('prac.choose')}</div><div class="grid2">${secCard('fig',t('sec.figDesc'))}${secCard('eq',t('sec.eqDesc'))}${secCard('latin',t('sec.latinDesc'))}${secCard('subj',t('sec.subjDesc'))}${secCard('bank',tf('sec.bankDesc',{due:bc.due,all:bc.all}))}</div>
+  return `<div class="stack"><h2 class="sr">${t('prac.choose')}</h2><div class="step"><i>1</i>${t('prac.choose')}</div><div class="grid2">${secCard('fig',t('sec.figDesc'))}${secCard('eq',t('sec.eqDesc'))}${secCard('latin',t('sec.latinDesc'))}${secCard('subj',t('sec.subjDesc'))}${secCard('bank',tf('sec.bankDesc',{due:bc.due,all:bc.all}))}</div>
   <div class="step" style="margin-top:8px"><i>2</i>${t('prac.setup')}</div><div class="panel stack">${opts}<div class="row" style="border-top:1px solid var(--line);padding-top:18px"><button class="btn primary big" id="startP" ${can?'':'disabled'}>${t('prac.start')}</button><span class="noteban">${can?t('prac.noNotes'):pr.sec==='bank'?t('prac.nothingRedo'):t('prac.pickTest')}</span></div></div></div>`;
 }
 function mixedDiffs(n){const a=[];for(let i=0;i<n;i++)a.push(i<n*0.3?'low':i<n*0.65?'medium':'high');return a;}
@@ -1861,13 +2001,13 @@ function startPractice(task){
 /* ---------- MOCK ---------- */
 function viewMock(){
   const log=store.get('log',[]); const didM=k=>log.some(l=>l.mock===k);
-  const card=(k,title)=>`<div class="pick"><span class="eyebrow">${didM(k)?'completed':'not taken yet'}</span><h3>${title}</h3><span class="muted">Figure Sequences 25′ → Equations 25′ → Latin Squares 25′ → 30′ break → Subject set (${MOCK_SETS[k].map(id=>PBY[id].domain).join(', ')})</span><span class="meta">≈ 3 h 15 min in total</span><button class="btn primary" data-mock="${k}" style="margin-top:6px;align-self:flex-start">Start ${title}</button></div>`;
-  return `<div class="stack"><div class="panel stack"><div><p class="eyebrow">Full exam simulation</p><h2>Sit it like the real thing</h2></div>
-  <p class="tag warn" style="align-self:flex-start">Mocks always run in exam-day mode: no hints or feedback until the end.</p>
-  <p class="muted" style="max-width:68ch">Each core section is 20 fresh items at mixed difficulty with a hard 25-minute cut-off. The subject set has 4 unseen texts (24 questions) in 60 minutes. The real module is 90 minutes and may contain more texts, so treat 60 minutes for 24 questions as the pace to hold. Phone away, no paper, one sitting.</p>
-  <div class="grid2">${card('mock1','Mock 1')}${card('mock2','Mock 2')}</div>
-  <p class="muted">${(()=>{const m=mockDates();return m.mock1?`Your plan schedules Mock 1 on ${m.mock1}${m.mock2?` and Mock 2 on ${m.mock2}`:''}. `:''})()}Want an extra core-only mock? Start one below; it generates new items every time.</p>
-  <div><button class="btn" data-mock="core">Core-only mock (75 min)</button></div></div></div>`;
+  const card=(k,title)=>`<div class="pick"><span class="eyebrow">${didM(k)?t('mock.completed'):t('mock.notTaken')}</span><h3>${title}</h3><span class="muted">${tf('mock.chain',{s:MOCK_SETS[k].map(id=>PBY[id].domain).join(', ')})}</span><span class="meta">${t('mock.total')}</span><button class="btn primary" data-mock="${k}" style="margin-top:6px;align-self:flex-start">${t('act.'+k)}</button></div>`;
+  return `<div class="stack"><div class="panel stack"><div><p class="eyebrow">${t('mock.eyebrow')}</p><h2>${t('mock.title')}</h2></div>
+  <p class="tag warn" style="align-self:flex-start">${t('mock.alwaysExam')}</p>
+  <p class="muted" style="max-width:68ch">${t('mock.body')}</p>
+  <div class="grid2">${card('mock1',t('mock.mock1'))}${card('mock2',t('mock.mock2'))}</div>
+  <p class="muted">${(()=>{const m=mockDates();return m.mock1?tf('mock.sched1',{date:m.mock1})+(m.mock2?tf('mock.sched2',{date:m.mock2}):''):''})()}${t('mock.extra')}</p>
+  <div><button class="btn" data-mock="core">${t('mock.core')}</button></div></div></div>`;
 }
 function startMock(k,task){
   const parts=['fig','eq','latin'].map(s=>({sec:s,items:buildCore(s,'mixed',20),limit:25*60}));
@@ -1902,12 +2042,12 @@ function resumeLive(){
 }
 function resumeBanner(){
   const L=liveSession(); if(!L||session)return '';
-  const p=L.parts[L.pi]||{}; const name=(SECTIONS[p.sec]||{}).name||'session';
-  const left=p.limit?` · ${fmt(Math.max(0,p.limit-(p.elapsed||0)))} left`:'';
+  const p=L.parts[L.pi]||{}; const name=(SECTIONS[p.sec]?secName(p.sec):t('ses.mock'));
+  const left=p.limit?tf('resume.left',{time:fmt(Math.max(0,p.limit-(p.elapsed||0)))}):'';
   const done=(p.ans||[]).filter(a=>a!=null).length;
-  return `<div class="panel stack noprint" style="border-color:var(--accent);gap:10px;margin-bottom:18px"><div><p class="eyebrow">Unfinished session</p><h3>${name} · ${done}/${(p.items||[]).length} answered${left}</h3></div>
-  <p class="muted" style="font-size:15px">You left this session open. Pick it up where you stopped, with the time you had left.</p>
-  <div class="row"><button class="btn primary" data-act="resume">Resume</button><button class="btn ghost" data-act="dropresume">Discard it</button></div></div>`;
+  return `<div class="panel stack noprint" style="border-color:var(--accent);gap:10px;margin-bottom:18px"><div><p class="eyebrow">${t('resume.title')}</p><h3>${name} · ${tf('ses.answered',{n:done,total:(p.items||[]).length})}${left}</h3></div>
+  <p class="muted" style="font-size:15px">${t('resume.body')}</p>
+  <div class="row"><button class="btn primary" data-act="resume">${t('resume.resume')}</button><button class="btn ghost" data-act="dropresume">${t('resume.discard')}</button></div></div>`;
 }
 
 function newSession(s){ clearLive(); session={...s,pi:0,finished:false,results:[]}; if((examDay()&&s.kind!=='bank')||s.kind==='mock'){session.exam=true;session.drill=false;} startPart(); }
@@ -1949,7 +2089,7 @@ function renderSession(){
     <button class="btn ghost" data-act="flag">${p.flags.has(p.idx)?t('ses.unflag'):t('ses.flag')}</button>
     <span style="flex:1"></span>
     <button class="btn ${last?'primary':''}" data-act="finish">${session.pi<session.parts.length-1?t('ses.submit'):t('ses.finish')}</button></div>`;
-  v.innerHTML=`<div class="panel"><div class="sessbar"><div><p class="eyebrow">${stepInfo}${session.kind==='mock'?t('ses.mock'):session.kind==='bank'?t('ses.bank'):drill?t('ses.drill'):t('ses.timed')}${EX&&session.kind!=='mock'?t('ses.examday'):''}</p><h3 style="font-size:20px">${secLabel}</h3></div><div class="row"><span id="pace" class="pace"></span><span class="muted" style="font-size:14.5px">${tf('ses.answered',{n:Object.keys(p.ans).filter(i=>answered(+i)).length,total:p.items.length})}</span><div class="timer" id="timer" aria-label="Time remaining">--:--</div></div></div>
+  v.innerHTML=`<div class="panel"><div class="sessbar"><div><p class="eyebrow">${stepInfo}${session.kind==='mock'?t('ses.mock'):session.kind==='bank'?t('ses.bank'):drill?t('ses.drill'):t('ses.timed')}${EX&&session.kind!=='mock'?t('ses.examday'):''}</p><h2 style="font-size:20px;line-height:1.3">${secLabel}</h2></div><div class="row"><span id="pace" class="pace"></span><span class="muted" style="font-size:14.5px">${tf('ses.answered',{n:Object.keys(p.ans).filter(i=>answered(+i)).length,total:p.items.length})}</span><div class="timer" id="timer" aria-label="Time remaining">--:--</div></div></div>
   <div class="navstrip">${strip}</div>
   <div class="row" style="justify-content:space-between;margin-bottom:12px"><span class="eyebrow" id="itemlabel" tabindex="-1">${tf('ses.item',{n:p.idx+1})}${it.diff&&!EX?` · ${it.diff}`:''}${session.kind==='bank'?` · ${bankLabel(it)}`:''}</span><span class="noteban">${EX?t('ses.noNotes'):keyHint(it,drill&&!checked)}</span></div>
   ${body}${nav}</div>`;
@@ -2063,14 +2203,16 @@ function gradeCard(i,how){const st=store.get('cards',{});const c=cardState(i);co
 function cardsDue(){const now=Date.now();return TRICKS.filter((c,i)=>{const s=cardState(i);return s.box===0||s.due<=now;}).length;}
 function viewTricks(){
   const groups=[...new Set(TRICKS.map(t=>t.g))]; const now=Date.now();
+  const pickF=c=>LANG==='de'?(c.df||(TRICK_DE[c.f]||{}).f||c.f):c.f;
+  const pickB=c=>LANG==='de'?(c.db||(TRICK_DE[c.f]||{}).b||c.b):c.b;
   const list=TRICKS.map((c,i)=>({...c,i,s:cardState(i)})).filter(c=>cardFilter==='all'||(cardFilter==='review'?(c.s.box===0||c.s.due<=now):c.g===cardFilter));
   const mastered=TRICKS.filter((c,i)=>cardState(i).box>=3).length;
   const nextIn=s=>{const d=Math.ceil((s.due-now)/DAY);return d<=0?t('tr.dueNow'):d===1?t('tr.tomorrow'):tf('tr.inDays',{n:d});};
-  const cards=list.map(c=>{const tag=c.s.box>=3?`<span class="tag good">${t('tr.masteredTag')}</span>`:c.s.box>0?`<span class="tag">${nextIn(c.s)}</span>`:'';return `<div class="card"><div class="row" style="justify-content:space-between;gap:6px"><span class="eyebrow">${esc(c.g)}</span>${tag}</div><h3>${esc(c.f)}</h3><button class="reveal" data-cardflip="${c.i}">${t('tr.show')}</button><p id="cb-${c.i}" hidden class="explain">${esc(c.b)}</p><div class="small"><button data-card="${c.i}" data-cardset="got">${t('tr.got')}</button><button data-card="${c.i}" data-cardset="again">${t('tr.again')}</button></div></div>`;}).join('');
+  const cards=list.map(c=>{const tag=c.s.box>=3?`<span class="tag good">${t('tr.masteredTag')}</span>`:c.s.box>0?`<span class="tag">${nextIn(c.s)}</span>`:'';return `<div class="card"><div class="row" style="justify-content:space-between;gap:6px"><span class="eyebrow">${esc(groupName(c.g))}</span>${tag}</div><h3>${esc(pickF(c))}</h3><button class="reveal" data-cardflip="${c.i}">${t('tr.show')}</button><p id="cb-${c.i}" hidden class="explain">${esc(pickB(c))}</p><div class="small"><button data-card="${c.i}" data-cardset="got">${t('tr.got')}</button><button data-card="${c.i}" data-cardset="again">${t('tr.again')}</button></div></div>`;}).join('');
   const empty=`<div class="panel"><h3>${t('tr.caughtUp')}</h3><p class="muted">${t('tr.caughtUpBody')}</p></div>`;
   return `<div class="stack"><div class="panel stack"><div class="row" style="justify-content:space-between"><div><p class="eyebrow">${t('tr.eyebrow')}</p><h2>${t('tr.title')}</h2></div><div class="row" style="gap:6px"><span class="tag warn">${tf('tr.toReview',{n:cardsDue()})}</span><span class="tag good">${tf('tr.mastered',{n:mastered,total:TRICKS.length})}</span></div></div>
   <p class="muted" style="max-width:64ch">${t('tr.body')}</p>
-  <div class="seg"><button data-cardfilter="review" aria-pressed="${cardFilter==='review'}">${t('tr.review')}</button><button data-cardfilter="all" aria-pressed="${cardFilter==='all'}">${t('tr.all')}</button>${groups.map(g=>`<button data-cardfilter="${esc(g)}" aria-pressed="${cardFilter===g}">${esc(g)}</button>`).join('')}</div></div>
+  <div class="seg"><button data-cardfilter="review" aria-pressed="${cardFilter==='review'}">${t('tr.review')}</button><button data-cardfilter="all" aria-pressed="${cardFilter==='all'}">${t('tr.all')}</button>${groups.map(g=>`<button data-cardfilter="${esc(g)}" aria-pressed="${cardFilter===g}">${esc(groupName(g))}</button>`).join('')}</div></div>
   <div class="grid2">${cards||empty}</div></div>`;
 }
 
@@ -2107,27 +2249,27 @@ function viewGuide(){
 /* ---------- AUTHOR A QUESTION ---------- */
 function authorWords(html){return html.replace(/<[^>]*>/g,' ').replace(/&[a-z]+;/gi,' ').split(/\s+/).filter(Boolean).length;}
 function authorQ(n){
-  return `<fieldset class="authorq" style="border:1px solid var(--line);border-radius:10px;padding:12px;display:grid;gap:10px"><legend style="padding:0 6px">Question ${n+1}</legend>
-    <label>Type<select id="au-q${n}-t">${Object.entries(QTYPES).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select></label>
-    <label>Question<input id="au-q${n}-q" type="text" autocomplete="off" spellcheck="true"></label>
-    <div class="grid2" style="gap:10px"><label>Option A<input id="au-q${n}-o0" type="text" autocomplete="off"></label><label>Option B<input id="au-q${n}-o1" type="text" autocomplete="off"></label><label>Option C<input id="au-q${n}-o2" type="text" autocomplete="off"></label><label>Option D<input id="au-q${n}-o3" type="text" autocomplete="off"></label></div>
-    <label>Correct option<select id="au-q${n}-a"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option></select></label>
-    <label>Why it is right<input id="au-q${n}-e" type="text" autocomplete="off" spellcheck="true"></label>
-    <label>Trick (one reusable sentence)<input id="au-q${n}-tip" type="text" autocomplete="off" spellcheck="true"></label>
+  return `<fieldset class="authorq" style="border:1px solid var(--line);border-radius:10px;padding:12px;display:grid;gap:10px"><legend style="padding:0 6px">${tf('author.questionN',{n:n+1})}</legend>
+    <label>${t('author.type')}<select id="au-q${n}-t">${Object.entries(QTYPES).map(([k,v])=>`<option value="${k}">${qtypeName(k)}</option>`).join('')}</select></label>
+    <label>${t('author.question')}<input id="au-q${n}-q" type="text" autocomplete="off" spellcheck="true"></label>
+    <div class="grid2" style="gap:10px"><label>${t('author.optionA')}<input id="au-q${n}-o0" type="text" autocomplete="off"></label><label>${t('author.optionB')}<input id="au-q${n}-o1" type="text" autocomplete="off"></label><label>${t('author.optionC')}<input id="au-q${n}-o2" type="text" autocomplete="off"></label><label>${t('author.optionD')}<input id="au-q${n}-o3" type="text" autocomplete="off"></label></div>
+    <label>${t('author.correct')}<select id="au-q${n}-a"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option></select></label>
+    <label>${t('author.why')}<input id="au-q${n}-e" type="text" autocomplete="off" spellcheck="true"></label>
+    <label>${t('author.trick')}<input id="au-q${n}-tip" type="text" autocomplete="off" spellcheck="true"></label>
   </fieldset>`;
 }
 function viewAuthor(){
-  return `<div class="stack"><div class="panel stack"><div class="row" style="justify-content:space-between;align-items:baseline"><div><p class="eyebrow">Contribute</p><h2>Write a new text</h2></div><button class="btn ghost" data-go="setup">Back to Settings</button></div>
-  <p class="muted" style="max-width:68ch">Write original material (never copy official or copyrighted items). The passage must be self-contained: everything needed to answer the six questions has to be in it. Aim for 150–250 words; tables and simple inline SVG charts are fine. The form checks the shape, then exports a JSON file. A maintainer runs <code>node tools/import-question.mjs your-file.json</code> to add it to the bank.</p>
+  return `<div class="stack"><div class="panel stack"><div class="row" style="justify-content:space-between;align-items:baseline"><div><p class="eyebrow">${t('author.eyebrow')}</p><h2>${t('author.title')}</h2></div><button class="btn ghost" data-go="setup">${t('author.back')}</button></div>
+  <p class="muted" style="max-width:68ch">${t('author.body')}</p>
   <div class="setup">
-    <label>id (lowercase, digits, dashes)<input id="au-id" type="text" autocomplete="off" spellcheck="false" placeholder="causal-loops"></label>
-    <label>Area<select id="au-area">${Object.entries(AREAS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select></label>
-    <label>Title<input id="au-title" type="text" autocomplete="off" spellcheck="true" placeholder="Short title"></label>
-    <label>Domain label<input id="au-domain" type="text" autocomplete="off" spellcheck="true" placeholder="Economics"></label>
+    <label>${t('author.id')}<input id="au-id" type="text" autocomplete="off" spellcheck="false" placeholder="causal-loops"></label>
+    <label>${t('author.area')}<select id="au-area">${Object.entries(AREAS).map(([k,v])=>`<option value="${k}">${areaName(k)}</option>`).join('')}</select></label>
+    <label>${t('author.titleField')}<input id="au-title" type="text" autocomplete="off" spellcheck="true" placeholder="${t('author.titleField')}"></label>
+    <label>${t('author.domain')}<input id="au-domain" type="text" autocomplete="off" spellcheck="true" placeholder="Economics"></label>
   </div>
-  <label style="display:grid;gap:6px">Passage (HTML allowed)<textarea id="au-text" rows="8" spellcheck="true" placeholder="<p>The passage. Include every formula or definition needed to answer the questions.</p>"></textarea></label>
+  <label style="display:grid;gap:6px">${t('author.passage')}<textarea id="au-text" rows="8" spellcheck="true" placeholder="${t('author.passagePlaceholder')}"></textarea></label>
   ${[0,1,2,3,4,5].map(authorQ).join('')}
-  <div class="row" style="border-top:1px solid var(--line);padding-top:16px"><button class="btn primary" data-act="authorExport">Check &amp; download JSON</button><button class="btn" data-act="authorCopy">Copy JSON</button><span class="muted" style="font-size:14px">Nothing is sent anywhere; the file stays on your machine.</span></div>
+  <div class="row" style="border-top:1px solid var(--line);padding-top:16px"><button class="btn primary" data-act="authorExport">${t('author.check')}</button><button class="btn" data-act="authorCopy">${t('author.copy')}</button><span class="muted" style="font-size:14px">${t('author.local')}</span></div>
   <p id="authormsg" class="muted" style="max-width:68ch"></p>
   </div></div>`;
 }
@@ -2139,40 +2281,40 @@ function authorPassage(){
 const DANGER=/<\s*\/?\s*(script|style|iframe|object|embed|form|input|button|img|base|meta|link)\b|\son[a-z]+\s*=|javascript\s*:/i;
 function authorProblems(p){
   const out=[];const okType=k=>Object.prototype.hasOwnProperty.call(QTYPES,k);
-  if(DANGER.test(p.text||''))out.push('the passage must not contain scripts, forms, images or event handlers');
-  p.qs.forEach((q,i)=>{const n=i+1;['q','e','tip'].forEach(k=>{if(DANGER.test(q[k]||''))out.push(`q${n}: the ${k} must not contain scripts, forms, images or event handlers`);});q.o.forEach((o,j)=>{if(DANGER.test(o||''))out.push(`q${n}: option ${j+1} must not contain scripts, forms, images or event handlers`);});});
-  if(!/^[a-z0-9-]+$/.test(p.id||''))out.push('id must contain only lowercase letters, digits and dashes');
-  if(!AREAS[p.area])out.push('pick a valid area');
-  if(!p.title)out.push('title is required');
-  if(!p.domain)out.push('domain is required');
+  if(DANGER.test(p.text||''))out.push(t('author.errDangerText'));
+  p.qs.forEach((q,i)=>{const n=i+1;['q','e','tip'].forEach(k=>{if(DANGER.test(q[k]||''))out.push(tf('author.errDangerQ',{n,k}));});q.o.forEach((o,j)=>{if(DANGER.test(o||''))out.push(tf('author.errDangerOpt',{n,n2:j+1}));});});
+  if(!/^[a-z0-9-]+$/.test(p.id||''))out.push(t('author.errId'));
+  if(!AREAS[p.area])out.push(t('author.errArea'));
+  if(!p.title)out.push(t('author.errTitle'));
+  if(!p.domain)out.push(t('author.errDomain'));
   const words=authorWords(p.text||'');
-  if(!p.text.trim())out.push('the passage is required');
-  else if(words<120)out.push(`the passage is too short (${words} words); aim for 150–250`);
-  else if(words>320)out.push(`the passage is too long (${words} words); aim for 150–250`);
-  if(PASSAGES.some(x=>x.id===p.id))out.push(`id "${p.id}" is already in the bank`);
+  if(!p.text.trim())out.push(t('author.errText'));
+  else if(words<120)out.push(tf('author.errTooShort',{n:words}));
+  else if(words>320)out.push(tf('author.errTooLong',{n:words}));
+  if(PASSAGES.some(x=>x.id===p.id))out.push(tf('author.errTaken',{id:p.id}));
   p.qs.forEach((q,i)=>{const n=i+1;
-    if(!okType(q.t))out.push(`q${n}: pick a valid type`);
-    if(!q.q)out.push(`q${n}: the question is required`);
-    if(q.o.some(o=>!o))out.push(`q${n}: all four options are required`);
-    else if(new Set(q.o).size!==4)out.push(`q${n}: the four options must all be different`);
-    if(!Number.isInteger(q.a)||q.a<0||q.a>3)out.push(`q${n}: pick the correct option`);
-    if(!q.e)out.push(`q${n}: the explanation is required`);
-    if(!q.tip)out.push(`q${n}: the trick is required`);
+    if(!okType(q.t))out.push(tf('author.errType',{n}));
+    if(!q.q)out.push(tf('author.errQ',{n}));
+    if(q.o.some(o=>!o))out.push(tf('author.errOpts',{n}));
+    else if(new Set(q.o).size!==4)out.push(tf('author.errDupe',{n}));
+    if(!Number.isInteger(q.a)||q.a<0||q.a>3)out.push(tf('author.errCorrect',{n}));
+    if(!q.e)out.push(tf('author.errWhy',{n}));
+    if(!q.tip)out.push(tf('author.errTrick',{n}));
   });
   return out;
 }
 function authorExport(){
   const p=authorPassage(); const bad=authorProblems(p); const msg=document.getElementById('authormsg');
-  if(bad.length){msg.innerHTML='<b>Not ready yet:</b><ul style="margin:6px 0 0 18px">'+bad.map(x=>`<li>${esc(x)}</li>`).join('')+'</ul>';return;}
+  if(bad.length){msg.innerHTML=`<b>${t('author.notReady')}</b><ul style="margin:6px 0 0 18px">`+bad.map(x=>`<li>${esc(x)}</li>`).join('')+'</ul>';return;}
   const blob=new Blob([JSON.stringify(p,null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`dmat-question-${p.id}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
-  msg.innerHTML=`Downloaded <code>${esc(a.download)}</code>. A maintainer can run <code>node tools/import-question.mjs ${esc(a.download)}</code> to add it to the bank.`;
+  msg.innerHTML=tf('author.okDownload',{file:esc(a.download)}).replace(/node tools\/import-question\.mjs/, '<code>$&</code>');
 }
 function authorCopy(){
   const p=authorPassage(); const bad=authorProblems(p); const msg=document.getElementById('authormsg'); const json=JSON.stringify(p,null,1);
-  if(bad.length){msg.innerHTML='<b>Not ready yet:</b><ul style="margin:6px 0 0 18px">'+bad.map(x=>`<li>${esc(x)}</li>`).join('')+'</ul>';return;}
-  const done=()=>{msg.textContent='JSON copied to the clipboard.';};
-  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(json).then(done).catch(()=>{msg.textContent='Copy blocked; use Check & download JSON instead.';});return;}
-  const ta=document.createElement('textarea');ta.value=json;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done();}catch{msg.textContent='Copy blocked; use Check & download JSON instead.';}ta.remove();
+  if(bad.length){msg.innerHTML=`<b>${t('author.notReady')}</b><ul style="margin:6px 0 0 18px">`+bad.map(x=>`<li>${esc(x)}</li>`).join('')+'</ul>';return;}
+  const done=()=>{msg.textContent=t('author.copyOk');};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(json).then(done).catch(()=>{msg.textContent=t('author.copyBlocked');});return;}
+  const ta=document.createElement('textarea');ta.value=json;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done();}catch{msg.textContent=t('author.copyBlocked');}ta.remove();
 }
 /* ---------- events ---------- */
 function bindView(){
@@ -2449,8 +2591,8 @@ function startBank(all,task){
 }
 /* keyboard */
 function keyHint(it,canCheck){
-  const base=it.type==='latin'?'Keys: A–E answer':it.type==='subj'?'Keys: 1–4 or A–D answer':it.type==='fig'?'Keys: 1–3 image 1, 4–6 image 2':'Type numbers, Tab between boxes';
-  return `${base} · ←/→ move · F flag${canCheck?' · Enter check':''}`;
+  const base=it.type==='latin'?t('key.latin'):it.type==='subj'?t('key.subj'):it.type==='fig'?t('key.fig'):t('key.eq');
+  return `${base} · ${t('key.move')} · ${t('key.flag')}${canCheck?' · '+t('key.check'):''}`;
 }
 document.addEventListener('keydown',e=>{
   if(!session||session.finished||e.metaKey||e.ctrlKey||e.altKey)return;
@@ -2470,7 +2612,7 @@ document.addEventListener('keydown',e=>{
 });
 /* AI explanations */
 function aiBtn(it){ if(!AI.available()||(session&&session.exam&&!session.finished))return ''; if(!window.__aiItems)window.__aiItems=[]; window.__aiItems.push(it); const id=window.__aiItems.length-1;
-  return `<div class="ai"><button class="btn ghost" data-explain="${id}">✦ Explain it differently</button><div class="ai-out" id="ai-${id}" hidden></div></div>`; }
+  return `<div class="ai"><button class="btn ghost" data-explain="${id}">✦ ${t('ai.title')}</button><div class="ai-out" id="ai-${id}" hidden></div></div>`; }
 function aiPrompt(it){
   const strip=h=>String(h).replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
   let task='';
@@ -2482,11 +2624,11 @@ function aiPrompt(it){
 }
 async function explainAI(btn){
   const id=btn.dataset.explain; const it=(window.__aiItems||[])[+id]; const out=document.getElementById('ai-'+id); if(!it||!out||!AI.available())return;
-  btn.disabled=true; out.hidden=false; out.textContent='Thinking…';
-  try{ const text=await AI.ask(aiPrompt(it),t=>{out.textContent=t;}); out.textContent=text||'The provider returned an empty answer.'; btn.textContent='✦ Explained'; }
-  catch(e){ if(e&&e.code==='not_granted'){out.textContent='Explanations are turned off for this page.';}
-    else if(e&&e.code==='rate_limited'){out.textContent='Too many requests right now. Try again in a minute.';btn.disabled=false;}
-    else{out.textContent=(e&&e.message)||(e&&e.text)||'Could not get an explanation. Try again.';btn.disabled=false;} }
+  btn.disabled=true; out.hidden=false; out.textContent=t('ai.thinking');
+  try{ const text=await AI.ask(aiPrompt(it),t=>{out.textContent=t;}); out.textContent=text||t('ai.empty'); btn.textContent=t('ai.explained'); }
+  catch(e){ if(e&&e.code==='not_granted'){out.textContent=t('ai.off');}
+    else if(e&&e.code==='rate_limited'){out.textContent=t('ai.rateLimit');btn.disabled=false;}
+    else{out.textContent=(e&&e.message)||(e&&e.text)||t('ai.failed');btn.disabled=false;} }
 }
 /* pacing */
 function pacePanel(r){
@@ -2497,25 +2639,26 @@ function pacePanel(r){
   const fast=ans.filter(x=>x.t<0.35*target), slow=rows.filter(x=>x.t>1.6*target);
   const pc=a=>a.length?Math.round(100*a.filter(x=>x.ok).length/a.length):0;
   const msgs=[];
-  if(fast.length>=3&&pc(fast)/100<acc-0.15)msgs.push(['warn',`Rushing: ${fast.length} quick answers (under ${Math.round(0.35*target)} s) were only ${pc(fast)}% correct. Spend 10 more seconds checking.`]);
-  if(slow.length>=3&&pc(slow)<50)msgs.push(['warn',`Overthinking: ${slow.length} items took over ${Math.round(1.6*target)} s and only ${pc(slow)}% were right. Guess, flag and move on sooner.`]);
-  if(r.answered<r.total&&p.limit)msgs.push(['bad',`Time ran out with ${r.total-r.answered} unanswered. Always leave the last minute to guess the rest.`]);
-  if(!msgs.length)msgs.push(['good',`Good pacing: an average of ${Math.round(r.secs/n)} s per item against a ${target} s target.`]);
+  if(fast.length>=3&&pc(fast)/100<acc-0.15)msgs.push(['warn',tf('pace.rushing',{n:fast.length,s:Math.round(0.35*target),p:pc(fast)})]);
+  if(slow.length>=3&&pc(slow)<50)msgs.push(['warn',tf('pace.overthinking',{n:slow.length,s:Math.round(1.6*target),p:pc(slow)})]);
+  if(r.answered<r.total&&p.limit)msgs.push(['bad',tf('pace.out',{n:r.total-r.answered})]);
+  if(!msgs.length)msgs.push(['good',tf('pace.good',{s:Math.round(r.secs/n),target})]);
   const W=Math.max(260,n*18), H=110, maxT=Math.max(target*2,...rows.map(x=>x.t))||1; const bw=W/n;
   const y=v=>H-8-(Math.min(v,maxT)/maxT)*(H-24);
   const bars=rows.map((x,i)=>`<rect x="${i*bw+2}" y="${y(x.t)}" width="${Math.max(3,bw-4)}" height="${H-8-y(x.t)}" rx="2" fill="${!x.ans?'var(--grid)':x.ok?'var(--good)':'var(--bad)'}"><title>Item ${i+1}: ${Math.round(x.t)} s, ${!x.ans?'unanswered':x.ok?'correct':'wrong'}</title></rect>`).join('');
-  return `<div class="panel stack" style="gap:12px"><div class="row" style="justify-content:space-between"><h3>Pacing · ${SECTIONS[r.sec].name}</h3><span class="muted" style="font-size:14px">Bars: seconds per item · <span style="color:var(--good)">■</span> right <span style="color:var(--bad)">■</span> wrong <span style="color:var(--grid)">■</span> unanswered · dashed line = ${target} s target</span></div>
+  return `<div class="panel stack" style="gap:12px"><div class="row" style="justify-content:space-between"><h3>Pacing · ${SECTIONS[r.sec].name}</h3><span class="muted" style="font-size:14px">${tf('pace.legend',{target})}</span></div>
   ${msgs.map(([c,m])=>`<p class="tag ${c}" style="align-self:flex-start;white-space:normal;font-size:14.5px;padding:6px 12px">${m}</p>`).join('')}
   <div class="scroll-x"><svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Seconds per item">${bars}<line x1="0" x2="${W}" y1="${y(target)}" y2="${y(target)}" stroke="var(--ink)" stroke-dasharray="4 4" opacity=".5"/><line x1="0" x2="${W}" y1="${H-8}" y2="${H-8}" stroke="var(--line)"/></svg></div></div>`;
 }
 /* today */
 const todayStr=()=>ymd(new Date());
+const GROUP_DE={'Figure Sequences':'Figurenfolgen','Equations':'Gleichungen','Latin Squares':'Lateinische Quadrate','Subject Module':'Fachmodul','Question types':'Fragetypen','Mathematics':'Mathematik','Statistics & Probability':'Statistik & Wahrscheinlichkeit','Physics & Engineering':'Physik & Technik','Chemistry & Biology':'Chemie & Biologie','Economics':'Wirtschaftswissenschaften','Business & Finance':'BWL & Finanzen','Computer Science':'Informatik','Social Sciences & Humanities':'Sozial- & Geisteswissenschaften','Exam habits':'Prüfungsgewohnheiten'};
+const groupName=g=>LANG==='de'&&GROUP_DE[g]?GROUP_DE[g]:g;
 function actLabel(a){
-  const sn={fig:'Figure Sequences',eq:'Equations',latin:'Latin Squares'};
-  if(a.k==='core')return `${sn[a.sec]} · ${a.mode==='timed'?'timed set':'drill'}${a.diff==='high'||a.diff==='low'||a.diff==='medium'?' · '+a.diff:''}`;
-  if(a.k==='subj')return `${a.n} subject tests`; if(a.k==='bank')return 'Redo mistakes'; if(a.k==='cards')return `Trick cards${a.g?' · '+a.g:''}`;
-  if(a.k==='link')return 'Open official videos'; if(a.k==='tab')return 'Open tactics'; if(a.k==='weak')return `Weakest section · timed set`;
-  if(a.k==='block')return 'Core block · 3 × 25 min'; if(a.k==='mock')return a.m==='mock1'?'Start Mock 1':a.m==='mock2'?'Start Mock 2':'Start core mock'; return '';
+  if(a.k==='core')return `${secName(a.sec)} · ${a.mode==='timed'?t('act.timed'):t('act.drill')}${a.diff==='high'||a.diff==='low'||a.diff==='medium'?' · '+t('diff.'+a.diff):''}`;
+  if(a.k==='subj')return tf('act.tests',{n:a.n}); if(a.k==='bank')return t('today.redo'); if(a.k==='cards')return `${t('tr.title')}${a.g?' · '+groupName(a.g):''}`;
+  if(a.k==='link')return t('act.videos'); if(a.k==='tab')return t('act.tactics'); if(a.k==='weak')return t('act.weakest');
+  if(a.k==='block')return t('act.block'); if(a.k==='mock')return a.m==='mock1'?t('act.mock1'):a.m==='mock2'?t('act.mock2'):t('act.mockcore'); return '';
 }
 function weakestCore(){const log=store.get('log',[]);let best=null;['fig','eq','latin'].forEach(k=>{const L=log.filter(l=>l.sec===k&&l.mode!=='drill');const t=L.reduce((s,l)=>s+l.total,0);const acc=t?L.reduce((s,l)=>s+l.correct,0)/t:0.5;if(!best||acc<best.acc)best={k,acc};});return best.k;}
 function nextSubjectTests(n){
@@ -2552,7 +2695,7 @@ function viewToday(){
     <div class="card"><span class="eyebrow">${t('today.mistakes')}</span><h3>${tf('today.due',{due:bc.due,all:bc.all})}</h3><p class="muted" style="font-size:15px">${t('today.mistakesNote')}</p><div class="row"><button class="btn ${bc.due?'primary':''}" data-bankgo="${bc.due?'due':'all'}" ${bc.all?'':'disabled'}>${t('today.redo')}</button></div></div>
     <div class="card"><span class="eyebrow">${t('today.cards')}</span><h3>${tf('today.reviewCount',{n:cd})}</h3><p class="muted" style="font-size:15px">${t('today.cardsNote')}</p><div class="row"><button class="btn" data-go="tricks">${t('today.reviewCards')}</button></div></div>
     <div class="card"><span class="eyebrow">${t('today.levels')}</span><h3>${['fig','eq','latin'].map(k=>({fig:'Fig',eq:'Eq',latin:'Latin'}[k])+' '+((store.get('level',{})[k])||2)).join(' · ')}</h3><p class="muted" style="font-size:15px">${t('today.adaptiveNote')}</p><div class="row"><button class="btn" data-go="progress">${t('today.seeProgress')}</button></div></div></div>`;
-  if(exam||after)return `<div class="stack"><div class="panel stack"><p class="eyebrow">${exam?parseYmd(S.exam).toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'}):t('today.after')}</p><h2>${exam?t('today.examDay'):t('today.after')}</h2>${exam?`<ul class="clean"><li>Morning: one relaxed 10-minute drill, then stop.</li><li>Bring your admission confirmation and ID; arrive early.</li><li>Core 90 min → 30 min break → Subject 90 min. No notes. Never leave a question blank.</li></ul><div class="row"><button class="btn" data-go="tricks">${t('today.reviewCards')}</button></div>`:`<p class="muted">${t('today.afterNote')}</p><div class="row"><button class="btn primary" data-go="setup">${t('today.newDate')}</button></div>`}</div></div>`;
+  if(exam||after)return `<div class="stack"><div class="panel stack"><p class="eyebrow">${exam?parseYmd(S.exam).toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'}):t('today.after')}</p><h2>${exam?t('today.examDay'):t('today.after')}</h2>${exam?`<ul class="clean"><li>${t('today.examL1')}</li><li>${t('today.examL2')}</li><li>${t('today.examL3')}</li></ul><div class="row"><button class="btn" data-go="tricks">${t('today.reviewCards')}</button></div>`:`<p class="muted">${t('today.afterNote')}</p><div class="row"><button class="btn primary" data-go="setup">${t('today.newDate')}</button></div>`}</div></div>`;
   const pi=days.indexOf(d); if(pi<0)return `<div class="panel"><h2>${t('today.nothing')}</h2><div class="row" style="margin-top:12px"><button class="btn primary" data-go="practice">${t('today.openPractice')}</button></div></div>`;
   const P=PLAN[pi]; const acts=TASKS[d]||[]; const nDone=P.items.filter((x,i)=>itemDone(d,i)).length;
   const rows=P.items.map((txt,i)=>{const done=itemDone(d,i);const m=txt.match(/^(\d\d:\d\d)\s(.*)$/);const time=m?m[1]:'';const body=m?m[2]:txt;

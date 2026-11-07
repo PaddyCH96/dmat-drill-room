@@ -209,7 +209,7 @@ check(/data-go="author"/.test(read('plan.js')), 'plan.js: Settings should link t
 check(/function viewAuthor/.test(appSrc), 'app.js: the in-app authoring view should exist');
 check(/function authorProblems/.test(appSrc), 'app.js: the authoring form must validate before export');
 check(/function authorExport/.test(appSrc), 'app.js: the authoring form must export JSON');
-check(/node tools\/import-question\.mjs/.test(appSrc), 'app.js: the export message should point at the importer');
+check(/node tools\/import-question\.mjs/.test(read('i18n.js')), 'i18n.js: the export message should point at the importer');
 console.log('In-app authoring: form, checks and export path');
 
 // 17. Figure-sequence generator actually produces the new modes over many draws

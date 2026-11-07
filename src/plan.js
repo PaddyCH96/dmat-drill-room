@@ -38,6 +38,18 @@ const DAY_TYPES={
  mock2:{t:'Mock exam 2',items:[[30,'Mock 2: core (75 min) → 30 min break → subject set 2',[A.M('mock2')]],[270,'Review and compare with Mock 1',[A.B()]],[330,'Re-read the official example solutions once more',[A.N()]]]},
  light:{t:'Light review',items:[[0,'One relaxed drill per core section',[A.C('fig','medium','drill'),A.C('eq','medium','drill'),A.C('latin','medium','drill')]],[90,'Review your due trick cards — no new material',[A.K('')]],[150,'Logistics: admission details, ID, route, arrival time, rules for the day',[A.N()]],[null,'Rest for the rest of the day and sleep early',[A.N()]]]},
 };
+const DAY_TYPES_DE={
+ baseline:{t:'Baseline',items:[[0,'Lies die offiziellen Anleitungen zu allen vier Aufgabentypen und schau dir die dMAT-Tutorialvideos an',[A.L()]],[60,'Arbeite die offiziellen Beispielaufgaben ohne Notizen durch',[A.N()]],[150,'Diagnose: eine Zeiteinheit pro Kernabschnitt (Stufe Gemischt)',[A.C('fig','mixed','timed'),A.C('eq','mixed','timed'),A.C('latin','mixed','timed')]],[300,'Fachmodul: 2 Übungstests, dann jeden Fehler aufarbeiten und deinen schwächsten Bereich notieren',[A.S(2),A.B()]]]},
+ latinEq:{t:'Lateinische Quadrate + Gleichungstechnik',items:[[0,'Tab Taktik: die Absuchreihenfolge für Lateinische Quadrate, dann eine Einheit ohne Zeitdruck',[A.G('guide'),A.C('latin','adaptive','drill')]],[60,'Zwei Zeiteinheiten Lateinische Quadrate',[A.C('latin','adaptive','timed',2)]],[135,'Gleichungen: Einsetzmuster — eine schwierige Einheit, dann zwei Zeiteinheiten',[A.C('eq','high','drill'),A.C('eq','adaptive','timed',2)]],[300,'Fachmodul: 2 Tests + Auswertung',[A.S(2),A.B()]]]},
+ fig:{t:'Figurenfolgen: Vertiefung',items:[[0,'Trickkarten: die Regeln für Figurenfolgen (Bewegung, Abprall, Randlauf, x + 1, Drehung, Farbe)',[A.K('Figure Sequences')]],[30,'Übe Stufe Niedrig → Mittel → Hoch und lies jede Erklärung',[A.C('fig','low','drill'),A.C('fig','medium','drill'),A.C('fig','high','drill')]],[120,'Drei Zeiteinheiten Figurenfolgen',[A.C('fig','adaptive','timed',3)]],[300,'Fachmodul: 2 Tests + Auswertung',[A.S(2),A.B()]]]},
+ weakest:{t:'Schwächster Bereich zuerst',items:[[0,'Greife deinen Kernabschnitt mit der niedrigsten Trefferquote an: drei Zeiteinheiten',[A.W(3)]],[120,'Eine Zeiteinheit pro Kernabschnitt',[A.C('fig','adaptive','timed'),A.C('eq','adaptive','timed'),A.C('latin','adaptive','timed')]],[210,'Kopf-Rechnung als Warm-up: Brüche, Quadrate, Zweier- und Zehnerpotenzen',[A.N()]],[300,'Fachmodul: 2 Tests + Auswertung',[A.S(2),A.B()]]]},
+ high:{t:'Hohe Schwierigkeit',items:[[0,'Eine schwierige Zeiteinheit pro Kernabschnitt',[A.C('fig','high','timed'),A.C('eq','high','timed'),A.C('latin','high','timed')]],[120,'Wiederhole deine Fehler und erkläre jede Regel laut',[A.B()]],[210,'Tempo: eine Einheit Lateinische Quadrate mit unter 60 s pro Aufgabe',[A.C('latin','adaptive','timed')]],[300,'Fachmodul: 2 Tests + Auswertung',[A.S(2)]]]},
+ block:{t:'Kompletter Kernblock',items:[[0,'Kernblock: 3 × 25 Min. am Stück, ohne Pausen',[A.CB()]],[90,'Wiederhole deine Fehler',[A.B()]],[150,'Zweiter Kernblock — übe dein Tempo: markieren, weitermachen, raten, bevor die Zeit abläuft',[A.CB()]],[300,'Fachmodul: 2 Tests + Auswertung',[A.S(2),A.B()]]]},
+ coremock:{t:'Kern-Probetest + Fachmodul',items:[[0,'Kern-Probetest (75 Min.) mit neuen Aufgaben',[A.M('core')]],[120,'Wiederhole deine Fehler',[A.B()]],[240,'Fachmodul: 2 Tests + Auswertung',[A.S(2)]]]},
+ mock1:{t:'Probetest 1',items:[[30,'Probetest 1: Kern (75 Min.) → 30 Min. Pause → Fachmodul-Set 1',[A.M('mock1')]],[270,'Arbeite jeden Fehler auf und notiere die Regeln oder Formeln, die du vergessen hast',[A.B()]],[330,'Leichte Einheit in deinem schwächsten Abschnitt',[A.W(1)]]]},
+ mock2:{t:'Probetest 2',items:[[30,'Probetest 2: Kern (75 Min.) → 30 Min. Pause → Fachmodul-Set 2',[A.M('mock2')]],[270,'Arbeite jeden Fehler auf und vergleiche mit Probetest 1',[A.B()]],[330,'Lies die offiziellen Beispiellösungen noch einmal',[A.N()]]]},
+ light:{t:'Lockere Wiederholung',items:[[0,'Eine entspannte Einheit pro Kernabschnitt',[A.C('fig','medium','drill'),A.C('eq','medium','drill'),A.C('latin','medium','drill')]],[90,'Wiederhole deine fälligen Trickkarten — kein neuer Stoff',[A.K('')]],[150,'Logistik: Zulassung, Ausweis, Anfahrt, Ankunftszeit, Regeln für den Tag',[A.N()]],[null,'Ruh den Rest des Tages aus und geh früh schlafen',[A.N()]]]},
+};
 const CANON=['baseline','latinEq','fig','weakest','high','block','coremock','mock1','mock2','light'];
 function daySequence(n){
   if(n<=0)return [];
@@ -51,12 +63,12 @@ function buildPlan(){
   const start=s.start||ymd(new Date()); const n=Math.min(60,dayDiff(start,s.exam)); const hours=Math.max(1,Math.min(10,+s.hours||6));
   const [fh,fm]=(s.from||'09:00').split(':').map(Number); const scale=hours/6;
   daySequence(n).forEach((type,i)=>{
-    const d=addDays(start,i); const T=DAY_TYPES[type];
+    const d=addDays(start,i); const T=LANG==='de'?DAY_TYPES_DE[type]:DAY_TYPES[type];
     const items=[],acts=[];
     T.items.forEach(([off,txt,a])=>{
       let label=txt;
       if(off!=null){let mins=fh*60+fm+Math.round(off*scale/15)*15;label=`${pad2(Math.floor(mins/60)%24)}:${pad2(mins%60)} ${txt}`;}
-      if(type.startsWith('mock')&&off===30&&hours<4)label+=' (this takes about 3 h 15 min — plan a longer session today)';
+      if(type.startsWith('mock')&&off===30&&hours<4)label+=LANG==='de'?' (das dauert etwa 3 Std. 15 Min. — plane heute einen längeren Block)':' (this takes about 3 h 15 min — plan a longer session today)';
       items.push(label); acts.push(a.map(x=>x.n>1&&hours<4?{...x,n:1}:x));
     });
     PLAN.push({d,t:T.t,type,items}); TASKS[d]=acts;
@@ -88,7 +100,7 @@ function viewSetup(){
   ${first?'':`<p class="muted" style="font-size:14.5px">${t('set.backupDetail')}</p>`}
   <div class="row">${first?'':`<button class="btn" data-act="export">${t('set.copyCode')}</button><button class="btn" data-act="download">${t('set.download')}</button>`}<button class="btn${first?'':' ghost'}" data-act="import">${t('set.importCode')}</button><button class="btn ghost" data-act="importfile">${t('set.importFile')}</button>${first?'':`<button class="btn ghost" data-act="reset" style="color:var(--bad)">${t('set.reset')}</button>`}<input type="file" id="backupfile" accept=".json,.txt,application/json,text/plain" hidden></div>
   <label for="codebox" class="muted" hidden>${t('set.backupCode')}</label><textarea id="codebox" hidden rows="3" style="width:100%;font-family:var(--mono);font-size:12px;background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px"></textarea><p id="codemsg" class="muted"></p></div>
-  ${first?'':`<div class="panel stack"><div class="row" style="justify-content:space-between;align-items:baseline"><h3>Contribute a text</h3><span class="tag">no code needed</span></div><p class="muted" style="max-width:64ch">You found a good dMAT-style text? Turn it into six questions here. The app checks the shape and exports a JSON file a maintainer can drop into the bank with one command.</p><div class="row"><button class="btn" data-go="author">Write a text</button></div></div>`}
+  ${first?'':`<div class="panel stack"><div class="row" style="justify-content:space-between;align-items:baseline"><h3>${t('set.contribTitle')}</h3><span class="tag">${t('set.contribBtn')}</span></div><p class="muted" style="max-width:64ch">${t('set.contribBody')}</p><div class="row"><button class="btn" data-go="author">${t('set.contribBtn')}</button></div></div>`}
   <p class="muted" style="font-size:13.5px">${t('set.unofficial')} <a href="https://www.d-mat.de/en/" target="_blank" rel="noopener">d-mat.de</a>.</p>
   </div>`;
 }
@@ -139,7 +151,7 @@ function setupPreview(){
   const n=dayDiff(start,exam);
   if(n<1){err.hidden=false;err.textContent='The plan must start at least one day before the exam.';pv.textContent='';return;}
   err.hidden=true; const seq=daySequence(Math.min(60,n));
-  pv.innerHTML=`<b>${Math.min(60,n)}-day plan</b>${n>60?' (capped at 60 days; the plan will start later)':''}: ${seq.map(t=>DAY_TYPES[t].t).filter((v,i,a)=>a.indexOf(v)===i).join(' → ')}.`;
+  pv.innerHTML=`<b>${Math.min(60,n)}-${LANG==='de'?'Tage-Plan':'day plan'}</b>${n>60?(LANG==='de'?' (auf 60 Tage begrenzt; der Plan beginnt später)':' (capped at 60 days; the plan will start later)'):''}: ${seq.map(t=>(LANG==='de'?DAY_TYPES_DE:DAY_TYPES)[t].t).filter((v,i,a)=>a.indexOf(v)===i).join(' → ')}.`;
 }
 function saveSetup(e){
   e.preventDefault(); const f=id=>document.getElementById(id);

@@ -8,7 +8,7 @@
 
 ---
 
-**New in 1.4.1:** contributed content is sanitised before it renders, backup imports validate their data, and a few rough edges are smoothed out. See the [changelog](CHANGELOG.md).
+**New in 1.5.0:** a full German interface including the study plan and trick cards, an axe-clean accessible app, and a headless smoke test wired into CI. See the [changelog](CHANGELOG.md).
 
 ## Contents
 
@@ -30,11 +30,12 @@ The dMAT has a **Core Module** (Figure Sequences, Mathematical Equations and Lat
 
 | Feature | What it does |
 |---|---|
-| **Study plan built around your date** | Enter your exam date, start date and daily hours, and get a plan of 1–60 days: baseline → technique → weak areas → high difficulty → core blocks → mocks → light review. |
+| **Study plan built around your date** | Enter your exam date, start date and daily hours, and get a day-by-day plan of 1–60 days: baseline → technique → weak areas → high difficulty → core blocks → mocks → light review. |
 | **Today screen** | Opens on today's steps. Each step has a button that starts the right session and ticks itself off when you finish. |
 | **Unlimited core puzzles** | Generated Figure Sequences (4×4 grids, movement, rotation, colour and *x + 1* rules), Mathematical Equations (values 1–20, one unique solution) and Latin Squares (5×5, one unique answer, step-by-step solution path). |
+| **Accessible** | Keyboard-navigable sessions (arrow keys, 1–4/A–E, F to flag), visible focus rings, WCAG AA contrast in all four themes, reduced-motion support, axe-clean views. |
 | **Adaptive difficulty** | Low/medium/high change the puzzle itself (deduction steps, unknowns, moving figures). **Mixed** walks a set from 30% low to 35% high. **Adaptive** keeps a level per core section and moves you up after a set at 85% or better, down after one below 60%. |
-| **German interface** | Switch the interface between English and German next to the theme picker. Setup, Today, Practice, Mock, Results, Progress, Tactics and the trick-card controls are translated; the choice is saved and synced like the theme. The study-plan step text, Subject Module texts, questions and trick-card copy stay English. |
+| **German interface** | Switch the interface between English and German next to the theme picker. The whole interface is translated, including the study-plan step text, trick cards and the author view. The choice is saved and synced like the theme. The Subject Module texts and questions stay English. |
 | **Subject Module bank** | 43 original texts with 258 questions across 8 subjects: maths, statistics, physics/engineering, chemistry/biology, economics, business, computer science, social sciences/humanities — the areas the official materials name. Four of them mirror the archetypes in the official preparatory PDF (vector calculations, hydrostatics, optimal order quantity, social research methods). |
 | **Three ways to practise it** | By **subject** (a full 13-minute text), by **question type** (one type, mixed across all eight areas), or **weakest first** (questions drawn from the areas and types you score lowest on, with anything unanswered treated as unknown). |
 | **Exam and Learn modes** | Review at the end, or see the answer plus the trick behind it after every question. |

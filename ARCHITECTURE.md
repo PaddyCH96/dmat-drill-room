@@ -37,7 +37,7 @@ Everything persistent goes through `store` (a thin `localStorage` wrapper in `ap
 | `live` | an unfinished session, so it can be resumed after a reload |
 | `ai` | the optional provider settings and API key |
 
-The interface language is stored as `lang` and travels with the theme. `src/i18n.js` holds `STRINGS` (an `en` and a `de` text per key), `t(id)` and `tf(id, vars)`; `applyLang()` rewrites the shell's `data-i18n` elements and the active view is re-rendered. The Subject Module texts and questions stay English on purpose, and trick-card copy is still English; the deck controls are translated. Missing keys fall back to English, then to the key itself.
+The interface language is stored as `lang` and travels with the theme. `src/i18n.js` holds `STRINGS` (an `en` and a `de` text per key), `t(id)` and `tf(id, vars)`; `applyLang()` rewrites the shell's `data-i18n` elements and the active view is re-rendered, and `buildPlan()` runs on a switch so the day-by-day plan is generated in the new language too. Missing keys fall back to English, then to the key itself. Plan templates, action labels, progress and practice labels, the results screen, the trick deck (`TRICK_DE`, `TYPE_TIP_DE` in `subjects-and-tricks.js`) and the author view are all bilingual. The Subject Module texts and questions stay English on purpose — the real module is in English.
 
 Two lists in `app.js` decide what travels: `SYNC_KEYS` (synced to the Claude account when the page runs as an artifact) and `BACKUP_KEYS` (the backup code). **`ai` and `live` are in neither** — the API key stays in the browser that entered it, and a half-finished session is local by nature. `tests/check.mjs` fails if that ever changes.
 
@@ -100,4 +100,6 @@ breakdown and the weakest-first drill can never disagree.
 - **A day type:** add to `DAY_TYPES` and place it in `daySequence`.
 - **A new provider for explanations:** add an entry to `AI_PROVIDERS` in `ai.js` with a `call(cfg, prompt)` that returns text.
 
-After any change: `node build.mjs && node tests/check.mjs`, then commit `src/` together with the rebuilt `index.html` and `sw.js`. CI checks both.
+After any change: `npm test` (that is `node build.mjs`, `node tests/check.mjs` and `node tests/smoke.mjs`), then commit `src/` together with the rebuilt `index.html` and `sw.js`. CI runs the same and also fails a stale build.
+
+`tests/check.mjs` is a dependency-free VM harness covering bank shape, both generators, the planner, i18n key coverage, and contributed-content sanitising. `tests/smoke.mjs` boots the real app in a minimal DOM stub — it renders every tab in both languages, asserts the trick deck and backup round-trip, and exists so CI needs no browser download. `tools/axe-audit.mjs` (manual, network-fetching axe-core on first run) audits every view with axe.

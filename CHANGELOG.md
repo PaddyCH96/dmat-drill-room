@@ -2,6 +2,17 @@
 
 All notable changes to the dMAT Drill Room. Dates are in ISO format.
 
+## [1.5.0] — 2026-11-07
+
+### Added
+- German depth: the day-by-day study plan, the Tactics table, practice/answer/progress labels, the mock-exam view, resume banner, pacing feedback and every trick card (`TRICK_DE`) are translated; the authoring view is bilingual too. The Subject Module texts and questions stay English on purpose.
+- A headless smoke test (`tests/smoke.mjs`) that boots the real app in a minimal DOM stub: renders every tab in both languages, asserts the trick-card translations and round-trips a backup at runtime. `npm test` now runs both suites, and CI runs the smoke test too.
+- `tools/axe-audit.mjs`, a manual axe-core audit of every view. The whole app is axe-clean.
+
+### Fixed
+- Accessibility: the Switch control has an accessible name, screen-reader headings fix the heading order in Practice and the session view, the update banner is a live region, and several theme tokens now meet WCAG AA contrast.
+- Trick cards keep their saved indices — new German translations were added to the existing cards, not inserted.
+
 ## [1.4.1] — 2026-11-07
 
 ### Security
